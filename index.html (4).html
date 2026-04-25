@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>🔥 Fênix Mobile — Relatório OPPO</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7F6;--card:#FFFFFF;--card2:#F8FAF9;--line:#DDE5E1;--txt:#17211C;--muted:#64746C;
+  --fire:#0F766E;--gold:#0F766E;--green:#16A34A;--red:#DC2626;--blue:#2563EB;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--txt);font-family:Inter,Arial,sans-serif}
+body{padding-bottom:calc(78px + var(--safe-bottom));overflow-x:hidden}
+button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.app{width:100%;max-width:540px;margin:0 auto}.super-app{max-width:1180px}
+.header{position:sticky;top:0;z-index:20;padding:18px 16px 14px;background:linear-gradient(135deg,#210700,#100 52%,#080808);border-bottom:1px solid rgba(255,77,0,.45);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand h1{font-family:Syne,sans-serif;font-size:18px;letter-spacing:.8px;line-height:1.1;background:linear-gradient(90deg,var(--fire),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid var(--line);padding:7px 9px;border-radius:999px;max-width:190px}.user-chip img{width:26px;height:26px;border-radius:50%}.user-chip span{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ghost{border:1px solid var(--line);background:#111;color:var(--txt);border-radius:12px;padding:10px 12px;font-weight:700}.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,12,12,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 10px calc(8px + var(--safe-bottom));display:flex;gap:8px;justify-content:center}.tab{min-height:52px;flex:1;max-width:210px;border:1px solid var(--line);background:#121212;color:var(--muted);border-radius:15px;font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.tab.active{background:linear-gradient(135deg,var(--fire),#ff8700);border-color:var(--fire);color:white;box-shadow:0 8px 25px rgba(255,77,0,.25)}
+.screen{display:none;padding:14px 14px 20px}.screen.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;margin:12px 0;overflow:hidden}.card-head{display:flex;align-items:center;gap:10px;padding:15px 16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(255,77,0,.16),transparent)}.card-head b{font-family:Syne,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--gold)}.card-body{padding:16px}.step-line{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 6px}.step-line div{height:4px;background:#2b2b2b;border-radius:99px}.step-line div.on{background:linear-gradient(90deg,var(--fire),var(--gold))}.field{margin-bottom:14px}.field label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-bottom:7px}input,select,textarea{width:100%;background:#0f0f0f;border:1px solid #303030;color:var(--txt);border-radius:14px;padding:14px 13px;outline:none;min-height:48px}input:focus,select:focus,textarea:focus{border-color:var(--fire);box-shadow:0 0 0 3px rgba(255,77,0,.15)}textarea{min-height:92px;resize:vertical}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{width:100%;border:0;border-radius:16px;padding:15px 16px;min-height:52px;background:linear-gradient(135deg,var(--fire),#ff8a00);color:white;font-weight:900;letter-spacing:.5px;box-shadow:0 8px 28px rgba(255,77,0,.28)}.btn.secondary{background:#111;border:1px solid var(--line);box-shadow:none}.btn.blue{background:linear-gradient(135deg,#1356ff,#4da6ff)}.btn:disabled{opacity:.5}.model-list{display:grid;grid-template-columns:1fr;gap:10px}.model-row{display:grid;grid-template-columns:minmax(92px,1fr) 44px 70px 44px;gap:8px;align-items:center;background:#0f0f0f;border:1px solid var(--line);border-radius:16px;padding:10px}.model-row b{font-size:14px;color:var(--gold)}.qty{font-family:Syne,sans-serif;text-align:center;font-size:22px;font-weight:900}.mini-btn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#1b1b1b;color:white;font-size:24px;font-weight:900}.total{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(255,77,0,.18),rgba(255,209,102,.08));border:1px solid rgba(255,77,0,.34);border-radius:18px;padding:14px 16px;margin-top:12px}.total span{color:var(--muted);font-size:12px;text-transform:uppercase;font-weight:800}.total b{font-family:Syne,sans-serif;font-size:32px;color:var(--gold)}.meta{background:#0f0f0f;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.bar{height:10px;background:#303030;border-radius:99px;overflow:hidden;margin-top:9px}.fill{height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--gold),var(--green));transition:.25s}.hint{font-size:12px;color:var(--muted);line-height:1.45}.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kpi{background:#101010;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi small{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.kpi b{display:block;font-family:Syne,sans-serif;font-size:28px;color:var(--gold);margin-top:5px}.status{display:none;margin:12px 0;padding:13px;border-radius:14px;text-align:center;font-weight:800}.status.ok{display:block;background:rgba(0,230,118,.1);border:1px solid var(--green);color:var(--green)}.status.err{display:block;background:rgba(255,75,75,.1);border:1px solid var(--red);color:var(--red)}.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}.login-card{max-width:430px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px;text-align:center;box-shadow:0 20px 80px rgba(0,0,0,.5)}.login-card h2{font-family:Syne,sans-serif;font-size:26px;margin-bottom:8px;color:var(--gold)}.login-card p{color:var(--muted);font-size:14px;line-height:1.45;margin-bottom:18px}.hidden{display:none!important}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px}.table{width:100%;border-collapse:collapse;min-width:760px;background:#101010}.table th,.table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--gold);font-size:11px;text-transform:uppercase;background:#171717;position:sticky;top:0}.rank{display:grid;gap:8px}.rank-item{display:grid;grid-template-columns:40px 1fr 70px;gap:10px;align-items:center;background:#101010;border:1px solid var(--line);border-radius:16px;padding:11px}.rank-item strong{font-size:14px}.rank-item small{color:var(--muted)}.pill{padding:6px 10px;border-radius:999px;background:rgba(255,209,102,.1);color:var(--gold);font-weight:900;text-align:center}.lock{opacity:.55;filter:grayscale(1)}
+@media(min-width:780px){.screen{padding:20px}.model-list{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(4,1fr)}.tabs{position:sticky;top:76px;bottom:auto;margin:0 auto;max-width:760px;border:1px solid var(--line);border-radius:18px;padding:8px;background:#111}.tab{flex-direction:row;font-size:14px}.header{padding-left:24px;padding-right:24px}.brand h1{font-size:24px}.app{max-width:920px}.mobile-only{display:none}}
+@media(max-width:380px){.screen{padding:10px}.model-row{grid-template-columns:1fr 40px 52px 40px;padding:8px}.mini-btn{width:40px;height:40px}.qty{font-size:20px}.tab{font-size:11px}.grid2{grid-template-columns:1fr}}
+/* TEMA FINAL: MOBILE LIMPO, NEUTRO E CONVIDATIVO */
+body{background:linear-gradient(180deg,#EEF7F2 0%,#F8FAF9 52%,#EEF2F0 100%)}
+.header{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid #DDE5E1;box-shadow:0 8px 28px rgba(23,33,28,.08)}
+.brand h1{background:linear-gradient(90deg,#0F766E,#22C55E);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.brand small{color:#64746C}
+.user-chip{background:#F6FAF8;border-color:#DDE5E1;color:#17211C}.ghost{background:#FFF;color:#17211C;border-color:#DDE5E1}
+.tabs{background:rgba(255,255,255,.96);border-top:1px solid #DDE5E1;box-shadow:0 -8px 30px rgba(23,33,28,.08)}
+.tab{background:#F7FAF8;color:#64746C;border-color:#DDE5E1}.tab.active{background:linear-gradient(135deg,#0F766E,#22C55E);border-color:#0F766E;color:white;box-shadow:0 10px 25px rgba(15,118,110,.22)}
+.card{background:rgba(255,255,255,.98);border-color:#DDE5E1;box-shadow:0 14px 40px rgba(23,33,28,.07)}
+.card-head{background:linear-gradient(90deg,rgba(34,197,94,.11),rgba(15,118,110,.03));border-bottom-color:#DDE5E1}.card-head b{color:#0F766E}
+input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}input:focus,select:focus,textarea:focus{border-color:#0F766E;box-shadow:0 0 0 4px rgba(15,118,110,.12)}
+.btn{background:linear-gradient(135deg,#0F766E,#22C55E);box-shadow:0 10px 26px rgba(15,118,110,.2)}.btn.secondary{background:#FFF;color:#17211C;border-color:#DDE5E1}.btn.blue{background:linear-gradient(135deg,#2563EB,#38BDF8)}
+.model-row,.meta,.kpi,.table,.rank-item{background:#F8FAF9;border-color:#DDE5E1}.mini-btn{background:#FFF;color:#0F766E;border-color:#D5DFDA}.model-row b,.total b,.kpi b,.table th,.pill,.login-card h2{color:#0F766E}
+.total{background:linear-gradient(135deg,rgba(15,118,110,.10),rgba(34,197,94,.08));border-color:rgba(15,118,110,.18)}
+.step-line div{background:#DDE5E1}.step-line div.on{background:linear-gradient(90deg,#0F766E,#22C55E)}.bar{background:#DDE5E1}.fill{background:linear-gradient(90deg,#F59E0B,#22C55E)}
+.login-card{background:rgba(255,255,255,.98);border-color:#DDE5E1;box-shadow:0 22px 80px rgba(23,33,28,.12)}.login-card p{color:#64746C}.table th{background:#EFF6F2}.pill{background:rgba(15,118,110,.08)}
+@media(max-width:540px){.login{align-items:flex-start;padding-top:28px}.login-card{border-radius:24px}.card{border-radius:22px}.card-body{padding:15px}.model-row{grid-template-columns:minmax(90px,1fr) 46px 54px 46px;border-radius:18px}.qty{font-size:21px}.mini-btn{height:46px}.tabs{padding-left:8px;padding-right:8px}.tab{border-radius:16px}.screen{padding-bottom:24px}}
+
+</style>
+<style>
+/* AJUSTES SOLICITADOS */
+.brand h1,.login-card h2{color:#C89B3C!important;background:none!important;-webkit-text-fill-color:#C89B3C!important}
+.qty,.total b,.kpi b,#metaLabel{font-family:Inter,Arial,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;font-weight:800;letter-spacing:.2px;color:#10231D}
+.btn.blue.super-only{display:none}.supervisor-on .btn.blue.super-only{display:block}
+.edit-list{display:grid;gap:10px}.edit-row{display:grid;grid-template-columns:1.2fr .8fr 84px 44px;gap:8px;align-items:end;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:10px}.edit-row input{background:#fff;color:#17211C;border-color:#DDE5E1}.edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}.edit-pencil{width:44px;height:48px;border-radius:14px;border:1px solid #D5DFDA;background:#fff;color:#C89B3C;font-size:20px}.model-month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.model-month-item{background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:13px}.model-month-item small{display:block;color:#64746C;font-weight:800}.model-month-item b{font-size:26px;color:#0F766E}@media(max-width:540px){.edit-row{grid-template-columns:1fr}.edit-pencil{width:100%}.model-month-grid{grid-template-columns:1fr}}
+
+.mostruario-row{display:grid;grid-template-columns:1fr 92px;gap:10px;align-items:center;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:12px}.mostruario-row b{font-size:14px;color:#0F766E}.mostruario-toggle{height:44px;border-radius:14px;border:1px solid #D5DFDA;background:#FFF;color:#64746C;font-weight:900}.mostruario-toggle.on{background:linear-gradient(135deg,#0F766E,#22C55E);color:#FFF;border-color:#0F766E}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="login-card">
+    <h2>🦅 Equipe Fênix <span style="display:block;font-size:18px;margin-top:6px;color:#c8942f;letter-spacing:.5px;">Relatório Diário</span></h2>
+    <p>Acesso simples e rápido. Promotor lança seus resultados diariamente.</p>
+    <div class="field" style="text-align:left"><label>Tipo de acesso</label><select id="loginTipo"><option value="promotor">Promotor</option><option value="supervisor">Supervisor</option></select></div>
+    <div class="field" id="loginNomeBox" style="text-align:left"><label>Promotor</label><select id="loginNome"></select></div>
+    <div class="field hidden" id="loginPinBox" style="text-align:left"><label>Senha supervisor</label><input type="password" id="loginPin" placeholder="Digite a senha" autocomplete="off"></div>
+    <button class="btn" id="btnEntrar">Entrar no painel</button>
+  </div>
+</div>
+
+<div id="main" class="hidden">
+  <header class="header">
+    <div class="brand">
+      <div><h1>🦅 Fênix Mobile</h1><small id="roleText">Relatório diário OPPO</small></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="user-chip"><img id="userPhoto" alt=""><span id="userName">Usuário</span></div>
+        <button class="ghost" id="btnSair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="relatorio">📝<span>Relatório</span></button>
+    <button class="tab" data-tab="historico">📈<span>Histórico</span></button>
+    <button class="tab" data-tab="supervisor">👑<span>Supervisor</span></button>
+  </nav>
+
+  <main class="app" id="appShell">
+    <section id="relatorio" class="screen active">
+      <div class="step-line"><div class="on" id="s1"></div><div id="s2"></div><div id="s3"></div></div>
+      <div class="card">
+        <div class="card-head"><span>📍</span><b>Identificação</b></div>
+        <div class="card-body">
+          <div class="field"><label>Promotor</label><select id="promotor"></select></div>
+          <div class="grid2">
+            <div class="field"><label>Loja / Filial</label><select id="loja"></select></div>
+            <div class="field"><label>Data</label><input type="date" id="data"></div>
+          </div>
+          <button class="btn secondary" id="btnContinuar">Continuar</button>
+        </div>
+      </div>
+      <div class="card" id="cardVendas">
+        <div class="card-head"><span>📦</span><b>Vendas do dia</b></div>
+        <div class="card-body">
+          <p class="hint" style="margin-bottom:12px">Use + e - para lançar rápido no celular.</p>
+          <div class="model-list" id="modelList"></div>
+          <div class="total"><span>Total vendido hoje</span><b id="totalDia">0</b></div>
+          <div class="meta"><div style="display:flex;justify-content:space-between;gap:10px"><span class="hint">Meta do mês</span><b id="metaLabel">0%</b></div><div class="bar"><div class="fill" id="metaFill"></div></div><p class="hint" id="metaHelp" style="margin-top:8px">Preencha as vendas para calcular.</p></div>
+          <button class="btn blue super-only" style="margin-top:12px" id="btnIA">✨ Analisar com IA</button>
+          <div class="status" id="iaBox"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span>🏪</span><b>Estoque OPPO</b></div>
+        <div class="card-body">
+          <p class="hint" style="margin-bottom:12px">Preencha o estoque separado das vendas.</p>
+          <div class="model-list" id="estoqueList"></div>
+
+          <div style="height:1px;background:#DDE5E1;margin:18px 0"></div>
+
+          <p class="hint" style="margin-bottom:12px;font-weight:800;color:#0F766E;text-transform:uppercase;letter-spacing:.8px">Mostruário OPPO</p>
+          <p class="hint" style="margin-bottom:12px">Informe quais modelos estão no mostruário da loja, separado do estoque.</p>
+          <div class="model-list" id="mostruarioList"></div>
+
+          <div class="field" style="margin-top:14px">
+            <label>Adicionar modelo no mostruário</label>
+            <input type="text" id="mostruarioExtra" placeholder="Ex: A79, Reno11F, outro modelo...">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span>⚔️</span><b>Concorrência</b></div>
+        <div class="card-body">
+          <div class="grid2"><div class="field"><label>Clientes interessados</label><input type="number" id="interessados" min="0" placeholder="0"></div><div class="field"><label>Vendas perdidas</label><input type="number" id="perdidas" min="0" placeholder="0"></div></div>
+          <div class="field"><label>Perdeu para qual marca?</label><select id="concorrencia"><option value="">Selecione</option><option>Samsung</option><option>Motorola</option><option>Apple</option><option>JOVI</option><option>Outra</option></select></div>
+          <div class="field"><label>Observação rápida</label><textarea id="obs" placeholder="Falta estoque, concorrência com desconto, cliente pediu brinde..."></textarea></div>
+          <button class="btn" id="btnSalvar">🔥 Salvar relatório online</button>
+          <div class="status" id="status"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="historico" class="screen">
+      <div class="kpis"><div class="kpi"><small>Meu mês</small><b id="hMes">0</b></div><div class="kpi"><small>Minha meta</small><b id="hMeta">0%</b></div><div class="kpi"><small>Ontem</small><b id="hOntem">0</b></div><div class="kpi"><small>Relatórios</small><b id="hQtd">0</b></div></div>
+      <div class="card"><div class="card-head"><span>🤖</span><b>Previsão IA</b></div><div class="card-body"><p class="hint" id="previsao">Carregando histórico...</p></div></div>
+      <div class="card"><div class="card-head"><span>📋</span><b>Meus lançamentos</b></div><div class="card-body"><div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Loja</th><th>Total</th><th>Mix</th><th>Obs</th></tr></thead><tbody id="tbodyHistorico"></tbody></table></div></div></div>
+    </section>
+
+    <section id="supervisor" class="screen">
+      <div id="supLocked" class="card"><div class="card-head"><span>🔒</span><b>Acesso supervisor</b></div><div class="card-body"><p class="hint">Seu perfil atual é promotor. Apenas quem entra com a senha de supervisor consegue ver dados da equipe.</p></div></div>
+      <div id="supPanel" class="hidden">
+        <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div>
+        <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, filial e meta de cada promotor.</p><div class="edit-list" id="configPromotores"></div></div></div>
+        <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Ver total por modelo vendido no mês</button><div class="model-month-grid hidden" id="modeloMesBox"></div></div></div>
+        <div class="card"><div class="card-head"><span>🏆</span><b>Ranking equipe</b></div><div class="card-body"><button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button><div class="status" id="iaSupervisorBox"></div><div class="rank" id="ranking"></div></div></div>
+        <div class="card"><div class="card-head"><span>📊</span><b>Base completa</b></div><div class="card-body"><button class="btn secondary" id="btnExport" style="margin-bottom:12px">Exportar CSV</button><div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Promotor</th><th>Loja</th><th>Total</th><th>A5 Pro</th><th>A6 Pro</th><th>Reno13F</th><th>Reno14F</th><th>Obs</th></tr></thead><tbody id="tbodySupervisor"></tbody></table></div></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+/* 🔥 COLE AQUI AS CHAVES DO SEU FIREBASE */
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI.firebaseapp.com",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI.appspot.com",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
+
+const SUPERVISOR_PIN = "85741290"; // Senha do painel supervisor
+
+const EQUIPE_DEFAULT = [{nome:"Beatriz Diniz",filial:"",meta:45},{nome:"Erika Maneia",filial:"",meta:74},{nome:"Taynara Ferreira",filial:"",meta:50},{nome:"Elias Andrade",filial:"",meta:46},{nome:"Dennas Pereira",filial:"",meta:58},{nome:"Erika Silva",filial:"",meta:45},{nome:"Lauanda Augusta",filial:"",meta:30},{nome:"Thais Rezende",filial:"",meta:48},{nome:"Tailon Martins",filial:"",meta:45},{nome:"Diego Souza",filial:"",meta:45},{nome:"Thais Almeida",filial:"",meta:50},{nome:"Gabriela Borges",filial:"",meta:45},{nome:"Lucas Monteiro",filial:"",meta:45}];
+let equipeConfig = carregarEquipeConfig();
+let PROMOTORES = equipeConfig.map(p=>p.nome);
+const LOJAS = ["Magalu","Casas Bahia","Ponto","FastShop"];
+const MODELOS = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
+let METAS = Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));
+let app, auth, db, user=null, isSupervisor=false, vendas={}, mostruario={};
+const $=id=>document.getElementById(id);
+function cfgOk(){return firebaseConfig.apiKey && firebaseConfig.apiKey!=="COLE_AQUI"}
+function today(){return new Date().toISOString().slice(0,10)}
+function moneyDate(d){return (d||'').split('-').reverse().join('/')}
+function safe(v){return Number(v||0)}
+function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
+function show(el,msg,type='ok'){el.textContent=msg;el.className='status '+type}
+
+function initUi(){
+  $('data').value=today();
+  $('promotor').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');
+  $('loja').innerHTML='<option value="">Selecione a loja...</option>'+LOJAS.map(n=>`<option>${n}</option>`).join('');
+  $('modelList').innerHTML=MODELOS.map(m=>`<div class="model-row"><b>${m}</b><button class="mini-btn" data-minus="${m}">−</button><div class="qty" id="q_${m.replaceAll(' ','_')}">0</div><button class="mini-btn" data-plus="${m}">+</button></div>`).join('');
+  $('estoqueList').innerHTML=MODELOS.map(m=>`<div class="field"><label>${m}</label><input type="number" min="0" id="est_${m.replaceAll(' ','_')}" placeholder="0"></div>`).join('');
+  $('mostruarioList').innerHTML=MODELOS.map(m=>`<div class="mostruario-row"><b>${m}</b><button type="button" class="mostruario-toggle" data-most="${m}">NÃO</button></div>`).join('');
+  MODELOS.forEach(m=>mostruario[m]=false);
+  document.querySelectorAll('[data-most]').forEach(b=>b.onclick=()=>{mostruario[b.dataset.most]=!mostruario[b.dataset.most];b.classList.toggle('on',mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';});
+  MODELOS.forEach(m=>vendas[m]=0);
+  document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.plus]++;renderVendas()});
+  document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.minus]=Math.max(0,vendas[b.dataset.minus]-1);renderVendas()});
+  $('promotor').onchange=renderVendas;$('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  $('btnIA').onclick=iaLocal;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor;
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
+}
+function renderVendas(){
+  MODELOS.forEach(m=>{$('q_'+m.replaceAll(' ','_')).textContent=vendas[m]});
+  const total=totalObj(vendas), meta=getMeta($('promotor').value), pct=meta?Math.round(total/meta*100):0;
+  $('totalDia').textContent=total;$('metaLabel').textContent=pct+'%';$('metaFill').style.width=Math.min(pct,100)+'%';
+  $('metaHelp').textContent=meta?`${total}/${meta} unidades no mês informado para este promotor.`:'Selecione o promotor para calcular a meta.';
+  if(total>0)$('s3').classList.add('on');
+}
+function iaLocal(){
+  const total=totalObj(vendas), melhor=MODELOS.slice().sort((a,b)=>vendas[b]-vendas[a])[0];
+  const texto= total>0 ? `🤖 Melhor modelo do dia: ${melhor}. Total lançado: ${total}. Foque amanhã em A5 Pro, A6 Pro e Reno para melhorar mix e comissão.` : 'Lance ao menos uma venda para gerar análise.';
+  show($('iaBox'),texto,total>0?'ok':'err');
+}
+function openTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+  $('appShell').classList.toggle('super-app',id==='supervisor');
+  if(id==='historico')carregarHistorico(); if(id==='supervisor')carregarSupervisor(); window.scrollTo(0,0);
+}
+
+async function salvarRelatorio(){
+  if(!$('promotor').value||!$('loja').value||!$('data').value){show($('status'),'Preencha promotor, loja e data.','err');return}
+  if(!cfgOk()){show($('status'),'Nuvem ainda não configurada. Cole o firebaseConfig para salvar online no Firebase.','err');return}
+  const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+m.replaceAll(' ','_'))?.value)]));
+  const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
+  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:getFilial($('promotor').value),loja:$('loja').value,data:$('data').value,vendas,total:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
+  await addDoc(collection(db,'relatorios'),payload);
+  show($('status'),'✅ Relatório salvo online com sucesso.');
+}
+async function carregarHistorico(){
+  if(!cfgOk()){$('tbodyHistorico').innerHTML='<tr><td colspan="5">Nuvem ainda não configurada.</td></tr>';return;}
+  const q=query(collection(db,'relatorios'),where('uid','==',user.uid),orderBy('data','desc'));
+  const snap=await getDocs(q); let rows=[], mes=0, ontem=0;
+  snap.forEach(d=>{const r=d.data();rows.push(r);mes+=safe(r.total); const y=new Date();y.setDate(y.getDate()-1); if(r.data===y.toISOString().slice(0,10))ontem+=safe(r.total)});
+  const meta=getMeta($('promotor').value); $('hMes').textContent=mes;$('hMeta').textContent=meta?Math.round(mes/meta*100)+'%':'0%';$('hOntem').textContent=ontem;$('hQtd').textContent=rows.length;
+  $('previsao').textContent=meta?`No ritmo atual, acompanhe a média diária. Faltam ${Math.max(0,meta-mes)} unidades para a meta do mês.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
+  $('tbodyHistorico').innerHTML=rows.map(r=>`<tr><td>${moneyDate(r.data)}</td><td>${r.loja}</td><td>${r.total}</td><td>${Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ')}</td><td>${r.obs||''}</td></tr>`).join('')||'<tr><td colspan="5">Sem relatórios ainda.</td></tr>';
+}
+
+function carregarEquipeConfig(){try{return JSON.parse(localStorage.getItem('fenixEquipeConfig')||'null')||EQUIPE_DEFAULT}catch(e){return EQUIPE_DEFAULT}}
+function salvarEquipeConfig(){localStorage.setItem('fenixEquipeConfig',JSON.stringify(equipeConfig));PROMOTORES=equipeConfig.map(p=>p.nome);METAS=Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));$('promotor').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');$('loginNome').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');}
+function getMeta(nome){const p=equipeConfig.find(x=>x.nome===nome);return Number(p?.meta||0)}
+function getFilial(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.filial||''}
+function renderConfigPromotores(){
+  if(!$('configPromotores'))return;
+  $('configPromotores').innerHTML=equipeConfig.map((p,i)=>`<div class="edit-row"><div><label>Nome</label><input id="cfg_nome_${i}" value="${p.nome}"></div><div><label>Filial</label><input id="cfg_filial_${i}" value="${p.filial||''}" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div><button class="edit-pencil" data-edit="${i}" title="Salvar edição">✏️</button></div>`).join('');
+  document.querySelectorAll('[data-edit]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.edit);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();});
+}
+function mostrarModeloMes(){
+  $('modeloMesBox').classList.toggle('hidden');
+  if($('modeloMesBox').classList.contains('hidden'))return;
+  const rows=window.__rowsSupervisorModelo||[];
+  const sum=Object.fromEntries(MODELOS.map(m=>[m,0]));
+  rows.forEach(r=>MODELOS.forEach(m=>sum[m]+=safe(r.vendas?.[m])));
+  $('modeloMesBox').innerHTML=MODELOS.map(m=>`<div class="model-month-item"><small>${m}</small><b>${sum[m]}</b></div>`).join('');
+}
+function iaSupervisor(){
+  const rows=window.__rowsSupervisorModelo||[]; const total=rows.reduce((s,r)=>s+safe(r.total),0); const prom=new Set(rows.map(r=>r.nome)).size;
+  const sum=Object.fromEntries(MODELOS.map(m=>[m,0])); rows.forEach(r=>MODELOS.forEach(m=>sum[m]+=safe(r.vendas?.[m])));
+  const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';
+  show($('iaSupervisorBox'), rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco: elevar mix de A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.', rows.length?'ok':'err');
+}
+
+async function carregarSupervisor(){
+  $('supLocked').classList.toggle('hidden',isSupervisor);$('supPanel').classList.toggle('hidden',!isSupervisor); if(!isSupervisor)return; renderConfigPromotores(); if(!cfgOk()){$('ranking').innerHTML='<p class="hint">Nuvem ainda não configurada.</p>';return;}
+  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push(d.data())); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.add('hidden');
+  const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
+  $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
+  const rank={}; rows.forEach(r=>rank[r.nome]=(rank[r.nome]||0)+safe(r.total));
+  $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${getMeta(n)?Math.round(t/getMeta(n)*100):0}% da meta</small></div><b>${t}</b></div>`).join('')||'<p class="hint">Sem dados.</p>';
+  $('tbodySupervisor').innerHTML=rows.map(r=>`<tr><td>${moneyDate(r.data)}</td><td>${r.nome}</td><td>${r.loja}</td><td>${r.total}</td><td>${safe(r.vendas?.['A5 Pro'])}</td><td>${safe(r.vendas?.['A6 Pro'])}</td><td>${safe(r.vendas?.['Reno13F'])}</td><td>${safe(r.vendas?.['Reno14F'])}</td><td>${r.obs||''}</td></tr>`).join('');
+}
+function exportCsv(){
+  const linhas=[...document.querySelectorAll('#tbodySupervisor tr')].map(tr=>[...tr.children].map(td=>'"'+td.textContent.replaceAll('"','')+'"').join(';'));
+  const csv='Data;Promotor;Loja;Total;A5 Pro;A6 Pro;Reno13F;Reno14F;Obs\n'+linhas.join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='relatorio_fenix.csv';a.click();
+}
+
+initUi();
+initLoginRapido();
+
+function slugNome(n){return String(n||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}
+function perfilSalvo(){try{return JSON.parse(localStorage.getItem('fenixPerfil')||'null')}catch(e){return null}}
+function salvarPerfil(p){localStorage.setItem('fenixPerfil',JSON.stringify(p))}
+function limparPerfil(){localStorage.removeItem('fenixPerfil')}
+function preencherLogin(){
+  $('loginNome').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');
+  $('loginTipo').onchange=()=>{const sup=$('loginTipo').value==='supervisor';$('loginNomeBox').classList.toggle('hidden',sup);$('loginPinBox').classList.toggle('hidden',!sup);};
+}
+async function entrarRapido(){
+  const tipo=$('loginTipo').value;
+  if(tipo==='supervisor'){
+    if($('loginPin').value!==SUPERVISOR_PIN){alert('Senha supervisor incorreta.');return}
+    salvarPerfil({tipo:'supervisor',nome:'Supervisor Fênix',uid:'supervisor'});
+  }else{
+    if(!$('loginNome').value){alert('Selecione o nome do promotor.');return}
+    salvarPerfil({tipo:'promotor',nome:$('loginNome').value,uid:'promotor_'+slugNome($('loginNome').value)});
+  }
+  if(cfgOk() && auth && !auth.currentUser) await signInAnonymously(auth);
+  aplicarPerfil();
+}
+function aplicarPerfil(){
+  const p=perfilSalvo();
+  if(!p){$('login').classList.remove('hidden');$('main').classList.add('hidden');return}
+  user={uid:p.uid,email:p.uid,displayName:p.nome,photoURL:''};
+  isSupervisor=p.tipo==='supervisor';
+  $('login').classList.add('hidden');$('main').classList.remove('hidden');
+  document.body.classList.toggle('supervisor-on',isSupervisor);
+  $('userName').textContent=p.nome;
+  $('userPhoto').src='https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+  $('roleText').textContent=isSupervisor?'Perfil Supervisor — visualiza equipe':'Perfil Promotor — visualiza seus dados';
+  document.querySelector('[data-tab="supervisor"]').classList.toggle('lock',!isSupervisor);
+  if(!isSupervisor){$('promotor').value=p.nome;renderVendas();}
+}
+function initLoginRapido(){
+  preencherLogin();
+  if(cfgOk()){app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);onAuthStateChanged(auth,()=>aplicarPerfil());}
+  $('btnEntrar').onclick=entrarRapido;
+  $('btnSair').onclick=async()=>{limparPerfil(); if(auth) await signOut(auth); aplicarPerfil();};
+  aplicarPerfil();
+}
+</script>
+
+</body>
+</html>
