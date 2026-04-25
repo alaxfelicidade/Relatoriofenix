@@ -39,6 +39,18 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 .login-card{background:rgba(255,255,255,.98);border-color:#DDE5E1;box-shadow:0 22px 80px rgba(23,33,28,.12)}.login-card p{color:#64746C}.table th{background:#EFF6F2}.pill{background:rgba(15,118,110,.08)}
 @media(max-width:540px){.login{align-items:flex-start;padding-top:28px}.login-card{border-radius:24px}.card{border-radius:22px}.card-body{padding:15px}.model-row{grid-template-columns:minmax(90px,1fr) 46px 54px 46px;border-radius:18px}.qty{font-size:21px}.mini-btn{height:46px}.tabs{padding-left:8px;padding-right:8px}.tab{border-radius:16px}.screen{padding-bottom:24px}}
 
+
+/* AJUSTES SOLICITADOS: responsivo desktop/mobile, destaque modelo mês e mostruário */
+@media(min-width:1024px){
+  .app{max-width:1180px;margin:0 auto;}
+  .screen{max-width:1180px;margin:0 auto;}
+  #supervisor .kpis,#historico .kpis{grid-template-columns:repeat(4,1fr);}
+  .supervisor-on #historico .table{min-width:980px;}
+}
+.model-month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.model-month-grid.hidden{display:none!important}
+.model-month-item{background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border:1px solid #BBF7D0;border-radius:16px;padding:14px;text-align:center;box-shadow:0 8px 22px rgba(15,118,110,.08)}
+.model-month-item small{display:block;color:#0F766E;font-weight:900;text-transform:uppercase;font-size:12px;margin-bottom:6px}.model-month-item b{font-family:Syne,sans-serif;font-size:30px;color:#064E3B}.model-month-title{font-family:Syne,sans-serif;color:#0F766E;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}.mostruario-toggle{border:1px solid #FCA5A5;background:#FEE2E2;color:#991B1B;border-radius:12px;padding:10px 14px;font-weight:900}.mostruario-toggle.on{border-color:#86EFAC;background:#DCFCE7;color:#166534}.most-extra-row{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:end}.most-extra-row .btn-save-extra{height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#0F766E,#22C55E);color:white;font-weight:900}.super-metrics-table .table{min-width:980px}@media(max-width:700px){.model-month-grid{grid-template-columns:1fr 1fr}.most-extra-row{grid-template-columns:1fr}.table-wrap{max-width:100%;}.table th,.table td{font-size:12px;padding:10px}}
 </style>
 <style>
 /* AJUSTES SOLICITADOS */
@@ -48,6 +60,18 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 .edit-list{display:grid;gap:10px}.edit-row{display:grid;grid-template-columns:minmax(210px,1.45fr) minmax(110px,.75fr) 78px 38px 92px 38px;gap:8px;align-items:end;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:10px}.edit-row input{background:#fff;color:#17211C;border-color:#DDE5E1}.edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}.edit-pencil,.edit-remove{width:38px;height:44px;border-radius:12px;border:1px solid #D5DFDA;background:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}.edit-pencil{color:#C89B3C}.edit-remove{color:#DC2626;font-weight:900}.edit-save{height:44px;border-radius:12px;border:0;background:linear-gradient(135deg,#0F766E,#22C55E);color:white;font-weight:900;padding:0 12px}.edit-row.editing{box-shadow:0 0 0 3px rgba(15,118,110,.12);border-color:#0F766E}.model-month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.model-month-item{background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:13px}.model-month-item small{display:block;color:#64746C;font-weight:800}.model-month-item b{font-size:26px;color:#0F766E}@media(max-width:700px){.edit-row{grid-template-columns:1fr 1fr 72px 38px 82px 38px}.edit-row>div:first-child{grid-column:1/-1}.model-month-grid{grid-template-columns:1fr}}@media(max-width:420px){.edit-row{grid-template-columns:1fr 1fr}.edit-pencil,.edit-remove,.edit-save{width:100%}.edit-save{grid-column:auto}.edit-row>div:first-child{grid-column:1/-1}}
 
 .mostruario-row{display:grid;grid-template-columns:1fr 92px;gap:10px;align-items:center;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:12px}.mostruario-row b{font-size:14px;color:#0F766E}.mostruario-toggle{height:44px;border-radius:14px;border:1px solid #D5DFDA;background:#FFF;color:#64746C;font-weight:900}.mostruario-toggle.on{background:linear-gradient(135deg,#0F766E,#22C55E);color:#FFF;border-color:#0F766E}
+
+/* AJUSTES SOLICITADOS: responsivo desktop/mobile, destaque modelo mês e mostruário */
+@media(min-width:1024px){
+  .app{max-width:1180px;margin:0 auto;}
+  .screen{max-width:1180px;margin:0 auto;}
+  #supervisor .kpis,#historico .kpis{grid-template-columns:repeat(4,1fr);}
+  .supervisor-on #historico .table{min-width:980px;}
+}
+.model-month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.model-month-grid.hidden{display:none!important}
+.model-month-item{background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border:1px solid #BBF7D0;border-radius:16px;padding:14px;text-align:center;box-shadow:0 8px 22px rgba(15,118,110,.08)}
+.model-month-item small{display:block;color:#0F766E;font-weight:900;text-transform:uppercase;font-size:12px;margin-bottom:6px}.model-month-item b{font-family:Syne,sans-serif;font-size:30px;color:#064E3B}.model-month-title{font-family:Syne,sans-serif;color:#0F766E;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}.mostruario-toggle{border:1px solid #FCA5A5;background:#FEE2E2;color:#991B1B;border-radius:12px;padding:10px 14px;font-weight:900}.mostruario-toggle.on{border-color:#86EFAC;background:#DCFCE7;color:#166534}.most-extra-row{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:end}.most-extra-row .btn-save-extra{height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#0F766E,#22C55E);color:white;font-weight:900}.super-metrics-table .table{min-width:980px}@media(max-width:700px){.model-month-grid{grid-template-columns:1fr 1fr}.most-extra-row{grid-template-columns:1fr}.table-wrap{max-width:100%;}.table th,.table td{font-size:12px;padding:10px}}
 </style>
 </head>
 <body>
@@ -75,8 +99,8 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 
   <nav class="tabs" id="tabs">
     <button class="tab active" data-tab="relatorio">📝<span>Relatório</span></button>
-    <button class="tab" data-tab="historico">📈<span>Histórico</span></button>
     <button class="tab" data-tab="supervisor">👑<span>Supervisor</span></button>
+    <button class="tab" data-tab="historico">📈<span>Histórico</span></button>
   </nav>
 
   <main class="app" id="appShell">
@@ -146,7 +170,7 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
       <div id="supPanel" class="hidden">
         <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div>
         <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, filial e meta de cada promotor.</p><div class="add-promotor-box"><div><label>Nome</label><input id="novoPromotorNome" placeholder="Nome do promotor"></div><div><label>Filial</label><input id="novoPromotorFilial" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div><button id="btnAddPromotor">Adicionar</button></div><div class="edit-list" id="configPromotores"></div></div></div>
-        <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Ver total por modelo vendido no mês</button><div class="model-month-grid hidden" id="modeloMesBox"></div></div></div>
+        <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Total vendido no mês por modelo</div><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão por modelo</button><div class="model-month-grid" id="modeloMesBox"></div></div></div>
         <div class="card"><div class="card-head"><span>🏆</span><b>Ranking equipe</b></div><div class="card-body"><button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button><div class="status" id="iaSupervisorBox"></div><div class="rank" id="ranking"></div></div></div>
         <div class="card"><div class="card-head"><span>📊</span><b>Base completa</b></div><div class="card-body"><button class="btn secondary" id="btnExport" style="margin-bottom:12px">Exportar CSV</button><div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Promotor</th><th>Loja</th><th>Total</th><th>A5 Pro</th><th>A6 Pro</th><th>Reno13F</th><th>Reno14F</th><th>Obs</th><th>Ação</th></tr></thead><tbody id="tbodySupervisor"></tbody></table></div></div></div>
       </div>
@@ -179,7 +203,7 @@ let PROMOTORES = equipeConfig.map(p=>p.nome);
 const LOJAS = ["Magalu","Casas Bahia","Ponto","FastShop"];
 const MODELOS = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
 let METAS = Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));
-let app, auth, db, user=null, isSupervisor=false, vendas={}, mostruario={};
+let app, auth, db, user=null, isSupervisor=false, vendas={}, mostruario={}, mostruarioExtraPorPromotor={};
 const $=id=>document.getElementById(id);
 function cfgOk(){return firebaseConfig.projectId==="fenix-relatorio" && firebaseConfig.apiKey.startsWith("AIza")}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -187,6 +211,21 @@ function moneyDate(d){return (d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
 function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
 function show(el,msg,type='ok'){el.textContent=msg;el.className='status '+type}
+function carregarMostruarioExtra(){try{return JSON.parse(localStorage.getItem('fenixMostruarioPromotor')||'{}')}catch(e){return {}}}
+function salvarMostruarioExtra(){localStorage.setItem('fenixMostruarioPromotor',JSON.stringify(mostruarioExtraPorPromotor||{}))}
+function carregarMostruarioPromotor(){
+  const nome=($('promotor')?.value||perfilSalvo()?.nome||'').trim();
+  const dados=mostruarioExtraPorPromotor[nome]||{};
+  mostruario={...Object.fromEntries(MODELOS.map(m=>[m,false])),...(dados.modelos||{})};
+  MODELOS.forEach(m=>{const b=document.querySelector(`[data-most="${m}"]`); if(b){b.classList.toggle('on',!!mostruario[m]); b.textContent=mostruario[m]?'SIM':'NÃO';}});
+  if($('mostruarioExtra')) $('mostruarioExtra').value=dados.modeloExtra||'';
+}
+function salvarMostruarioPromotor(){
+  const nome=($('promotor')?.value||perfilSalvo()?.nome||'').trim();
+  if(!nome)return;
+  mostruarioExtraPorPromotor[nome]={modelos:{...mostruario},modeloExtra:($('mostruarioExtra')?.value||'').trim()};
+  salvarMostruarioExtra();
+}
 function popupSucesso(msg='✅ Enviado com sucesso!'){const t=$('toastOk'); if(!t)return; t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2600);}
 
 function initUi(){
@@ -196,12 +235,14 @@ function initUi(){
   $('modelList').innerHTML=MODELOS.map(m=>`<div class="model-row"><b>${m}</b><button class="mini-btn" data-minus="${m}">−</button><div class="qty" id="q_${m.replaceAll(' ','_')}">0</div><button class="mini-btn" data-plus="${m}">+</button></div>`).join('');
   $('estoqueList').innerHTML=MODELOS.map(m=>`<div class="field"><label>${m}</label><input type="number" min="0" id="est_${m.replaceAll(' ','_')}" placeholder="0"></div>`).join('');
   $('mostruarioList').innerHTML=MODELOS.map(m=>`<div class="mostruario-row"><b>${m}</b><button type="button" class="mostruario-toggle" data-most="${m}">NÃO</button></div>`).join('');
+  mostruarioExtraPorPromotor=carregarMostruarioExtra();
   MODELOS.forEach(m=>mostruario[m]=false);
-  document.querySelectorAll('[data-most]').forEach(b=>b.onclick=()=>{mostruario[b.dataset.most]=!mostruario[b.dataset.most];b.classList.toggle('on',mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';});
+  document.querySelectorAll('[data-most]').forEach(b=>b.onclick=()=>{mostruario[b.dataset.most]=!mostruario[b.dataset.most];b.classList.toggle('on',mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';salvarMostruarioPromotor();});
+  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('✅ Modelo salvo no mostruário!');};
   MODELOS.forEach(m=>vendas[m]=0);
   document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.plus]++;renderVendas()});
   document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.minus]=Math.max(0,vendas[b.dataset.minus]-1);renderVendas()});
-  $('promotor').onchange=()=>{preencherFilialPromotor();renderVendas();};$('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};$('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
   $('btnIA').onclick=iaLocal;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
@@ -231,6 +272,7 @@ function openTab(id){
 async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!cfgOk()){show($('status'),'Nuvem ainda não configurada. Cole o firebaseConfig para salvar online no Firebase.','err');return}
+  salvarMostruarioPromotor();
   const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+m.replaceAll(' ','_'))?.value)]));
   const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
   const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:($('filial').value.trim()||getFilial($('promotor').value)),loja:$('loja').value,data:$('data').value,vendas,total:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
@@ -241,28 +283,55 @@ async function salvarRelatorio(){
 async function carregarHistorico(){
   if(!cfgOk()){$('tbodyHistorico').innerHTML='<tr><td colspan="5">Nuvem ainda não configurada.</td></tr>';return;}
   try{
-    const snap=await getDocs(collection(db,'relatorios')); let rows=[], mes=0, ontem=0;
-    const nomeAtual=(perfilSalvo()?.nome || $('promotor').value || '').trim();
-    snap.forEach(d=>{const r=d.data(); if(r.uid===user.uid || r.nome===nomeAtual){rows.push(r)}});
+    const snap=await getDocs(collection(db,'relatorios')); let rows=[];
+    snap.forEach(d=>rows.push({id:d.id,...d.data()}));
     rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
 
-    // Agrupa os lançamentos do mesmo dia em uma única linha.
+    if(isSupervisor){
+      // Histórico do supervisor: mostra todos os resultados e métricas por promotor.
+      const porProm={};
+      rows.forEach(r=>{
+        const n=r.nome||'Sem promotor';
+        if(!porProm[n]) porProm[n]={nome:n,total:0,relatorios:0,ontem:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),lojas:new Set(),obs:[]};
+        porProm[n].total+=safe(r.total);
+        porProm[n].relatorios+=1;
+        porProm[n].lojas.add(r.loja||'');
+        const y=new Date();y.setDate(y.getDate()-1);
+        if(r.data===y.toISOString().slice(0,10)) porProm[n].ontem+=safe(r.total);
+        MODELOS.forEach(m=>porProm[n].vendas[m]+=safe(r.vendas?.[m]));
+        if(r.obs && !porProm[n].obs.includes(r.obs)) porProm[n].obs.push(r.obs);
+      });
+      const lista=Object.values(porProm).sort((a,b)=>b.total-a.total);
+      const totalEquipe=lista.reduce((s,r)=>s+r.total,0), totalRel=lista.reduce((s,r)=>s+r.relatorios,0), ontem=lista.reduce((s,r)=>s+r.ontem,0);
+      $('hMes').textContent=totalEquipe;
+      $('hMeta').textContent=lista.length?Math.round(lista.reduce((s,r)=>s+(getMeta(r.nome)?r.total/getMeta(r.nome)*100:0),0)/lista.length)+'%':'0%';
+      $('hOntem').textContent=ontem;
+      $('hQtd').textContent=totalRel;
+      $('previsao').textContent=lista.length?`Supervisor: ${lista.length} promotores com lançamentos. Total do mês: ${totalEquipe}. Acompanhe atingimento, percentual e mix por promotor.`:'Sem lançamentos da equipe ainda.';
+      $('tbodyHistorico').innerHTML=lista.map(r=>{
+        const meta=getMeta(r.nome), pct=meta?Math.round(r.total/meta*100):0;
+        const mix=Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ');
+        return `<tr><td>${r.nome}</td><td>${[...r.lojas].filter(Boolean).join(', ')}</td><td>${r.total} / Meta ${meta||0} — ${pct}%</td><td>${mix||'-'}</td><td>${r.relatorios} relatórios${r.obs.length?' | '+r.obs.join(' | '):''}</td></tr>`;
+      }).join('')||'<tr><td colspan="5">Sem relatórios ainda.</td></tr>';
+      return;
+    }
+
+    let mes=0, ontem=0;
+    const nomeAtual=(perfilSalvo()?.nome || $('promotor').value || '').trim();
+    rows=rows.filter(r=>r.uid===user.uid || r.nome===nomeAtual);
     const agrupado={};
     rows.forEach(r=>{
       mes+=safe(r.total);
       const y=new Date();y.setDate(y.getDate()-1);
       if(r.data===y.toISOString().slice(0,10))ontem+=safe(r.total);
       const key=r.data||'Sem data';
-      if(!agrupado[key]){
-        agrupado[key]={data:r.data,lojas:new Set(),total:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),obs:[]};
-      }
+      if(!agrupado[key]) agrupado[key]={data:r.data,lojas:new Set(),total:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),obs:[]};
       if(r.loja)agrupado[key].lojas.add(r.loja);
       agrupado[key].total+=safe(r.total);
       MODELOS.forEach(m=>agrupado[key].vendas[m]+=safe(r.vendas?.[m]));
       if(r.obs && !agrupado[key].obs.includes(r.obs))agrupado[key].obs.push(r.obs);
     });
     const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-
     const meta=getMeta(nomeAtual); $('hMes').textContent=mes;$('hMeta').textContent=meta?Math.round(mes/meta*100)+'%':'0%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
     $('previsao').textContent=meta?`No ritmo atual, acompanhe a média diária. Faltam ${Math.max(0,meta-mes)} unidades para a meta do mês.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
     $('tbodyHistorico').innerHTML=linhasDia.map(r=>`<tr><td>${moneyDate(r.data)}</td><td>${[...r.lojas].join(', ')}</td><td>${r.total}</td><td>${Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ')}</td><td>${r.obs.join(' | ')}</td></tr>`).join('')||'<tr><td colspan="5">Sem relatórios ainda.</td></tr>';
@@ -282,8 +351,8 @@ function renderConfigPromotores(){
   const addBtn=$('btnAddPromotor');
   if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim(); if(!nome){alert('Digite o nome do promotor.');return} equipeConfig.push({nome,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)}); salvarEquipeConfig(); renderConfigPromotores(); renderVendas(); popupSucesso('✅ Promotor adicionado!');};}
 }
-function mostrarModeloMes(){
-  $('modeloMesBox').classList.toggle('hidden');
+function mostrarModeloMes(force=false){
+  if(!force) $('modeloMesBox').classList.toggle('hidden');
   if($('modeloMesBox').classList.contains('hidden'))return;
   const rows=window.__rowsSupervisorModelo||[];
   const sum=Object.fromEntries(MODELOS.map(m=>[m,0]));
@@ -299,7 +368,7 @@ function iaSupervisor(){
 
 async function carregarSupervisor(){
   $('supLocked').classList.toggle('hidden',isSupervisor);$('supPanel').classList.toggle('hidden',!isSupervisor); if(!isSupervisor)return; renderConfigPromotores(); if(!cfgOk()){$('ranking').innerHTML='<p class="hint">Nuvem ainda não configurada.</p>';return;}
-  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.add('hidden');
+  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
   const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
   const rank={}; rows.forEach(r=>rank[r.nome]=(rank[r.nome]||0)+safe(r.total));
@@ -308,7 +377,9 @@ async function carregarSupervisor(){
   window.__rowsSupervisorBase=rows;
   document.querySelectorAll('[data-save-base]').forEach(btn=>btn.onclick=()=>salvarBaseSupervisor(Number(btn.dataset.saveBase)));
   document.querySelectorAll('[data-delete-base]').forEach(btn=>btn.onclick=()=>excluirBaseSupervisor(Number(btn.dataset.deleteBase)));
+  mostrarModeloMes(true);
 }
+
 async function excluirBaseSupervisor(i){
   const rows=window.__rowsSupervisorBase||[]; const r=rows[i];
   if(!r?.id){alert('Registro não encontrado.');return}
@@ -331,9 +402,15 @@ async function salvarBaseSupervisor(i){
   await carregarSupervisor();
 }
 function exportCsv(){
-  const linhas=[...document.querySelectorAll('#tbodySupervisor tr')].map(tr=>[...tr.children].map(td=>'"'+td.textContent.replaceAll('"','')+'"').join(';'));
-  const csv='Data;Promotor;Loja;Total;A5 Pro;A6 Pro;Reno13F;Reno14F;Obs\n'+linhas.join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='relatorio_fenix.csv';a.click();
+  const headers=['Data','Promotor','Loja','Total','A5 Pro','A6 Pro','Reno13F','Reno14F','Obs'];
+  const rows=window.__rowsSupervisorBase||[];
+  const linhas=rows.map((r,i)=>[
+    moneyDate(r.data), r.nome||'', $('base_loja_'+i)?.value||r.loja||'', $('base_total_'+i)?.value||safe(r.total),
+    $('base_a5pro_'+i)?.value||safe(r.vendas?.['A5 Pro']), $('base_a6pro_'+i)?.value||safe(r.vendas?.['A6 Pro']),
+    $('base_reno13_'+i)?.value||safe(r.vendas?.['Reno13F']), $('base_reno14_'+i)?.value||safe(r.vendas?.['Reno14F']), $('base_obs_'+i)?.value||r.obs||''
+  ].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';'));
+  const csv=headers.join(';')+'\n'+linhas.join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix.csv';a.click();
 }
 
 initUi();
@@ -369,7 +446,7 @@ function aplicarPerfil(){
   $('userPhoto').src='https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
   $('roleText').textContent=isSupervisor?'Perfil Supervisor — visualiza equipe':'Perfil Promotor — visualiza seus dados';
   document.querySelector('[data-tab="supervisor"]').classList.toggle('lock',!isSupervisor);
-  if(!isSupervisor){$('promotor').value=p.nome;preencherFilialPromotor();renderVendas();}
+  if(!isSupervisor){$('promotor').value=p.nome;preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();}
 }
 function initLoginRapido(){
   preencherLogin();
