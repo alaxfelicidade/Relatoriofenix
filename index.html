@@ -45,7 +45,7 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 .brand h1,.login-card h2{color:#C89B3C!important;background:none!important;-webkit-text-fill-color:#C89B3C!important}
 .qty,.total b,.kpi b,#metaLabel{font-family:Inter,Arial,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;font-weight:800;letter-spacing:.2px;color:#10231D}
 .btn.blue.super-only{display:none}.supervisor-on .btn.blue.super-only{display:block}
-.edit-list{display:grid;gap:10px}.edit-row{display:grid;grid-template-columns:1.2fr .8fr 84px 44px;gap:8px;align-items:end;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:10px}.edit-row input{background:#fff;color:#17211C;border-color:#DDE5E1}.edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}.edit-pencil{width:44px;height:48px;border-radius:14px;border:1px solid #D5DFDA;background:#fff;color:#C89B3C;font-size:20px}.model-month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.model-month-item{background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:13px}.model-month-item small{display:block;color:#64746C;font-weight:800}.model-month-item b{font-size:26px;color:#0F766E}@media(max-width:540px){.edit-row{grid-template-columns:1fr}.edit-pencil{width:100%}.model-month-grid{grid-template-columns:1fr}}
+.edit-list{display:grid;gap:10px}.edit-row{display:grid;grid-template-columns:minmax(210px,1.45fr) minmax(110px,.75fr) 78px 38px 92px 38px;gap:8px;align-items:end;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:10px}.edit-row input{background:#fff;color:#17211C;border-color:#DDE5E1}.edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}.edit-pencil,.edit-remove{width:38px;height:44px;border-radius:12px;border:1px solid #D5DFDA;background:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}.edit-pencil{color:#C89B3C}.edit-remove{color:#DC2626;font-weight:900}.edit-save{height:44px;border-radius:12px;border:0;background:linear-gradient(135deg,#0F766E,#22C55E);color:white;font-weight:900;padding:0 12px}.edit-row.editing{box-shadow:0 0 0 3px rgba(15,118,110,.12);border-color:#0F766E}.model-month-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.model-month-item{background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:13px}.model-month-item small{display:block;color:#64746C;font-weight:800}.model-month-item b{font-size:26px;color:#0F766E}@media(max-width:700px){.edit-row{grid-template-columns:1fr 1fr 72px 38px 82px 38px}.edit-row>div:first-child{grid-column:1/-1}.model-month-grid{grid-template-columns:1fr}}@media(max-width:420px){.edit-row{grid-template-columns:1fr 1fr}.edit-pencil,.edit-remove,.edit-save{width:100%}.edit-save{grid-column:auto}.edit-row>div:first-child{grid-column:1/-1}}
 
 .mostruario-row{display:grid;grid-template-columns:1fr 92px;gap:10px;align-items:center;background:#F8FAF9;border:1px solid #DDE5E1;border-radius:16px;padding:12px}.mostruario-row b{font-size:14px;color:#0F766E}.mostruario-toggle{height:44px;border-radius:14px;border:1px solid #D5DFDA;background:#FFF;color:#64746C;font-weight:900}.mostruario-toggle.on{background:linear-gradient(135deg,#0F766E,#22C55E);color:#FFF;border-color:#0F766E}
 </style>
@@ -236,12 +236,33 @@ async function salvarRelatorio(){
 }
 async function carregarHistorico(){
   if(!cfgOk()){$('tbodyHistorico').innerHTML='<tr><td colspan="5">Nuvem ainda não configurada.</td></tr>';return;}
-  const q=query(collection(db,'relatorios'),where('uid','==',user.uid),orderBy('data','desc'));
-  const snap=await getDocs(q); let rows=[], mes=0, ontem=0;
-  snap.forEach(d=>{const r=d.data();rows.push(r);mes+=safe(r.total); const y=new Date();y.setDate(y.getDate()-1); if(r.data===y.toISOString().slice(0,10))ontem+=safe(r.total)});
-  const meta=getMeta($('promotor').value); $('hMes').textContent=mes;$('hMeta').textContent=meta?Math.round(mes/meta*100)+'%':'0%';$('hOntem').textContent=ontem;$('hQtd').textContent=rows.length;
-  $('previsao').textContent=meta?`No ritmo atual, acompanhe a média diária. Faltam ${Math.max(0,meta-mes)} unidades para a meta do mês.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
-  $('tbodyHistorico').innerHTML=rows.map(r=>`<tr><td>${moneyDate(r.data)}</td><td>${r.loja}</td><td>${r.total}</td><td>${Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ')}</td><td>${r.obs||''}</td></tr>`).join('')||'<tr><td colspan="5">Sem relatórios ainda.</td></tr>';
+  try{
+    const snap=await getDocs(collection(db,'relatorios')); let rows=[], mes=0, ontem=0;
+    const nomeAtual=(perfilSalvo()?.nome || $('promotor').value || '').trim();
+    snap.forEach(d=>{const r=d.data(); if(r.uid===user.uid || r.nome===nomeAtual){rows.push(r)}});
+    rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+
+    // Agrupa os lançamentos do mesmo dia em uma única linha.
+    const agrupado={};
+    rows.forEach(r=>{
+      mes+=safe(r.total);
+      const y=new Date();y.setDate(y.getDate()-1);
+      if(r.data===y.toISOString().slice(0,10))ontem+=safe(r.total);
+      const key=r.data||'Sem data';
+      if(!agrupado[key]){
+        agrupado[key]={data:r.data,lojas:new Set(),total:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),obs:[]};
+      }
+      if(r.loja)agrupado[key].lojas.add(r.loja);
+      agrupado[key].total+=safe(r.total);
+      MODELOS.forEach(m=>agrupado[key].vendas[m]+=safe(r.vendas?.[m]));
+      if(r.obs && !agrupado[key].obs.includes(r.obs))agrupado[key].obs.push(r.obs);
+    });
+    const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+
+    const meta=getMeta(nomeAtual); $('hMes').textContent=mes;$('hMeta').textContent=meta?Math.round(mes/meta*100)+'%':'0%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
+    $('previsao').textContent=meta?`No ritmo atual, acompanhe a média diária. Faltam ${Math.max(0,meta-mes)} unidades para a meta do mês.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
+    $('tbodyHistorico').innerHTML=linhasDia.map(r=>`<tr><td>${moneyDate(r.data)}</td><td>${[...r.lojas].join(', ')}</td><td>${r.total}</td><td>${Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ')}</td><td>${r.obs.join(' | ')}</td></tr>`).join('')||'<tr><td colspan="5">Sem relatórios ainda.</td></tr>';
+  }catch(e){console.error(e);$('tbodyHistorico').innerHTML='<tr><td colspan="5">Erro ao carregar histórico. Confira o Firebase/Firestore.</td></tr>';}
 }
 
 function carregarEquipeConfig(){try{return JSON.parse(localStorage.getItem('fenixEquipeConfig')||'null')||EQUIPE_DEFAULT}catch(e){return EQUIPE_DEFAULT}}
@@ -250,8 +271,10 @@ function getMeta(nome){const p=equipeConfig.find(x=>x.nome===nome);return Number
 function getFilial(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.filial||''}
 function renderConfigPromotores(){
   if(!$('configPromotores'))return;
-  $('configPromotores').innerHTML=equipeConfig.map((p,i)=>`<div class="edit-row"><div><label>Nome</label><input id="cfg_nome_${i}" value="${p.nome}"></div><div><label>Filial</label><input id="cfg_filial_${i}" value="${p.filial||''}" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div><button class="edit-pencil" data-edit="${i}" title="Salvar edição">✏️</button></div>`).join('');
-  document.querySelectorAll('[data-edit]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.edit);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();});
+  $('configPromotores').innerHTML=equipeConfig.map((p,i)=>`<div class="edit-row" id="cfg_row_${i}"><div><label>Nome</label><input id="cfg_nome_${i}" value="${p.nome}"></div><div><label>Filial</label><input id="cfg_filial_${i}" value="${p.filial||''}" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div><button class="edit-pencil" data-focus="${i}" title="Editar linha">✏️</button><button class="edit-save" data-save="${i}" title="Salvar esta linha">Salvar</button><button class="edit-remove" data-remove="${i}" title="Remover promotor">×</button></div>`).join('');
+  document.querySelectorAll('[data-focus]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.focus);document.querySelectorAll('.edit-row').forEach(r=>r.classList.remove('editing'));$('cfg_row_'+i)?.classList.add('editing');$('cfg_nome_'+i)?.focus();});
+  document.querySelectorAll('[data-save]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.save);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();alert('✅ Dados salvos nesta linha.');});
+  document.querySelectorAll('[data-remove]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.remove);const nome=equipeConfig[i]?.nome||'este promotor';if(confirm('Remover '+nome+' da lista?')){equipeConfig.splice(i,1);salvarEquipeConfig();renderConfigPromotores();renderVendas();}});
 }
 function mostrarModeloMes(){
   $('modeloMesBox').classList.toggle('hidden');
