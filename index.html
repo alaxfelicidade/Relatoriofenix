@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -52,8 +53,8 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 <body>
 <div id="login" class="login">
   <div class="login-card">
-    <h2>🦅 Equipe Fênix <span style="display:block;font-size:18px;margin-top:6px;color:#c8942f;letter-spacing:.5px;">Relatório Diário</span></h2>
-    <p>Acesso simples e rápido. Promotor lança seus resultados diariamente.</p>
+    <h2>🦅 Equipe Fênix</h2>
+    <p>Acesso simples e rápido para lançar o relatório diário da equipe.</p>
     <div class="field" style="text-align:left"><label>Tipo de acesso</label><select id="loginTipo"><option value="promotor">Promotor</option><option value="supervisor">Supervisor</option></select></div>
     <div class="field" id="loginNomeBox" style="text-align:left"><label>Promotor</label><select id="loginNome"></select></div>
     <div class="field hidden" id="loginPinBox" style="text-align:left"><label>Senha supervisor</label><input type="password" id="loginPin" placeholder="Digite a senha" autocomplete="off"></div>
@@ -64,7 +65,7 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 <div id="main" class="hidden">
   <header class="header">
     <div class="brand">
-      <div><h1>🦅 Fênix Mobile</h1><small id="roleText">Relatório diário OPPO</small></div>
+      <div><h1>🦅 Equipe Fênix — Relatório Diário</h1><small id="roleText">Relatório diário OPPO</small></div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="user-chip"><img id="userPhoto" alt=""><span id="userName">Usuário</span></div>
         <button class="ghost" id="btnSair">Sair</button>
@@ -85,8 +86,9 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
         <div class="card-head"><span>📍</span><b>Identificação</b></div>
         <div class="card-body">
           <div class="field"><label>Promotor</label><select id="promotor"></select></div>
+          <div class="field"><label>Loja</label><select id="loja"></select></div>
           <div class="grid2">
-            <div class="field"><label>Loja / Filial</label><select id="loja"></select></div>
+            <div class="field"><label>Filial</label><input type="text" id="filial" placeholder="Digite a filial"></div>
             <div class="field"><label>Data</label><input type="date" id="data"></div>
           </div>
           <button class="btn secondary" id="btnContinuar">Continuar</button>
@@ -157,7 +159,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* 🔥 COLE AQUI AS CHAVES DO SEU FIREBASE */
+/* 🔥 FIREBASE CONFIGURADO — Projeto: Fenix-Relatorio */
 const firebaseConfig = {
   apiKey: "AIzaSyApkEb5MZs33tU9HSh7STE5plSbiHk2UuY",
   authDomain: "fenix-relatorio.firebaseapp.com",
@@ -165,7 +167,6 @@ const firebaseConfig = {
   storageBucket: "fenix-relatorio.firebasestorage.app",
   messagingSenderId: "53553002621",
   appId: "1:53553002621:web:a9f356e56814dc91de1914"
-};
 };
 
 const SUPERVISOR_PIN = "85741290"; // Senha do painel supervisor
@@ -178,7 +179,7 @@ const MODELOS = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","
 let METAS = Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));
 let app, auth, db, user=null, isSupervisor=false, vendas={}, mostruario={};
 const $=id=>document.getElementById(id);
-function cfgOk(){return firebaseConfig.apiKey && firebaseConfig.apiKey!=="COLE_AQUI"}
+function cfgOk(){return firebaseConfig.projectId==="fenix-relatorio" && firebaseConfig.apiKey.startsWith("AIza")}
 function today(){return new Date().toISOString().slice(0,10)}
 function moneyDate(d){return (d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
@@ -197,9 +198,13 @@ function initUi(){
   MODELOS.forEach(m=>vendas[m]=0);
   document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.plus]++;renderVendas()});
   document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.minus]=Math.max(0,vendas[b.dataset.minus]-1);renderVendas()});
-  $('promotor').onchange=renderVendas;$('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  $('promotor').onchange=()=>{preencherFilialPromotor();renderVendas();};$('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
   $('btnIA').onclick=iaLocal;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
+}
+function preencherFilialPromotor(){
+  const p=equipeConfig.find(x=>x.nome===$('promotor').value);
+  if(p && !$('filial').value) $('filial').value=p.filial||'';
 }
 function renderVendas(){
   MODELOS.forEach(m=>{$('q_'+m.replaceAll(' ','_')).textContent=vendas[m]});
@@ -221,11 +226,11 @@ function openTab(id){
 }
 
 async function salvarRelatorio(){
-  if(!$('promotor').value||!$('loja').value||!$('data').value){show($('status'),'Preencha promotor, loja e data.','err');return}
+  if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!cfgOk()){show($('status'),'Nuvem ainda não configurada. Cole o firebaseConfig para salvar online no Firebase.','err');return}
   const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+m.replaceAll(' ','_'))?.value)]));
   const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
-  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:getFilial($('promotor').value),loja:$('loja').value,data:$('data').value,vendas,total:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
+  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:($('filial').value.trim()||getFilial($('promotor').value)),loja:$('loja').value,data:$('data').value,vendas,total:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
   await addDoc(collection(db,'relatorios'),payload);
   show($('status'),'✅ Relatório salvo online com sucesso.');
 }
@@ -298,7 +303,6 @@ async function entrarRapido(){
     if(!$('loginNome').value){alert('Selecione o nome do promotor.');return}
     salvarPerfil({tipo:'promotor',nome:$('loginNome').value,uid:'promotor_'+slugNome($('loginNome').value)});
   }
-  if(cfgOk() && auth && !auth.currentUser) await signInAnonymously(auth);
   aplicarPerfil();
 }
 function aplicarPerfil(){
@@ -312,40 +316,21 @@ function aplicarPerfil(){
   $('userPhoto').src='https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
   $('roleText').textContent=isSupervisor?'Perfil Supervisor — visualiza equipe':'Perfil Promotor — visualiza seus dados';
   document.querySelector('[data-tab="supervisor"]').classList.toggle('lock',!isSupervisor);
-  if(!isSupervisor){$('promotor').value=p.nome;renderVendas();}
+  if(!isSupervisor){$('promotor').value=p.nome;preencherFilialPromotor();renderVendas();}
 }
 function initLoginRapido(){
   preencherLogin();
-  if(cfgOk()){app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);onAuthStateChanged(auth,()=>aplicarPerfil());}
-  $('btnEntrar').onclick=entrarRapido;
-  $('btnSair').onclick=async()=>{limparPerfil(); if(auth) await signOut(auth); aplicarPerfil();};
+  if(cfgOk()){
+    app=initializeApp(firebaseConfig);
+    db=getFirestore(app);
+    window.db=db;
+    console.log("🔥 Firebase conectado!");
+  }
+  $("btnEntrar").onclick=entrarRapido;
+  $("btnSair").onclick=async()=>{limparPerfil(); aplicarPerfil();};
   aplicarPerfil();
 }
 </script>
-<script type="module">
-  <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyApkEb5MZs33tU9HSh7STE5plSbiHk2UuY",
-  authDomain: "fenix-relatorio.firebaseapp.com",
-  projectId: "fenix-relatorio",
-  storageBucket: "fenix-relatorio.firebasestorage.app",
-  messagingSenderId: "53553002621",
-  appId: "1:53553002621:web:a9f356e56814dc91de1914"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.db = db;
-window.firebaseAtivo = true;
-
-console.log("🔥 Firebase conectado!");
-
-</script>
-</script>
 </body>
 </html>
