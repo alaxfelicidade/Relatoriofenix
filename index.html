@@ -5,7 +5,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>🔥 Fênix Mobile — Relatório OPPO</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F4F7F6;--card:#FFFFFF;--card2:#F8FAF9;--line:#DDE5E1;--txt:#17211C;--muted:#64746C;
@@ -57,6 +57,39 @@ input,select,textarea{background:#F8FAF9;border-color:#D5DFDA;color:#17211C}inpu
 body.promotor-on [data-tab="historico"]{display:none!important;}
 body.promotor-on #historico{display:none!important;}
 
+/* PALETA E FONTES FINAIS — MAIS CONVIDATIVO, SEM ALTERAR LAYOUT */
+:root{
+  --bg:#F3F8F5;
+  --card:#FFFFFF;
+  --card2:#F8FBF9;
+  --line:#D8E7DE;
+  --txt:#14251F;
+  --muted:#60736A;
+  --fire:#12866F;
+  --gold:#B8872C;
+  --green:#22B86A;
+  --red:#D95454;
+  --blue:#2F80ED;
+}
+html,body{font-family:'Manrope',Inter,Arial,sans-serif;background:linear-gradient(180deg,#F0F8F3 0%,#FAFCFB 58%,#EEF5F1 100%);color:var(--txt)}
+.brand h1,.card-head b,.kpi b,.total b,.qty,.model-month-title,.toast-ok .toast-title{font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif;letter-spacing:.3px}
+.header{background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);box-shadow:0 10px 34px rgba(18,134,111,.10)}
+.brand h1{background:linear-gradient(90deg,#B8872C,#12866F);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.brand small{color:var(--muted)}
+.user-chip{background:#F8FBF9;border-color:var(--line)}.ghost{background:#FFFFFF;color:#14251F;border-color:var(--line)}
+.tabs{background:rgba(255,255,255,.92);border-color:var(--line);box-shadow:0 -10px 34px rgba(18,134,111,.08)}
+.tab{background:#FFFFFF;color:#60736A;border-color:var(--line)}.tab.active{background:linear-gradient(135deg,#12866F,#22B86A);border-color:#12866F;color:#FFFFFF;box-shadow:0 10px 28px rgba(18,134,111,.22)}
+.card{background:rgba(255,255,255,.94);border-color:var(--line);box-shadow:0 14px 44px rgba(20,37,31,.06)}
+.card-head{background:linear-gradient(90deg,#EAF8F0,rgba(255,255,255,0));border-bottom-color:var(--line)}.card-head b{color:#08746A}
+input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font-weight:600}input:focus,select:focus,textarea:focus{border-color:#12866F;box-shadow:0 0 0 4px rgba(18,134,111,.12)}
+.btn{background:linear-gradient(135deg,#12866F,#22B86A);box-shadow:0 10px 30px rgba(18,134,111,.22);font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif;font-weight:800}.btn.secondary{background:#FFFFFF;color:#14251F;border:1px solid var(--line)}.btn.blue{background:linear-gradient(135deg,#2F80ED,#42B7F5)}
+.model-row,.meta,.kpi,.rank-item,.table,.add-model-sales{background:#FBFEFC;border-color:#D8E7DE}.model-row b{color:#08746A}.mini-btn{background:#FFFFFF;color:#08746A;border-color:#D6E5DC}.total{background:linear-gradient(135deg,#E8F8F1,#FFF9EC);border-color:#BFE6D2}.total b,.kpi b{color:#08746A}.table th{background:#ECF7F1;color:#08746A}.hint,.field label{color:#60736A}.add-model-sales button{background:linear-gradient(135deg,#12866F,#22B86A);font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}
+.toast-ok{font-family:'Manrope',Arial,sans-serif;border-color:#CBEBDD;box-shadow:0 28px 90px rgba(18,134,111,.22)}.toast-ok .toast-title{color:#12866F;font-weight:800}.toast-ok::before{background:linear-gradient(135deg,#12866F,#22B86A)}
+@media(min-width:780px){.tabs{background:rgba(255,255,255,.90)}}
+
+
+/* Controle mensal automático */
+#statusMesAuto{background:#F8FAF9;color:#0F766E;font-weight:700}
+@media(min-width:900px){.dashboard-geral .card-body{padding:18px 20px}.dashboard-table{min-width:980px}}
 </style>
 <style>
 /* AJUSTES SOLICITADOS */
@@ -78,6 +111,59 @@ body.promotor-on #historico{display:none!important;}
 .model-month-grid.hidden{display:none!important}
 .model-month-item{background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border:1px solid #BBF7D0;border-radius:16px;padding:14px;text-align:center;box-shadow:0 8px 22px rgba(15,118,110,.08)}
 .model-month-item small{display:block;color:#0F766E;font-weight:900;text-transform:uppercase;font-size:12px;margin-bottom:6px}.model-month-item b{font-family:Syne,sans-serif;font-size:30px;color:#064E3B}.model-month-title{font-family:Syne,sans-serif;color:#0F766E;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}.mostruario-toggle{border:1px solid #FCA5A5;background:#FEE2E2;color:#991B1B;border-radius:12px;padding:10px 14px;font-weight:900}.mostruario-toggle.on{border-color:#86EFAC;background:#DCFCE7;color:#166534}.most-extra-row{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:end}.most-extra-row .btn-save-extra{height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#0F766E,#22C55E);color:white;font-weight:900}.super-metrics-table .table{min-width:980px}@media(max-width:700px){.model-month-grid{grid-template-columns:1fr 1fr}.most-extra-row{grid-template-columns:1fr}.table-wrap{max-width:100%;}.table th,.table td{font-size:12px;padding:10px}}
+
+/* AJUSTES FINAIS SOLICITADOS: paleta mais convidativa, popup formal e supervisor oculto para promotor */
+:root{
+  --bg:#F3F8F5;--card:#FFFFFF;--card2:#FAFCFB;--line:#D8E5DE;--txt:#10231D;--muted:#5F7169;
+  --fire:#0E7A68;--gold:#C99A35;--green:#22C55E;--red:#DC2626;--blue:#2563EB;
+}
+html,body{font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#F0FAF5 0%,#FFFFFF 54%,#EFF5F2 100%)}
+.card{box-shadow:0 12px 38px rgba(16,35,29,.065)}
+.card-head{background:linear-gradient(90deg,rgba(14,122,104,.10),rgba(201,154,53,.05))}.card-head b{color:#0E7A68}
+.btn{background:linear-gradient(135deg,#0E7A68,#24C96B);box-shadow:0 10px 26px rgba(14,122,104,.18);letter-spacing:.1px;font-weight:800}
+.tab.active{background:linear-gradient(135deg,#0E7A68,#24C96B)}
+input,select,textarea{background:#FBFDFC;border-color:#D8E5DE;color:#10231D;font-weight:500}.model-row,.kpi,.meta,.rank-item{background:#FBFDFC}.qty{font-family:Inter,Arial,sans-serif;font-weight:800}
+body.promotor-on [data-tab="supervisor"]{display:none!important;}
+.add-model-sales{margin-top:14px;background:#FBFDFC;border:1px dashed #B8D6C8;border-radius:18px;padding:12px}
+.add-model-sales .line{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end}.add-model-sales input{background:#fff}.add-model-sales button{height:48px;border:0;border-radius:14px;background:linear-gradient(135deg,#0E7A68,#24C96B);color:white;font-weight:800}
+.toast-ok{background:rgba(255,255,255,.98);border:1px solid #CBEBDD;border-radius:28px;padding:30px 30px 28px;box-shadow:0 26px 90px rgba(14,122,104,.22);font-family:Inter,Arial,sans-serif;min-width:min(380px,90vw)}
+.toast-ok::before{content:"✓";width:58px;height:58px;background:linear-gradient(135deg,#0E7A68,#24C96B);font-family:Inter,Arial,sans-serif;font-size:31px;font-weight:800;box-shadow:0 12px 28px rgba(34,197,94,.24)}
+.toast-ok .toast-title{font-family:Inter,Arial,sans-serif;font-size:20px;font-weight:750;color:#0E7A68;letter-spacing:0;margin-bottom:7px;text-transform:none}.toast-ok .toast-sub{font-size:14px;color:#5F7169;font-weight:500}
+@media(max-width:700px){.add-model-sales .line{grid-template-columns:1fr}.add-model-sales button{width:100%}.tabs{justify-content:center}.promotor-on .tab{max-width:260px}}
+
+/* PALETA E FONTES FINAIS — MAIS CONVIDATIVO, SEM ALTERAR LAYOUT */
+:root{
+  --bg:#F3F8F5;
+  --card:#FFFFFF;
+  --card2:#F8FBF9;
+  --line:#D8E7DE;
+  --txt:#14251F;
+  --muted:#60736A;
+  --fire:#12866F;
+  --gold:#B8872C;
+  --green:#22B86A;
+  --red:#D95454;
+  --blue:#2F80ED;
+}
+html,body{font-family:'Manrope',Inter,Arial,sans-serif;background:linear-gradient(180deg,#F0F8F3 0%,#FAFCFB 58%,#EEF5F1 100%);color:var(--txt)}
+.brand h1,.card-head b,.kpi b,.total b,.qty,.model-month-title,.toast-ok .toast-title{font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif;letter-spacing:.3px}
+.header{background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);box-shadow:0 10px 34px rgba(18,134,111,.10)}
+.brand h1{background:linear-gradient(90deg,#B8872C,#12866F);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.brand small{color:var(--muted)}
+.user-chip{background:#F8FBF9;border-color:var(--line)}.ghost{background:#FFFFFF;color:#14251F;border-color:var(--line)}
+.tabs{background:rgba(255,255,255,.92);border-color:var(--line);box-shadow:0 -10px 34px rgba(18,134,111,.08)}
+.tab{background:#FFFFFF;color:#60736A;border-color:var(--line)}.tab.active{background:linear-gradient(135deg,#12866F,#22B86A);border-color:#12866F;color:#FFFFFF;box-shadow:0 10px 28px rgba(18,134,111,.22)}
+.card{background:rgba(255,255,255,.94);border-color:var(--line);box-shadow:0 14px 44px rgba(20,37,31,.06)}
+.card-head{background:linear-gradient(90deg,#EAF8F0,rgba(255,255,255,0));border-bottom-color:var(--line)}.card-head b{color:#08746A}
+input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font-weight:600}input:focus,select:focus,textarea:focus{border-color:#12866F;box-shadow:0 0 0 4px rgba(18,134,111,.12)}
+.btn{background:linear-gradient(135deg,#12866F,#22B86A);box-shadow:0 10px 30px rgba(18,134,111,.22);font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif;font-weight:800}.btn.secondary{background:#FFFFFF;color:#14251F;border:1px solid var(--line)}.btn.blue{background:linear-gradient(135deg,#2F80ED,#42B7F5)}
+.model-row,.meta,.kpi,.rank-item,.table,.add-model-sales{background:#FBFEFC;border-color:#D8E7DE}.model-row b{color:#08746A}.mini-btn{background:#FFFFFF;color:#08746A;border-color:#D6E5DC}.total{background:linear-gradient(135deg,#E8F8F1,#FFF9EC);border-color:#BFE6D2}.total b,.kpi b{color:#08746A}.table th{background:#ECF7F1;color:#08746A}.hint,.field label{color:#60736A}.add-model-sales button{background:linear-gradient(135deg,#12866F,#22B86A);font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}
+.toast-ok{font-family:'Manrope',Arial,sans-serif;border-color:#CBEBDD;box-shadow:0 28px 90px rgba(18,134,111,.22)}.toast-ok .toast-title{color:#12866F;font-weight:800}.toast-ok::before{background:linear-gradient(135deg,#12866F,#22B86A)}
+@media(min-width:780px){.tabs{background:rgba(255,255,255,.90)}}
+
+
+/* Controle mensal automático */
+#statusMesAuto{background:#F8FAF9;color:#0F766E;font-weight:700}
+@media(min-width:900px){.dashboard-geral .card-body{padding:18px 20px}.dashboard-table{min-width:980px}}
 </style>
 </head>
 <body>
@@ -167,6 +253,7 @@ body.promotor-on #historico{display:none!important;}
 
     <section id="historico" class="screen dashboard-geral">
       <div class="kpis"><div class="kpi"><small>Total mês</small><b id="hMes">0</b></div><div class="kpi"><small>Atingimento</small><b id="hMeta">0%</b></div><div class="kpi"><small>Ontem</small><b id="hOntem">0</b></div><div class="kpi"><small>Relatórios</small><b id="hQtd">0</b></div></div>
+      <div class="card"><div class="card-head"><span>🗓️</span><b>Controle mensal automático</b></div><div class="card-body"><div class="grid2"><div class="field"><label>Mês do dashboard</label><select id="mesDashboard"></select></div><div class="field"><label>Status</label><input id="statusMesAuto" readonly value="Mês atual filtrado automaticamente"></div></div><div class="kpis"><div class="kpi"><small>Dias do mês</small><b id="cmDias">0</b></div><div class="kpi"><small>Dias restantes</small><b id="cmRestantes">0</b></div><div class="kpi"><small>Ritmo necessário</small><b id="cmRitmo">0</b></div><div class="kpi"><small>Previsão fechamento</small><b id="cmPrevisto">0</b></div></div><p class="hint" id="cmResumo" style="margin-top:12px">Ao virar o mês, o painel começa zerado automaticamente sem apagar o histórico anterior.</p></div></div>
       <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>📊</span><b>Dashboard geral</b></div><div class="card-body"><div class="table-wrap"><table class="table dashboard-table"><thead><tr><th>Promotor/Data</th><th>Loja/Filial</th><th>Total mês</th><th>Meta</th><th>%</th><th>Mix vendas</th><th>Estoque</th><th>Mostruário</th><th>Obs</th></tr></thead><tbody id="tbodyHistorico"></tbody></table></div></div></div>
@@ -176,6 +263,7 @@ body.promotor-on #historico{display:none!important;}
       <div id="supLocked" class="card"><div class="card-head"><span>🔒</span><b>Acesso supervisor</b></div><div class="card-body"><p class="hint">Seu perfil atual é promotor. Apenas quem entra com a senha de supervisor consegue ver dados da equipe.</p></div></div>
       <div id="supPanel" class="hidden">
         <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div>
+        <div class="card"><div class="card-head"><span>📱</span><b>Adicionar modelo em vendas do dia</b></div><div class="card-body"><div class="add-model-sales"><label>Novo modelo OPPO</label><div class="line"><input type="text" id="novoModeloVenda" placeholder="Ex: A79, A80, Reno11F..."><button type="button" id="btnAddModeloVenda">Adicionar modelo</button></div><p class="hint" style="margin-top:8px">Ao adicionar, o modelo ficará disponível para todos os promotores em Vendas do dia, Estoque e Mostruário.</p></div></div></div>
         <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, filial e meta de cada promotor.</p><div class="add-promotor-box"><div><label>Nome</label><input id="novoPromotorNome" placeholder="Nome do promotor"></div><div><label>Filial</label><input id="novoPromotorFilial" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div><button id="btnAddPromotor">Adicionar</button></div><div class="edit-list" id="configPromotores"></div></div></div>
         <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Total vendido no mês por modelo</div><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão por modelo</button><div class="model-month-grid" id="modeloMesBox"></div></div></div>
         <div class="card"><div class="card-head"><span>🏆</span><b>Ranking equipe</b></div><div class="card-body"><button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button><div class="status" id="iaSupervisorBox"></div><div class="rank" id="ranking"></div></div></div>
@@ -208,12 +296,25 @@ const EQUIPE_DEFAULT = [{nome:"Beatriz Diniz",filial:"",meta:45},{nome:"Erika Ma
 let equipeConfig = carregarEquipeConfig();
 let PROMOTORES = equipeConfig.map(p=>p.nome);
 const LOJAS = ["Magalu","Casas Bahia","Ponto","FastShop"];
-const MODELOS = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
+const MODELOS_PADRAO = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
+let MODELOS = carregarModelosVenda();
 let METAS = Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));
 let app, auth, db, user=null, isSupervisor=false, vendas={}, mostruario={}, mostruarioExtraPorPromotor={};
 const $=id=>document.getElementById(id);
+function carregarModelosVenda(){try{const salvos=JSON.parse(localStorage.getItem('fenixModelosVenda')||'[]');const todos=[...MODELOS_PADRAO,...salvos].map(x=>String(x||'').trim()).filter(Boolean);return [...new Set(todos)];}catch(e){return [...MODELOS_PADRAO];}}
+function salvarModelosVenda(){const extras=MODELOS.filter(m=>!MODELOS_PADRAO.includes(m));localStorage.setItem('fenixModelosVenda',JSON.stringify(extras));}
+function normalizarModelo(nome){return String(nome||'').trim().replace(/\s+/g,' ');}
 function cfgOk(){return firebaseConfig.projectId==="fenix-relatorio" && firebaseConfig.apiKey.startsWith("AIza")}
 function today(){return new Date().toISOString().slice(0,10)}
+function parseDataLocal(d){ if(!d)return new Date(); const [y,m,day]=String(d).split('-').map(Number); return new Date(y||new Date().getFullYear(),(m||1)-1,day||1,12,0,0); }
+function mesKeyFromDate(d){ const x=parseDataLocal(d||today()); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0'); }
+function mesNomeFromKey(key){ const [y,m]=String(key||mesKeyFromDate()).split('-').map(Number); return new Date(y,(m||1)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); }
+function infoMes(key=mesKeyFromDate()){ const [ano,mes]=String(key).split('-').map(Number); const agora=new Date(); const atual=key===mesKeyFromDate(today()); const diasNoMes=new Date(ano,mes,0).getDate(); const diaBase=atual?agora.getDate():diasNoMes; return {key,ano,mes,nome:mesNomeFromKey(key),diasNoMes,diaBase,diasRestantes:Math.max(0,diasNoMes-diaBase),isAtual:atual}; }
+function rowMesKey(r){ return r.mesKey || (r.ano&&r.mes ? `${r.ano}-${String(r.mes).padStart(2,'0')}` : mesKeyFromDate(r.data)); }
+function mesesDasLinhas(rows){ const set=new Set([mesKeyFromDate(today())]); (rows||[]).forEach(r=>set.add(rowMesKey(r))); return [...set].sort().reverse(); }
+function getMesSelecionado(rows){ const meses=mesesDasLinhas(rows); const sel=$('mesDashboard'); const atual=mesKeyFromDate(today()); const valorAtual=sel?.value || atual; if(sel){ sel.innerHTML=meses.map(k=>`<option value="${k}">${mesNomeFromKey(k)}</option>`).join(''); sel.value=meses.includes(valorAtual)?valorAtual:atual; } return sel?.value || atual; }
+function filtrarMes(rows,key){ return (rows||[]).filter(r=>rowMesKey(r)===key); }
+function calcularControleMensal(rowsMes, mesKey, totalMes, metaGeral){ const info=infoMes(mesKey); const total=safe(totalMes); const meta=safe(metaGeral); const mediaDia=info.diaBase?total/info.diaBase:0; const previsto=Math.ceil(mediaDia*info.diasNoMes); const falta=Math.max(0,meta-total); const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0; if($('cmDias'))$('cmDias').textContent=info.diasNoMes; if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes; if($('cmRitmo'))$('cmRitmo').textContent=ritmo; if($('cmPrevisto'))$('cmPrevisto').textContent=previsto; if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome; if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`; }
 function moneyDate(d){return (d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
 function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
@@ -235,22 +336,34 @@ function salvarMostruarioPromotor(){
 }
 function popupSucesso(msg="Relatório enviado com sucesso",sub="Os dados foram salvos na nuvem."){const t=$("toastOk"); if(!t)return; t.innerHTML="<span class=\"toast-title\">"+msg+"</span><span class=\"toast-sub\">"+sub+"</span>"; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),3000);}
 
+function idModelo(m){return String(m).replaceAll(' ','_').replace(/[^a-zA-Z0-9_]/g,'_')}
+function renderModelosInputs(){
+  if($('modelList')) $('modelList').innerHTML=MODELOS.map(m=>`<div class="model-row"><b>${m}</b><button class="mini-btn" data-minus="${m}">−</button><div class="qty" id="q_${idModelo(m)}">0</div><button class="mini-btn" data-plus="${m}">+</button></div>`).join('');
+  if($('estoqueList')) $('estoqueList').innerHTML=MODELOS.map(m=>`<div class="field"><label>${m}</label><input type="number" min="0" id="est_${idModelo(m)}" placeholder="0"></div>`).join('');
+  if($('mostruarioList')) $('mostruarioList').innerHTML=MODELOS.map(m=>`<div class="mostruario-row"><b>${m}</b><button type="button" class="mostruario-toggle" data-most="${m}">${mostruario[m]?'SIM':'NÃO'}</button></div>`).join('');
+  MODELOS.forEach(m=>{ if(vendas[m]===undefined) vendas[m]=0; if(mostruario[m]===undefined) mostruario[m]=false; });
+  document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.plus]=(vendas[b.dataset.plus]||0)+1;renderVendas()});
+  document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.minus]=Math.max(0,(vendas[b.dataset.minus]||0)-1);renderVendas()});
+  document.querySelectorAll('[data-most]').forEach(b=>{b.classList.toggle('on',!!mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';b.onclick=()=>{mostruario[b.dataset.most]=!mostruario[b.dataset.most];b.classList.toggle('on',mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';salvarMostruarioPromotor();};});
+  renderVendas();
+}
+function adicionarModeloVenda(){
+  const campo=$('novoModeloVenda'); const nome=normalizarModelo(campo?.value);
+  if(!nome){alert('Digite o nome do modelo.');return}
+  if(MODELOS.some(m=>m.toLowerCase()===nome.toLowerCase())){alert('Este modelo já existe em vendas do dia.');return}
+  MODELOS.push(nome); salvarModelosVenda(); vendas[nome]=0; mostruario[nome]=false; if(campo) campo.value=''; renderModelosInputs(); carregarMostruarioPromotor(); popupSucesso('Modelo adicionado',`${nome} entrou nas vendas, estoque e mostruário.`);
+}
+
 function initUi(){
   $('data').value=today();
   $('promotor').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');
   $('loja').innerHTML='<option value="">Selecione a loja...</option>'+LOJAS.map(n=>`<option>${n}</option>`).join('');
-  $('modelList').innerHTML=MODELOS.map(m=>`<div class="model-row"><b>${m}</b><button class="mini-btn" data-minus="${m}">−</button><div class="qty" id="q_${m.replaceAll(' ','_')}">0</div><button class="mini-btn" data-plus="${m}">+</button></div>`).join('');
-  $('estoqueList').innerHTML=MODELOS.map(m=>`<div class="field"><label>${m}</label><input type="number" min="0" id="est_${m.replaceAll(' ','_')}" placeholder="0"></div>`).join('');
-  $('mostruarioList').innerHTML=MODELOS.map(m=>`<div class="mostruario-row"><b>${m}</b><button type="button" class="mostruario-toggle" data-most="${m}">NÃO</button></div>`).join('');
   mostruarioExtraPorPromotor=carregarMostruarioExtra();
-  MODELOS.forEach(m=>mostruario[m]=false);
-  document.querySelectorAll('[data-most]').forEach(b=>b.onclick=()=>{mostruario[b.dataset.most]=!mostruario[b.dataset.most];b.classList.toggle('on',mostruario[b.dataset.most]);b.textContent=mostruario[b.dataset.most]?'SIM':'NÃO';salvarMostruarioPromotor();});
-  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('✅ Modelo salvo no mostruário!');};
-  MODELOS.forEach(m=>vendas[m]=0);
-  document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.plus]++;renderVendas()});
-  document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{vendas[b.dataset.minus]=Math.max(0,vendas[b.dataset.minus]-1);renderVendas()});
+  renderModelosInputs();
+  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
+  if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick=adicionarModeloVenda;
   $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();}; if($('totalMesInformado')) $('totalMesInformado').oninput=renderVendas; $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
-  if($('btnIA')) $('btnIA').onclick=iaDashboard;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor;
+  if($('btnIA')) $('btnIA').onclick=iaDashboard;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor; if($('mesDashboard')) $('mesDashboard').onchange=carregarHistorico;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
 function preencherFilialPromotor(){
@@ -258,7 +371,7 @@ function preencherFilialPromotor(){
   if(p && !$('filial').value) $('filial').value=p.filial||'';
 }
 function renderVendas(){
-  MODELOS.forEach(m=>{$('q_'+m.replaceAll(' ','_')).textContent=vendas[m]});
+  MODELOS.forEach(m=>{$('q_'+idModelo(m)).textContent=vendas[m]||0});
   const total=totalObj(vendas), meta=getMeta($('promotor').value), totalMes=safe($('totalMesInformado')?.value)||total, pct=meta?Math.round(totalMes/meta*100):0;
   $('totalDia').textContent=total;$('metaLabel').textContent=pct+'%';$('metaFill').style.width=Math.min(pct,100)+'%';
   $('metaHelp').textContent=meta?`${totalMes}/${meta} unidades no mês para este promotor.`:'Selecione o promotor para calcular a meta.';
@@ -281,11 +394,11 @@ async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!cfgOk()){show($('status'),'Nuvem ainda não configurada. Cole o firebaseConfig para salvar online no Firebase.','err');return}
   salvarMostruarioPromotor();
-  const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+m.replaceAll(' ','_'))?.value)]));
+  const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
   const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
-  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:($('filial').value.trim()||getFilial($('promotor').value)),loja:$('loja').value,data:$('data').value,vendas,total:totalObj(vendas),totalMesInformado:safe($('totalMesInformado')?.value),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
+  const dataRel=$('data').value; const infMes=infoMes(mesKeyFromDate(dataRel)); const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:($('filial').value.trim()||getFilial($('promotor').value)),loja:$('loja').value,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:safe($('totalMesInformado')?.value),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
   await addDoc(collection(db,'relatorios'),payload);
-  show($('status'),'✅ Relatório salvo online com sucesso.');
+  if($('status')) $('status').className='status';
   popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
 }
 async function carregarHistorico(){
@@ -294,7 +407,11 @@ async function carregarHistorico(){
     const snap=await getDocs(collection(db,'relatorios')); let rows=[];
     snap.forEach(d=>rows.push({id:d.id,...d.data()}));
     rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+    window.__rowsDashboardRaw=rows;
+    const mesAtivo=getMesSelecionado(rows);
+    rows=filtrarMes(rows,mesAtivo);
     window.__rowsDashboard=rows;
+    window.__mesAtivo=mesAtivo;
 
     const somaModelos=Object.fromEntries(MODELOS.map(m=>[m,0]));
     rows.forEach(r=>MODELOS.forEach(m=>somaModelos[m]+=safe(r.vendas?.[m])));
@@ -321,6 +438,7 @@ async function carregarHistorico(){
       const lista=Object.values(porProm).sort((a,b)=>(b.totalMes||b.total)-(a.totalMes||a.total));
       const totalEquipe=lista.reduce((s,r)=>s+(r.totalMes||r.total),0), totalRel=lista.reduce((s,r)=>s+r.relatorios,0), ontem=lista.reduce((s,r)=>s+r.ontem,0);
       const metaEquipe=lista.reduce((s,r)=>s+getMeta(r.nome),0), pctEquipe=metaEquipe?Math.round(totalEquipe/metaEquipe*100):0;
+      calcularControleMensal(rows, window.__mesAtivo, totalEquipe, metaEquipe);
       $('hMes').textContent=totalEquipe;
       $('hMeta').textContent=pctEquipe+'%';
       $('hOntem').textContent=ontem;
@@ -357,6 +475,7 @@ async function carregarHistorico(){
     });
     const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
     const meta=getMeta(nomeAtual), totalMes=totalMesMax||mes, pct=meta?Math.round(totalMes/meta*100):0;
+    calcularControleMensal(rows, window.__mesAtivo, totalMes, meta);
     $('hMes').textContent=totalMes;$('hMeta').textContent=pct+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
     $('previsao').textContent=meta?`Dashboard: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
     $('tbodyHistorico').innerHTML=linhasDia.map(r=>{
@@ -387,7 +506,7 @@ function renderConfigPromotores(){
   document.querySelectorAll('[data-save]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.save);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();alert('✅ Dados salvos nesta linha.');});
   document.querySelectorAll('[data-remove]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.remove);const nome=equipeConfig[i]?.nome||'este promotor';if(confirm('Remover '+nome+' da lista?')){equipeConfig.splice(i,1);salvarEquipeConfig();renderConfigPromotores();renderVendas();}});
   const addBtn=$('btnAddPromotor');
-  if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim(); if(!nome){alert('Digite o nome do promotor.');return} equipeConfig.push({nome,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)}); salvarEquipeConfig(); renderConfigPromotores(); renderVendas(); popupSucesso('✅ Promotor adicionado!');};}
+  if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim(); if(!nome){alert('Digite o nome do promotor.');return} equipeConfig.push({nome,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)}); salvarEquipeConfig(); renderConfigPromotores(); renderVendas(); popupSucesso('Promotor adicionado','A lista foi atualizada.');};}
 }
 function mostrarModeloMes(force=false){
   if(!force) $('modeloMesBox').classList.toggle('hidden');
@@ -406,7 +525,7 @@ function iaSupervisor(){
 
 async function carregarSupervisor(){
   $('supLocked').classList.toggle('hidden',isSupervisor);$('supPanel').classList.toggle('hidden',!isSupervisor); if(!isSupervisor)return; renderConfigPromotores(); if(!cfgOk()){$('ranking').innerHTML='<p class="hint">Nuvem ainda não configurada.</p>';return;}
-  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
+  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); const mesSup=window.__mesAtivo||mesKeyFromDate(today()); rows=filtrarMes(rows,mesSup); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
   const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
   const rank={}; rows.forEach(r=>rank[r.nome]=(rank[r.nome]||0)+safe(r.total));
@@ -423,7 +542,7 @@ async function excluirBaseSupervisor(i){
   if(!r?.id){alert('Registro não encontrado.');return}
   if(!confirm('Excluir esta linha da base?'))return;
   await deleteDoc(doc(db,'relatorios',r.id));
-  popupSucesso('✅ Linha removida!');
+  popupSucesso('Linha removida','A base foi atualizada.');
   await carregarSupervisor();
   await carregarHistorico();
 }
@@ -436,7 +555,7 @@ async function salvarBaseSupervisor(i){
   vendas['Reno14F']=safe($('base_reno14_'+i).value);
   const novoTotal=safe($('base_total_'+i).value);
   await updateDoc(doc(db,'relatorios',r.id),{loja:$('base_loja_'+i).value.trim(),total:novoTotal,vendas,obs:$('base_obs_'+i).value.trim()});
-  popupSucesso('✅ Base atualizada!');
+  popupSucesso('Base atualizada','As alterações foram salvas.');
   await carregarSupervisor();
 }
 function exportCsv(){
@@ -448,7 +567,7 @@ function exportCsv(){
     $('base_reno13_'+i)?.value||safe(r.vendas?.['Reno13F']), $('base_reno14_'+i)?.value||safe(r.vendas?.['Reno14F']), $('base_obs_'+i)?.value||r.obs||''
   ].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';'));
   const csv=headers.join(';')+'\n'+linhas.join('\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix_'+(window.__mesAtivo||mesKeyFromDate(today()))+'.csv';a.click();
 }
 
 initUi();
