@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -163,6 +164,56 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
 /* Controle mensal automático */
 #statusMesAuto{background:#F8FAF9;color:#0F766E;font-weight:700}
 @media(min-width:900px){.dashboard-geral .card-body{padding:18px 20px}.dashboard-table{min-width:980px}}
+
+/* AJUSTE PONTUAL — supervisor menos cansativo, alertas e base mais legível */
+#supervisor .card:nth-child(3n+1) .card-head{background:linear-gradient(90deg,#EAF8F0,#FFF7E6)}
+#supervisor .card:nth-child(3n+2) .card-head{background:linear-gradient(90deg,#EFF6FF,#F8FBF9)}
+#supervisor .card:nth-child(3n+3) .card-head{background:linear-gradient(90deg,#FFF1F2,#F8FBF9)}
+#supervisor .table th{background:#E9F7F1;color:#075F55;white-space:nowrap}
+#supervisor .table td{background:#FFFFFF;vertical-align:middle}
+.req-alert{border:1px solid #FCA5A5!important;background:#FEF2F2!important;box-shadow:0 0 0 4px rgba(220,38,38,.08)!important}
+.base-premium{font-size:12px;line-height:1.5;color:#075F55;font-weight:800}.base-most{font-size:12px;line-height:1.45;min-width:150px}.base-most b{color:#0F766E}
+
+
+/* VERSÃO NÍVEL GESTOR FORTE — CORES, ALERTAS E LEITURA RÁPIDA */
+.req-alert{border-color:#DC2626!important;box-shadow:0 0 0 4px rgba(220,38,38,.14)!important;background:#FFF5F5!important}
+.meta-promotor-box{margin-top:-6px;margin-bottom:14px;padding:11px 13px;border-radius:14px;background:linear-gradient(135deg,#FFF7ED,#ECFEFF);border:1px solid #FED7AA;color:#7C2D12;font-weight:900;font-size:13px}
+.supervisor-on #supervisor .kpi:nth-child(1){background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border-color:#86EFAC}
+.supervisor-on #supervisor .kpi:nth-child(2){background:linear-gradient(135deg,#EFF6FF,#FFFFFF);border-color:#93C5FD}
+.supervisor-on #supervisor .kpi:nth-child(3){background:linear-gradient(135deg,#FFFBEB,#FFFFFF);border-color:#FCD34D}
+.supervisor-on #supervisor .kpi:nth-child(4){background:linear-gradient(135deg,#F5F3FF,#FFFFFF);border-color:#C4B5FD}
+#historico .kpi:nth-child(1){background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border-color:#86EFAC}
+#historico .kpi:nth-child(2){background:linear-gradient(135deg,#EFF6FF,#FFFFFF);border-color:#93C5FD}
+#historico .kpi:nth-child(3){background:linear-gradient(135deg,#FFF7ED,#FFFFFF);border-color:#FDBA74}
+#historico .kpi:nth-child(4){background:linear-gradient(135deg,#FDF2F8,#FFFFFF);border-color:#F9A8D4}
+#supervisor .card:nth-of-type(1) .card-head{background:linear-gradient(90deg,#DBEAFE,#FFFFFF)}
+#supervisor .card:nth-of-type(2) .card-head{background:linear-gradient(90deg,#FEF3C7,#FFFFFF)}
+#supervisor .card:nth-of-type(3) .card-head{background:linear-gradient(90deg,#DCFCE7,#FFFFFF)}
+#supervisor .card:nth-of-type(4) .card-head{background:linear-gradient(90deg,#FCE7F3,#FFFFFF)}
+#supervisor .card:nth-of-type(5) .card-head{background:linear-gradient(90deg,#E0E7FF,#FFFFFF)}
+#historico .card:nth-of-type(1) .card-head{background:linear-gradient(90deg,#ECFEFF,#FFFFFF)}
+#historico .card:nth-of-type(2) .card-head{background:linear-gradient(90deg,#EFF6FF,#FFFFFF)}
+#historico .card:nth-of-type(3) .card-head{background:linear-gradient(90deg,#ECFDF5,#FFFFFF)}
+#historico .card:nth-of-type(4) .card-head{background:linear-gradient(90deg,#FFF7ED,#FFFFFF)}
+.gestor-alertas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.alert-card{border-radius:18px;padding:14px;border:1px solid #D8E7DE;background:#fff;box-shadow:0 10px 28px rgba(20,37,31,.06)}
+.alert-card small{display:block;font-weight:900;text-transform:uppercase;font-size:11px;color:#60736A;margin-bottom:6px}.alert-card b{font-size:24px}.alert-red{background:linear-gradient(135deg,#FEF2F2,#FFFFFF);border-color:#FCA5A5}.alert-red b{color:#B91C1C}.alert-orange{background:linear-gradient(135deg,#FFF7ED,#FFFFFF);border-color:#FDBA74}.alert-orange b{color:#C2410C}.alert-green{background:linear-gradient(135deg,#ECFDF5,#FFFFFF);border-color:#86EFAC}.alert-green b{color:#047857}.alert-blue{background:linear-gradient(135deg,#EFF6FF,#FFFFFF);border-color:#93C5FD}.alert-blue b{color:#1D4ED8}
+.rede-badge,.status-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;white-space:nowrap;border:1px solid transparent}.rede-Magalu{background:#E0F2FE;color:#075985;border-color:#7DD3FC}.rede-Casas{background:#DBEAFE;color:#1E3A8A;border-color:#93C5FD}.rede-Ponto{background:#FFEDD5;color:#9A3412;border-color:#FDBA74}.rede-FastShop{background:#111827;color:#FFFFFF;border-color:#374151}.rede-Sem{background:#F3F4F6;color:#374151;border-color:#D1D5DB}
+.status-ok{background:#DCFCE7;color:#166534;border-color:#86EFAC}.status-mid{background:#FEF3C7;color:#92400E;border-color:#FCD34D}.status-bad{background:#FEE2E2;color:#991B1B;border-color:#FCA5A5}.status-blue{background:#DBEAFE;color:#1D4ED8;border-color:#93C5FD}
+.rank-item:nth-child(1){background:linear-gradient(135deg,#FFFBEB,#FFFFFF);border-color:#FCD34D}.rank-item:nth-child(2){background:linear-gradient(135deg,#F8FAFC,#FFFFFF);border-color:#CBD5E1}.rank-item:nth-child(3){background:linear-gradient(135deg,#FFF7ED,#FFFFFF);border-color:#FDBA74}
+.base-premium{line-height:1.55}.base-most{min-width:160px}.table td{vertical-align:middle}
+@media(max-width:700px){.gestor-alertas{grid-template-columns:1fr}}
+
+
+/* BASE COMPLETA — LAYOUT GESTOR FORTE, ALTERADO SOMENTE NESTA ÁREA */
+.base-completa-wrap{display:grid;gap:14px}
+.base-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.base-toolbar .hint{margin:0;max-width:680px}
+.base-card{background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(20,37,31,.07)}
+.base-card-top{display:grid;grid-template-columns:1.2fr .75fr .75fr .85fr auto;gap:12px;align-items:center;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}
+.base-person b{display:block;font-size:15px;color:#10231D}.base-person small{display:block;color:#60736A;margin-top:3px;font-size:11px}.base-num small,.base-status small{display:block;color:#60736A;font-size:10px;text-transform:uppercase;font-weight:900;letter-spacing:.6px;margin-bottom:4px}.base-num strong{font-size:22px;color:#08746A}.base-status strong{font-size:18px}.base-card-body{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:12px;padding:14px 16px}.base-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:16px;padding:12px}.base-box-title{display:block;color:#08746A;font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.7px;margin-bottom:8px}.base-premium-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.base-model-pill{background:#F0F8F3;border:1px solid #D8E7DE;border-radius:12px;padding:8px;font-weight:800;color:#10231D}.base-model-pill span{display:block;color:#60736A;font-size:10px;text-transform:uppercase}.base-most-text,.base-obs-text{line-height:1.45;color:#10231D}.base-edit-line{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.base-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}.base-actions .base-save{height:40px}.base-actions .base-delete{height:40px;width:40px}.base-meta-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.base-empty{padding:18px;border:1px dashed #B8D6C8;border-radius:18px;text-align:center;color:#60736A;background:#FBFEFC}
+@media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -201,6 +252,7 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
         <div class="card-head"><span>📍</span><b>Identificação</b></div>
         <div class="card-body">
           <div class="field"><label>Promotor</label><select id="promotor"></select></div>
+          <div id="metaPromotorBox" class="meta-promotor-box hidden">Meta do mês: 0 aparelhos</div>
           <div class="field"><label>Loja</label><select id="loja"></select></div>
           <div class="grid2">
             <div class="field"><label>Filial</label><input type="text" id="filial" placeholder="Digite a filial"></div>
@@ -215,7 +267,7 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
           <p class="hint" style="margin-bottom:12px">Use + e - para lançar rápido no celular.</p>
           <div class="model-list" id="modelList"></div>
           <div class="total"><span>Total vendido hoje</span><b id="totalDia">0</b></div>
-          <div class="field" style="margin-top:12px"><label>Total vendido no mês</label><input type="number" id="totalMesInformado" min="0" placeholder="Digite quanto já vendeu no mês"></div>
+          <div class="field" style="margin-top:12px"><label>Total vendido no mês <span style="color:#DC2626">*</span></label><input type="number" id="totalMesInformado" min="0" required placeholder="Obrigatório: informe o acumulado do mês"></div>
           <div class="meta"><div style="display:flex;justify-content:space-between;gap:10px"><span class="hint">Meta do mês</span><b id="metaLabel">0%</b></div><div class="bar"><div class="fill" id="metaFill"></div></div><p class="hint" id="metaHelp" style="margin-top:8px">Preencha o total vendido no mês para calcular.</p></div>
         </div>
       </div>
@@ -263,11 +315,12 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
       <div id="supLocked" class="card"><div class="card-head"><span>🔒</span><b>Acesso supervisor</b></div><div class="card-body"><p class="hint">Seu perfil atual é promotor. Apenas quem entra com a senha de supervisor consegue ver dados da equipe.</p></div></div>
       <div id="supPanel" class="hidden">
         <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div>
+        <div class="gestor-alertas"><div class="alert-card alert-red"><small>Precisam de ajuda</small><b id="gaAjuda">0</b></div><div class="alert-card alert-orange"><small>Diária crítica</small><b id="gaCritica">0</b></div><div class="alert-card alert-green"><small>Vão bater meta</small><b id="gaBater">0</b></div></div>
         <div class="card"><div class="card-head"><span>📱</span><b>Adicionar modelo em vendas do dia</b></div><div class="card-body"><div class="add-model-sales"><label>Novo modelo OPPO</label><div class="line"><input type="text" id="novoModeloVenda" placeholder="Ex: A79, A80, Reno11F..."><button type="button" id="btnAddModeloVenda">Adicionar modelo</button></div><p class="hint" style="margin-top:8px">Ao adicionar, o modelo ficará disponível para todos os promotores em Vendas do dia, Estoque e Mostruário.</p></div></div></div>
         <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, rede, filial e meta de cada promotor.</p><div class="add-promotor-box"><div><label>Nome</label><input id="novoPromotorNome" placeholder="Nome do promotor"></div><div><label>Rede</label><select id="novoPromotorRede"><option value="">Selecione</option><option>Magalu</option><option>Casas Bahia</option><option>Ponto</option><option>FastShop</option></select></div><div><label>Filial</label><input id="novoPromotorFilial" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div><button id="btnAddPromotor">Adicionar</button></div><div class="edit-list" id="configPromotores"></div></div></div>
         <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Total vendido no mês por modelo</div><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão por modelo</button><div class="model-month-grid" id="modeloMesBox"></div></div></div>
         <div class="card"><div class="card-head"><span>🏆</span><b>Ranking equipe</b></div><div class="card-body"><button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button><div class="status" id="iaSupervisorBox"></div><div class="rank" id="ranking"></div></div></div>
-        <div class="card"><div class="card-head"><span>📊</span><b>Base completa</b></div><div class="card-body"><button class="btn secondary" id="btnExport" style="margin-bottom:12px">Exportar CSV</button><div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Promotor</th><th>Loja</th><th>Total</th><th>A5 Pro</th><th>A6 Pro</th><th>Reno13F</th><th>Reno14F</th><th>Obs</th><th>Ação</th></tr></thead><tbody id="tbodySupervisor"></tbody></table></div></div></div>
+        <div class="card"><div class="card-head"><span>📊</span><b>Base completa</b></div><div class="card-body"><div class="base-toolbar"><p class="hint">Leitura em cards para gestão: total do dia, total do mês, % da meta, diária, mix premium, mostruário e observação sem repetir rede/filial em colunas separadas.</p><button class="btn secondary" id="btnExport" style="max-width:180px">Exportar CSV</button></div><div class="base-completa-wrap" id="tbodySupervisor"></div></div></div>
       </div>
     </section>
   </main>
@@ -362,20 +415,25 @@ function initUi(){
   renderModelosInputs();
   if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
   if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick=adicionarModeloVenda;
-  $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();}; if($('totalMesInformado')) $('totalMesInformado').oninput=renderVendas; $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();}; if($('totalMesInformado')) $('totalMesInformado').oninput=()=>{$('totalMesInformado').classList.remove('req-alert');renderVendas();}; $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
   if($('btnIA')) $('btnIA').onclick=iaDashboard;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor; if($('mesDashboard')) $('mesDashboard').onchange=carregarHistorico; if($('redeDashboard')) $('redeDashboard').onchange=carregarHistorico;
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
 function preencherFilialPromotor(){
   const p=equipeConfig.find(x=>x.nome===$('promotor').value);
+  const metaBox=$('metaPromotorBox');
   if(p){
     if(p.rede){ $('loja').value=p.rede; }
     if(p.filial){ $('filial').value=p.filial||''; }
-    if(!isSupervisor){ $('loja').disabled=!!p.rede; $('filial').readOnly=!!p.filial; }
+    if(metaBox){metaBox.classList.remove('hidden'); metaBox.textContent=`Meta do mês: ${safe(p.meta)} aparelhos • Rede: ${p.rede||'não definida'} • Filial: ${p.filial||'não definida'}`;}
+    $('loja').disabled=!!p.rede;
+    $('filial').readOnly=!!p.filial;
   }else{
+    if(metaBox) metaBox.classList.add('hidden');
     $('loja').disabled=false; $('filial').readOnly=false;
   }
 }
+
 function renderVendas(){
   MODELOS.forEach(m=>{$('q_'+idModelo(m)).textContent=vendas[m]||0});
   const total=totalObj(vendas), meta=getMeta($('promotor').value), totalMes=safe($('totalMesInformado')?.value)||total, pct=meta?Math.round(totalMes/meta*100):0;
@@ -398,6 +456,12 @@ function openTab(id){
 
 async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
+  if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta no perfil Supervisor. Defina a meta antes de salvar.','err');return}
+  const totalMesCampo=$('totalMesInformado');
+  totalMesCampo?.classList.remove('req-alert');
+  if(!totalMesCampo || totalMesCampo.value===''){totalMesCampo?.classList.add('req-alert'); totalMesCampo?.focus(); show($('status'),'Total vendido no mês é obrigatório. Informe o acumulado antes de salvar.','err');return}
+  const mostSelecionado=Object.values(mostruario||{}).some(Boolean) || (($('mostruarioExtra')?.value||'').trim().length>0);
+  if(!mostSelecionado){show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo ou escreva o modelo do mostruário.','err'); $('mostruarioExtra')?.focus(); return}
   if(!cfgOk()){show($('status'),'Nuvem ainda não configurada. Cole o firebaseConfig para salvar online no Firebase.','err');return}
   salvarMostruarioPromotor();
   const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
@@ -514,6 +578,15 @@ function salvarEquipeConfig(){localStorage.setItem('fenixEquipeConfig',JSON.stri
 function getMeta(nome){const p=equipeConfig.find(x=>x.nome===nome);return Number(p?.meta||0)}
 function getFilial(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.filial||''}
 function getRede(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.rede||''}
+function getPerfilSupervisor(nome){return equipeConfig.find(x=>x.nome===nome)||{nome,rede:'',filial:'',meta:0}}
+function mostruarioTexto(payload){const lista=Object.entries(payload?.modelos||{}).filter(([_,v])=>v).map(([m])=>m); if(payload?.modeloExtra) lista.push(payload.modeloExtra); return lista.length?lista.join(', '):''}
+function redeClasse(rede){const r=String(rede||'Sem').replace(/\s+/g,''); if(r.includes('Casas'))return 'rede-Casas'; if(r.includes('Fast'))return 'rede-FastShop'; if(r.includes('Ponto'))return 'rede-Ponto'; if(r.includes('Magalu'))return 'rede-Magalu'; return 'rede-Sem'}
+function redeBadge(rede){const texto=rede||'Sem rede';return `<span class="rede-badge ${redeClasse(texto)}">${texto}</span>`}
+function statusMostruario(payload){const txt=mostruarioTexto(payload); if(!txt)return {txt:'Sem mostruário',cls:'status-bad'}; const qtd=txt.split(',').filter(Boolean).length; return qtd>=3?{txt:'Completo',cls:'status-ok'}:{txt:'Parcial',cls:'status-mid'}}
+function metaStats(totalMes,meta,mesKey){const info=infoMes(mesKey||window.__mesAtivo||mesKeyFromDate(today())); totalMes=safe(totalMes); meta=safe(meta); const falta=Math.max(0,meta-totalMes); const diaria=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):falta; const pct=meta?Math.round(totalMes/meta*100):0; const cls=pct>=100?'pct-ok':pct>=60?'pct-mid':'pct-low'; return {pct,falta,diaria,cls}}
+function taxaPerda(r){const inter=safe(r.interessados), perd=safe(r.perdidas); return inter?Math.round(perd/inter*100):0}
+function perdaBadge(r){const tx=taxaPerda(r); const cls=tx>=50?'status-bad':tx>=25?'status-mid':'status-ok'; return `<span class="status-badge ${cls}">${tx}%</span>`}
+
 function renderConfigPromotores(){
   if(!$('configPromotores'))return;
   $('configPromotores').innerHTML=equipeConfig.map((p,i)=>`<div class="edit-row" id="cfg_row_${i}"><div><label>Nome</label><input id="cfg_nome_${i}" value="${p.nome}"></div><div><label>Rede</label><select id="cfg_rede_${i}"><option value="">Selecione</option>${LOJAS.map(l=>`<option ${p.rede===l?'selected':''}>${l}</option>`).join('')}</select></div><div><label>Filial</label><input id="cfg_filial_${i}" value="${p.filial||''}" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div><button class="edit-pencil" data-focus="${i}" title="Editar linha">✏️</button><button class="edit-save" data-save="${i}" title="Salvar esta linha">Salvar</button><button class="edit-remove" data-remove="${i}" title="Remover promotor">×</button></div>`).join('');
@@ -535,7 +608,7 @@ function iaSupervisor(){
   const rows=window.__rowsSupervisorModelo||[]; const total=rows.reduce((s,r)=>s+safe(r.total),0); const prom=new Set(rows.map(r=>r.nome)).size;
   const sum=Object.fromEntries(MODELOS.map(m=>[m,0])); rows.forEach(r=>MODELOS.forEach(m=>sum[m]+=safe(r.vendas?.[m])));
   const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';
-  show($('iaSupervisorBox'), rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco: elevar mix de A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.', rows.length?'ok':'err');
+  show($('iaSupervisorBox'), rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Use os alertas: vermelho = precisa de ajuda, laranja = diária crítica, verde = tendência de bater meta. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.', rows.length?'ok':'err');
 }
 
 async function carregarSupervisor(){
@@ -543,9 +616,13 @@ async function carregarSupervisor(){
   const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); const mesSup=window.__mesAtivo||mesKeyFromDate(today()); rows=filtrarMes(rows,mesSup); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
   const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
-  const rank={}; rows.forEach(r=>rank[r.nome]=(rank[r.nome]||0)+safe(r.total));
-  $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${getMeta(n)?Math.round(t/getMeta(n)*100):0}% da meta</small></div><b>${t}</b></div>`).join('')||'<p class="hint">Sem dados.</p>';
-  $('tbodySupervisor').innerHTML=rows.map((r,i)=>`<tr><td>${moneyDate(r.data)}</td><td>${r.nome}</td><td><input class="base-edit" id="base_loja_${i}" value="${r.loja||''}"></td><td><input class="base-edit" type="number" id="base_total_${i}" value="${safe(r.total)}"></td><td><input class="base-edit" type="number" id="base_a5pro_${i}" value="${safe(r.vendas?.['A5 Pro'])}"></td><td><input class="base-edit" type="number" id="base_a6pro_${i}" value="${safe(r.vendas?.['A6 Pro'])}"></td><td><input class="base-edit" type="number" id="base_reno13_${i}" value="${safe(r.vendas?.['Reno13F'])}"></td><td><input class="base-edit" type="number" id="base_reno14_${i}" value="${safe(r.vendas?.['Reno14F'])}"></td><td><input class="base-edit" id="base_obs_${i}" value="${r.obs||''}"></td><td><button class="base-save" data-save-base="${i}">Salvar</button><button class="base-delete" data-delete-base="${i}" title="Excluir linha">×</button></td></tr>`).join('');
+  const rank={}; const maxMes={}; rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total); maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
+  const alertas=Object.keys(maxMes).map(n=>({nome:n,...metaStats(maxMes[n],getMeta(n),mesSup)}));
+  if($('gaAjuda')) $('gaAjuda').textContent=alertas.filter(a=>a.pct<60).length;
+  if($('gaCritica')) $('gaCritica').textContent=alertas.filter(a=>a.diaria>5 && a.pct<100).length;
+  if($('gaBater')) $('gaBater').textContent=alertas.filter(a=>a.pct>=90 || a.diaria<=1).length;
+  $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return `<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
+  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome); const loja=r.loja||perfil.rede||''; const filial=r.filial||perfil.filial||''; const meta=safe(r.metaMes)||safe(perfil.meta); const totalDia=safe(r.total); const totalMes=safe(r.totalMesInformado); const st=metaStats(totalMes,meta,mesSup); const mst=statusMostruario(r.mostruario); const most=mostruarioTexto(r.mostruario)||'Não informado'; const obs=(r.obs||'').replace(/"/g,'&quot;'); return `<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit" type="number" id="base_total_${i}" value="${totalDia}"></div><div class="base-num"><small>Total mês</small><input class="base-edit" type="number" id="base_total_mes_${i}" value="${totalMes}"></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions"><button class="base-save" data-save-base="${i}">Salvar</button><button class="base-delete" data-delete-base="${i}" title="Excluir linha">×</button></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit" type="number" id="base_total_mobile_${i}" value="${totalDia}" oninput="document.getElementById('base_total_${i}').value=this.value"></div><div><label>Total mês</label><input class="base-edit" type="number" id="base_total_mes_mobile_${i}" value="${totalMes}" oninput="document.getElementById('base_total_mes_${i}').value=this.value"></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit" id="base_obs_${i}" value="${obs}" placeholder="Sem observação"></div></div></div></div>`}).join('') || '<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
   window.__rowsSupervisorBase=rows;
   document.querySelectorAll('[data-save-base]').forEach(btn=>btn.onclick=()=>salvarBaseSupervisor(Number(btn.dataset.saveBase)));
   document.querySelectorAll('[data-delete-base]').forEach(btn=>btn.onclick=()=>excluirBaseSupervisor(Number(btn.dataset.deleteBase)));
@@ -564,22 +641,19 @@ async function excluirBaseSupervisor(i){
 async function salvarBaseSupervisor(i){
   const rows=window.__rowsSupervisorBase||[]; const r=rows[i]; if(!r?.id){alert('Registro não encontrado.');return}
   const vendas={...(r.vendas||{})};
-  vendas['A5 Pro']=safe($('base_a5pro_'+i).value);
-  vendas['A6 Pro']=safe($('base_a6pro_'+i).value);
-  vendas['Reno13F']=safe($('base_reno13_'+i).value);
-  vendas['Reno14F']=safe($('base_reno14_'+i).value);
   const novoTotal=safe($('base_total_'+i).value);
-  await updateDoc(doc(db,'relatorios',r.id),{loja:$('base_loja_'+i).value.trim(),total:novoTotal,vendas,obs:$('base_obs_'+i).value.trim()});
+  const novoTotalMes=safe($('base_total_mes_'+i).value);
+  await updateDoc(doc(db,'relatorios',r.id),{total:novoTotal,totalMesInformado:novoTotalMes,vendas,obs:$('base_obs_'+i).value.trim()});
   popupSucesso('Base atualizada','As alterações foram salvas.');
   await carregarSupervisor();
 }
 function exportCsv(){
-  const headers=['Data','Promotor','Loja','Total','A5 Pro','A6 Pro','Reno13F','Reno14F','Obs'];
+  const headers=['Data','Promotor','Loja','Filial','Total dia','Total mês','A5 Pro','A6 Pro','Reno13F','Reno14F','Mostruario','Obs'];
   const rows=window.__rowsSupervisorBase||[];
   const linhas=rows.map((r,i)=>[
-    moneyDate(r.data), r.nome||'', $('base_loja_'+i)?.value||r.loja||'', $('base_total_'+i)?.value||safe(r.total),
-    $('base_a5pro_'+i)?.value||safe(r.vendas?.['A5 Pro']), $('base_a6pro_'+i)?.value||safe(r.vendas?.['A6 Pro']),
-    $('base_reno13_'+i)?.value||safe(r.vendas?.['Reno13F']), $('base_reno14_'+i)?.value||safe(r.vendas?.['Reno14F']), $('base_obs_'+i)?.value||r.obs||''
+    moneyDate(r.data), r.nome||'', r.loja||r.rede||'', r.filial||'', $('base_total_'+i)?.value||safe(r.total), $('base_total_mes_'+i)?.value||safe(r.totalMesInformado),
+    safe(r.vendas?.['A5 Pro']), safe(r.vendas?.['A6 Pro']),
+    safe(r.vendas?.['Reno13F']), safe(r.vendas?.['Reno14F']), mostruarioTexto(r.mostruario), $('base_obs_'+i)?.value||r.obs||''
   ].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';'));
   const csv=headers.join(';')+'\n'+linhas.join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix_'+(window.__mesAtivo||mesKeyFromDate(today()))+'.csv';a.click();
