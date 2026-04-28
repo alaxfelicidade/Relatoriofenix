@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -205,6 +207,9 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
 @media(max-width:700px){.gestor-alertas{grid-template-columns:1fr}}
 
 
+.kpi{cursor:pointer;transition:.18s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(20,37,31,.10)}
+
 /* BASE COMPLETA — LAYOUT GESTOR FORTE, ALTERADO SOMENTE NESTA ÁREA */
 .base-completa-wrap{display:grid;gap:14px}
 .base-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
@@ -331,7 +336,7 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* 🔥 FIREBASE CONFIGURADO — Projeto: Fenix-Relatorio */
 const firebaseConfig = {
@@ -423,13 +428,17 @@ function preencherFilialPromotor(){
   const p=equipeConfig.find(x=>x.nome===$('promotor').value);
   const metaBox=$('metaPromotorBox');
   if(p){
-    if(p.rede){ $('loja').value=p.rede; }
-    if(p.filial){ $('filial').value=p.filial||''; }
-    if(metaBox){metaBox.classList.remove('hidden'); metaBox.textContent=`Meta do mês: ${safe(p.meta)} aparelhos • Rede: ${p.rede||'não definida'} • Filial: ${p.filial||'não definida'}`;}
+    $('loja').value=p.rede||'';
+    $('filial').value=p.filial||'';
+    if(metaBox){
+      metaBox.classList.remove('hidden');
+      metaBox.textContent=`Meta do mês: ${safe(p.meta)} aparelhos`;
+    }
     $('loja').disabled=!!p.rede;
     $('filial').readOnly=!!p.filial;
   }else{
     if(metaBox) metaBox.classList.add('hidden');
+    $('loja').value=''; $('filial').value='';
     $('loja').disabled=false; $('filial').readOnly=false;
   }
 }
@@ -466,7 +475,7 @@ async function salvarRelatorio(){
   salvarMostruarioPromotor();
   const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
   const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
-  const dataRel=$('data').value; const infMes=infoMes(mesKeyFromDate(dataRel)); const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:($('filial').value.trim()||getFilial($('promotor').value)),loja:$('loja').value||getRede($('promotor').value),rede:getRede($('promotor').value)||$('loja').value,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:safe($('totalMesInformado')?.value),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
+  const dataRel=$('data').value; const infMes=infoMes(mesKeyFromDate(dataRel)); const perfilAtual=getPerfilSupervisor($('promotor').value); const redeFinal=perfilAtual.rede||$('loja').value; const filialFinal=perfilAtual.filial||$('filial').value.trim(); const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:safe($('totalMesInformado')?.value),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
   await addDoc(collection(db,'relatorios'),payload);
   if($('status')) $('status').className='status';
   popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
@@ -573,8 +582,34 @@ function iaDashboard(){
   $('previsao').textContent=`🤖 Análise geral: ${prom} promotores com dados, ${total} vendas consideradas no mês. Modelo mais forte: ${melhor}. Acompanhe estoque baixo e mostruário para destravar vendas premium.`;
 }
 
-function carregarEquipeConfig(){try{return (JSON.parse(localStorage.getItem('fenixEquipeConfig')||'null')||EQUIPE_DEFAULT).map(p=>({rede:'',...p}))}catch(e){return EQUIPE_DEFAULT.map(p=>({rede:'',...p}))}}
-function salvarEquipeConfig(){localStorage.setItem('fenixEquipeConfig',JSON.stringify(equipeConfig));PROMOTORES=equipeConfig.map(p=>p.nome);METAS=Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));$('promotor').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');$('loginNome').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');}
+function normalizarEquipeConfig(lista){return (Array.isArray(lista)&&lista.length?lista:EQUIPE_DEFAULT).map(p=>({nome:String(p.nome||'').trim(),rede:p.rede||'',filial:p.filial||'',meta:safe(p.meta)})).filter(p=>p.nome)}
+function carregarEquipeConfig(){try{return normalizarEquipeConfig(JSON.parse(localStorage.getItem('fenixEquipeConfig')||'null'))}catch(e){return normalizarEquipeConfig(EQUIPE_DEFAULT)}}
+function aplicarEquipeConfig(lista){
+  equipeConfig=normalizarEquipeConfig(lista);
+  PROMOTORES=equipeConfig.map(p=>p.nome);
+  METAS=Object.fromEntries(equipeConfig.map(p=>[p.nome,Number(p.meta)||0]));
+  localStorage.setItem('fenixEquipeConfig',JSON.stringify(equipeConfig));
+  if($('promotor')) $('promotor').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');
+  if($('loginNome')) $('loginNome').innerHTML='<option value="">Selecione seu nome...</option>'+PROMOTORES.map(n=>`<option>${n}</option>`).join('');
+}
+async function carregarEquipeConfigOnline(){
+  if(!db) return;
+  try{
+    const ref=doc(db,'config','equipe');
+    const snap=await getDoc(ref);
+    if(snap.exists() && Array.isArray(snap.data().promotores)) aplicarEquipeConfig(snap.data().promotores);
+    else await setDoc(ref,{promotores:equipeConfig,updatedAt:serverTimestamp()},{merge:true});
+  }catch(e){console.warn('Falha ao carregar equipe online:',e);}
+}
+function salvarEquipeConfig(){
+  aplicarEquipeConfig(equipeConfig);
+  if(db){
+    setDoc(doc(db,'config','equipe'),{promotores:equipeConfig,updatedAt:serverTimestamp()},{merge:true})
+      .then(()=>console.log('✅ Configuração supervisor salva online.'))
+      .catch(e=>alert('Erro ao salvar configuração online: '+e.message));
+  }
+  preencherFilialPromotor();
+}
 function getMeta(nome){const p=equipeConfig.find(x=>x.nome===nome);return Number(p?.meta||0)}
 function getFilial(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.filial||''}
 function getRede(nome){const p=equipeConfig.find(x=>x.nome===nome);return p?.rede||''}
@@ -611,11 +646,29 @@ function iaSupervisor(){
   show($('iaSupervisorBox'), rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Use os alertas: vermelho = precisa de ajuda, laranja = diária crítica, verde = tendência de bater meta. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.', rows.length?'ok':'err');
 }
 
+
+function ativarCardsSupervisorDetalhes(rows, mesSup){
+  const total=rows.reduce((s,r)=>s+safe(r.total),0);
+  const rel=rows.length;
+  const promAtivos=new Set(rows.map(r=>r.nome).filter(Boolean)).size;
+  const media=rel?Math.ceil(total/rel):0;
+  const maxMes={}; rows.forEach(r=>{maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
+  const faltas=Object.entries(maxMes).map(([nome,totalMes])=>{const st=metaStats(totalMes,getMeta(nome),mesSup);return `${nome}: ${totalMes}/${getMeta(nome)} (${st.pct}%) falta ${st.falta}`;}).slice(0,8).join(' • ');
+  const cards=[...document.querySelectorAll('#supervisor .kpis .kpi')];
+  const textos=[
+    `Equipe mês: ${total} aparelhos no período selecionado. ${faltas||'Sem metas lançadas ainda.'}`,
+    `Relatórios: ${rel} envio(s) no mês. Média por relatório: ${media} aparelho(s).`,
+    `Promotores ativos: ${promAtivos}. Cadastrados no supervisor: ${equipeConfig.length}.`,
+    `Média diária: ${media}. Use este número para acompanhar ritmo da equipe e cobrança diária.`
+  ];
+  cards.forEach((card,i)=>{card.title='Clique para ver detalhes'; card.onclick=()=>show($('iaSupervisorBox'),textos[i]||'Sem detalhe disponível.','ok');});
+}
+
 async function carregarSupervisor(){
   $('supLocked').classList.toggle('hidden',isSupervisor);$('supPanel').classList.toggle('hidden',!isSupervisor); if(!isSupervisor)return; renderConfigPromotores(); if(!cfgOk()){$('ranking').innerHTML='<p class="hint">Nuvem ainda não configurada.</p>';return;}
   const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); const mesSup=window.__mesAtivo||mesKeyFromDate(today()); rows=filtrarMes(rows,mesSup); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
   const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
-  $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
+  $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0; ativarCardsSupervisorDetalhes(rows,mesSup);
   const rank={}; const maxMes={}; rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total); maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
   const alertas=Object.keys(maxMes).map(n=>({nome:n,...metaStats(maxMes[n],getMeta(n),mesSup)}));
   if($('gaAjuda')) $('gaAjuda').textContent=alertas.filter(a=>a.pct<60).length;
@@ -695,14 +748,15 @@ function aplicarPerfil(){
   document.querySelector('[data-tab="supervisor"]').classList.toggle('lock',!isSupervisor);
   if(!isSupervisor){$('promotor').value=p.nome;preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();openTab('relatorio');}
 }
-function initLoginRapido(){
-  preencherLogin();
+async function initLoginRapido(){
   if(cfgOk()){
     app=initializeApp(firebaseConfig);
     db=getFirestore(app);
     window.db=db;
     console.log("🔥 Firebase conectado!");
+    await carregarEquipeConfigOnline();
   }
+  preencherLogin();
   $("btnEntrar").onclick=entrarRapido;
   $("btnSair").onclick=async()=>{limparPerfil(); aplicarPerfil();};
   aplicarPerfil();
