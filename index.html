@@ -1,6 +1,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -209,6 +211,9 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
 
 .kpi{cursor:pointer;transition:.18s}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(20,37,31,.10)}
+.super-kpi-preview{margin:12px 0 4px;padding:14px 16px;border:1px solid #BFE6D2;border-radius:18px;background:linear-gradient(135deg,#ECFDF5,#FFFFFF);box-shadow:0 10px 28px rgba(20,37,31,.06)}
+.super-kpi-preview b{display:block;color:#08746A;font-size:13px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.super-kpi-preview p{margin:0;color:#10231D;font-size:13px;line-height:1.45}
 
 /* BASE COMPLETA — LAYOUT GESTOR FORTE, ALTERADO SOMENTE NESTA ÁREA */
 .base-completa-wrap{display:grid;gap:14px}
@@ -219,6 +224,15 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
 .base-person b{display:block;font-size:15px;color:#10231D}.base-person small{display:block;color:#60736A;margin-top:3px;font-size:11px}.base-num small,.base-status small{display:block;color:#60736A;font-size:10px;text-transform:uppercase;font-weight:900;letter-spacing:.6px;margin-bottom:4px}.base-num strong{font-size:22px;color:#08746A}.base-status strong{font-size:18px}.base-card-body{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:12px;padding:14px 16px}.base-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:16px;padding:12px}.base-box-title{display:block;color:#08746A;font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.7px;margin-bottom:8px}.base-premium-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.base-model-pill{background:#F0F8F3;border:1px solid #D8E7DE;border-radius:12px;padding:8px;font-weight:800;color:#10231D}.base-model-pill span{display:block;color:#60736A;font-size:10px;text-transform:uppercase}.base-most-text,.base-obs-text{line-height:1.45;color:#10231D}.base-edit-line{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.base-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}.base-actions .base-save{height:40px}.base-actions .base-delete{height:40px;width:40px}.base-meta-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.base-empty{padding:18px;border:1px dashed #B8D6C8;border-radius:18px;text-align:center;color:#60736A;background:#FBFEFC}
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
 
+
+/* AJUSTE PONTUAL — DASHBOARD GERAL RESPONSIVO E CARDS DO SUPERVISOR CLICÁVEIS */
+.dashboard-card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;overflow:visible}
+.dashboard-info-card{background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
+.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}
+.dashboard-info-top b{display:block;color:#10231D;font-size:15px}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900}
+.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{font-size:20px;color:#08746A}.dashboard-section{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.dashboard-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:11px;min-width:0}.dashboard-box-title{display:block;color:#08746A;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.6px;margin-bottom:7px}.dashboard-model-list{font-size:12px;line-height:1.55;color:#10231D;word-break:break-word}.dashboard-model-list b{color:#08746A}.dashboard-obs{grid-column:1/-1}.super-kpi-preview{margin:10px 0 12px;padding:14px 16px;border:1px solid #BFE6D2;border-radius:18px;background:linear-gradient(135deg,#ECFDF5,#FFFFFF);color:#10231D}.super-kpi-preview b{display:block;color:#08746A;margin-bottom:6px}.super-kpi-preview p{margin:0;color:#60736A;line-height:1.45}.alert-card{cursor:pointer;transition:.18s}.alert-card:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(20,37,31,.10)}
+@media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
 </style>
 </head>
 <body>
@@ -313,13 +327,13 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
       <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
-      <div class="card"><div class="card-head"><span>📊</span><b>Dashboard geral</b></div><div class="card-body"><div class="table-wrap"><table class="table dashboard-table"><thead><tr><th>Promotor/Data</th><th>Loja/Filial</th><th>Total mês</th><th>Meta</th><th>%</th><th>Mix vendas</th><th>Estoque</th><th>Mostruário</th><th>Obs</th></tr></thead><tbody id="tbodyHistorico"></tbody></table></div></div></div>
+      <div class="card"><div class="card-head"><span>📊</span><b>Dashboard geral</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
     </section>
 
     <section id="supervisor" class="screen">
       <div id="supLocked" class="card"><div class="card-head"><span>🔒</span><b>Acesso supervisor</b></div><div class="card-body"><p class="hint">Seu perfil atual é promotor. Apenas quem entra com a senha de supervisor consegue ver dados da equipe.</p></div></div>
       <div id="supPanel" class="hidden">
-        <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div>
+        <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div><div id="superKpiPreview" class="super-kpi-preview hidden"><b>Prévia</b><p>Clique em um card acima para ver os detalhes.</p></div>
         <div class="gestor-alertas"><div class="alert-card alert-red"><small>Precisam de ajuda</small><b id="gaAjuda">0</b></div><div class="alert-card alert-orange"><small>Diária crítica</small><b id="gaCritica">0</b></div><div class="alert-card alert-green"><small>Vão bater meta</small><b id="gaBater">0</b></div></div>
         <div class="card"><div class="card-head"><span>📱</span><b>Adicionar modelo em vendas do dia</b></div><div class="card-body"><div class="add-model-sales"><label>Novo modelo OPPO</label><div class="line"><input type="text" id="novoModeloVenda" placeholder="Ex: A79, A80, Reno11F..."><button type="button" id="btnAddModeloVenda">Adicionar modelo</button></div><p class="hint" style="margin-top:8px">Ao adicionar, o modelo ficará disponível para todos os promotores em Vendas do dia, Estoque e Mostruário.</p></div></div></div>
         <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, rede, filial e meta de cada promotor.</p><div class="add-promotor-box"><div><label>Nome</label><input id="novoPromotorNome" placeholder="Nome do promotor"></div><div><label>Rede</label><select id="novoPromotorRede"><option value="">Selecione</option><option>Magalu</option><option>Casas Bahia</option><option>Ponto</option><option>FastShop</option></select></div><div><label>Filial</label><input id="novoPromotorFilial" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div><button id="btnAddPromotor">Adicionar</button></div><div class="edit-list" id="configPromotores"></div></div></div>
@@ -480,8 +494,30 @@ async function salvarRelatorio(){
   if($('status')) $('status').className='status';
   popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
 }
+
+function listaVendasModelo(vendas){
+  return Object.entries(vendas||{}).filter(([_,v])=>safe(v)>0).map(([m,v])=>`${m}: ${safe(v)}`).join('<br>') || '-';
+}
+function somaModelosPorPromotor(rows){
+  const porProm={};
+  (rows||[]).forEach(r=>{
+    const n=r.nome||'Sem promotor';
+    if(!porProm[n]) porProm[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));
+    MODELOS.forEach(m=>porProm[n][m]+=safe(r.vendas?.[m]));
+  });
+  return porProm;
+}
+function ultimaVendaDoDiaPorPromotor(rows){
+  const ult={};
+  (rows||[]).forEach(r=>{
+    const n=r.nome||'Sem promotor';
+    if(!ult[n] || String(r.data||'')>String(ult[n].data||'')) ult[n]=r;
+  });
+  return ult;
+}
+
 async function carregarHistorico(){
-  if(!cfgOk()){$('tbodyHistorico').innerHTML='<tr><td colspan="9">Nuvem ainda não configurada.</td></tr>';return;}
+  if(!cfgOk()){$('tbodyHistorico').innerHTML='<div class="base-empty">Nuvem ainda não configurada.</div>';return;}
   try{
     const snap=await getDocs(collection(db,'relatorios')); let rows=[];
     snap.forEach(d=>rows.push({id:d.id,...d.data()}));
@@ -531,12 +567,15 @@ async function carregarHistorico(){
       $('hOntem').textContent=ontem;
       $('hQtd').textContent=totalRel;
       $('previsao').textContent=lista.length?`Dashboard geral: ${lista.length} promotores, ${totalEquipe} vendas no mês, ${pctEquipe}% da meta geral e ${totalRel} relatórios lançados.`:'Sem lançamentos da equipe ainda.';
+      const ultimasVendasDia=ultimaVendaDoDiaPorPromotor(rows);
       $('tbodyHistorico').innerHTML=lista.map(r=>{
         const meta=getMeta(r.nome), totalMes=r.totalMes||r.total, pct=meta?Math.round(totalMes/meta*100):0, cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
-        const mix=Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ');
-        const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>');
-        return `<tr><td><b>${r.nome}</b><br><small>${r.relatorios} relatórios</small></td><td>${[...r.lojas].filter(Boolean).join(', ')||'-'}<br><small>Filial: ${[...r.filiais].filter(Boolean).join(', ')||'-'}</small></td><td><b>${totalMes}</b></td><td>${meta||0}</td><td class="${cls}">${pct}%</td><td>${mix||'-'}</td><td class="stock-mini">${estoque}</td><td>${r.mostruario.length?r.mostruario.join(', '):'-'}</td><td>${r.obs.join(' | ')||'-'}</td></tr>`;
-      }).join('')||'<tr><td colspan="9">Sem relatórios ainda.</td></tr>';
+        const vendaDia=ultimasVendasDia[r.nome];
+        const vendasDia=listaVendasModelo(vendaDia?.vendas);
+        const somaModelo=listaVendasModelo(r.vendas);
+        const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
+        return `<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
+      }).join('')||'<div class="base-empty">Sem relatórios ainda.</div>';
       return;
     }
 
@@ -565,12 +604,14 @@ async function carregarHistorico(){
     calcularControleMensal(rows, window.__mesAtivo, totalMes, meta);
     $('hMes').textContent=totalMes;$('hMeta').textContent=pct+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
     $('previsao').textContent=meta?`Dashboard: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
+    const somaPromotorModelo=Object.fromEntries(MODELOS.map(m=>[m,0]));
+    linhasDia.forEach(l=>MODELOS.forEach(m=>somaPromotorModelo[m]+=safe(l.vendas?.[m])));
     $('tbodyHistorico').innerHTML=linhasDia.map(r=>{
       const totalDia=r.totalMes||r.total, pctDia=meta?Math.round(totalDia/meta*100):0, cls=pctDia>=100?'pct-ok':pctDia>=50?'pct-mid':'pct-low';
-      const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>');
-      return `<tr><td>${moneyDate(r.data)}</td><td>${[...r.lojas].join(', ')}<br><small>Filial: ${[...r.filiais].join(', ')||'-'}</small></td><td><b>${totalDia}</b></td><td>${meta||0}</td><td class="${cls}">${pctDia}%</td><td>${Object.entries(r.vendas||{}).filter(([_,v])=>v>0).map(([m,v])=>m+': '+v).join(', ')||'-'}</td><td class="stock-mini">${estoque}</td><td>${r.mostruario.length?r.mostruario.join(', '):'-'}</td><td>${r.obs.join(' | ')||'-'}</td></tr>`;
-    }).join('')||'<tr><td colspan="9">Sem relatórios ainda.</td></tr>';
-  }catch(e){console.error(e);$('tbodyHistorico').innerHTML='<tr><td colspan="9">Erro ao carregar dashboard. Confira o Firebase/Firestore.</td></tr>';}
+      const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
+      return `<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b><small>${[...r.lojas].join(', ')||'Sem loja'}${[...r.filiais].join(', ')?' • Filial '+[...r.filiais].join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pctDia}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalDia}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Total dia</small><b>${r.total}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${listaVendasModelo(somaPromotorModelo)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
+    }).join('')||'<div class="base-empty">Sem relatórios ainda.</div>';
+  }catch(e){console.error(e);$('tbodyHistorico').innerHTML='<div class="base-empty">Erro ao carregar dashboard. Confira o Firebase/Firestore.</div>';}
 }
 function iaDashboard(){
   const rows=window.__rowsDashboard||[];
@@ -653,15 +694,37 @@ function ativarCardsSupervisorDetalhes(rows, mesSup){
   const promAtivos=new Set(rows.map(r=>r.nome).filter(Boolean)).size;
   const media=rel?Math.ceil(total/rel):0;
   const maxMes={}; rows.forEach(r=>{maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
-  const faltas=Object.entries(maxMes).map(([nome,totalMes])=>{const st=metaStats(totalMes,getMeta(nome),mesSup);return `${nome}: ${totalMes}/${getMeta(nome)} (${st.pct}%) falta ${st.falta}`;}).slice(0,8).join(' • ');
+  const ranking=Object.entries(maxMes).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([nome,totalMes],i)=>`${i+1}º ${nome}: ${totalMes}/${getMeta(nome)||0}`).join(' • ');
+  const diariaCritica=Object.entries(maxMes).map(([nome,totalMes])=>({nome,totalMes,...metaStats(totalMes,getMeta(nome),mesSup)})).filter(x=>x.diaria>5 && x.pct<100).slice(0,5).map(x=>`${x.nome}: falta ${x.falta} (${x.diaria}/dia)`).join(' • ');
+  const modelos=Object.fromEntries(MODELOS.map(m=>[m,0])); rows.forEach(r=>MODELOS.forEach(m=>modelos[m]+=safe(r.vendas?.[m])));
+  const topModelos=Object.entries(modelos).filter(([_,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,v])=>`${m}: ${v}`).join(' • ');
+  const preview=$('superKpiPreview');
+  const abrirPrevia=(titulo,texto)=>{
+    if(preview){
+      preview.classList.remove('hidden');
+      preview.innerHTML=`<b>${titulo}</b><p>${texto}</p>`;
+    }
+  };
   const cards=[...document.querySelectorAll('#supervisor .kpis .kpi')];
   const textos=[
-    `Equipe mês: ${total} aparelhos no período selecionado. ${faltas||'Sem metas lançadas ainda.'}`,
-    `Relatórios: ${rel} envio(s) no mês. Média por relatório: ${media} aparelho(s).`,
-    `Promotores ativos: ${promAtivos}. Cadastrados no supervisor: ${equipeConfig.length}.`,
-    `Média diária: ${media}. Use este número para acompanhar ritmo da equipe e cobrança diária.`
+    ['Equipe mês', `Total vendido no mês: ${total} aparelho(s). Destaques: ${ranking||'sem dados por promotor ainda.'}`],
+    ['Relatórios', `${rel} relatório(s) no mês. Média por relatório: ${media} aparelho(s). Modelos mais vendidos: ${topModelos||'sem vendas por modelo ainda.'}`],
+    ['Promotores', `${promAtivos} promotor(es) com lançamento. Cadastrados no supervisor: ${equipeConfig.length}.`],
+    ['Média diária', `Média atual: ${media}. Diária crítica: ${diariaCritica||'nenhum promotor em crítica no momento.'}`]
   ];
-  cards.forEach((card,i)=>{card.title='Clique para ver detalhes'; card.onclick=()=>show($('iaSupervisorBox'),textos[i]||'Sem detalhe disponível.','ok');});
+  cards.forEach((card,i)=>{card.title='Clique para ver a prévia'; card.onclick=()=>abrirPrevia(textos[i][0],textos[i][1]);});
+  const alertas=Object.entries(maxMes).map(([nome,totalMes])=>({nome,totalMes,...metaStats(totalMes,getMeta(nome),mesSup)}));
+  const ajuda=alertas.filter(a=>a.pct<60);
+  const critica=alertas.filter(a=>a.diaria>5 && a.pct<100);
+  const bater=alertas.filter(a=>a.pct>=90 || a.diaria<=1);
+  const fmtLista=lista=>lista.length?lista.slice(0,8).map(x=>`${x.nome}: ${x.pct}% • falta ${x.falta} • ${x.diaria}/dia`).join('<br>'):'Nenhum promotor nesta condição.';
+  const alertCards=[...document.querySelectorAll('#supervisor .gestor-alertas .alert-card')];
+  const alertTextos=[
+    ['Precisam de ajuda', fmtLista(ajuda)],
+    ['Diária crítica', fmtLista(critica)],
+    ['Vão bater meta', fmtLista(bater)]
+  ];
+  alertCards.forEach((card,i)=>{card.title='Clique para ver a prévia'; card.onclick=()=>abrirPrevia(alertTextos[i][0],alertTextos[i][1]);});
 }
 
 async function carregarSupervisor(){
