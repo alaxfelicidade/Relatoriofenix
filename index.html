@@ -264,7 +264,7 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
   <nav class="tabs" id="tabs">
     <button class="tab active" data-tab="relatorio">📝<span>Relatório</span></button>
     <button class="tab" data-tab="supervisor">👑<span>Supervisor</span></button>
-    <button class="tab" data-tab="historico">📊<span>Fechamento Geral</span></button>
+    <button class="tab" data-tab="historico">📊<span>Dashboard Geral</span></button>
   </nav>
 
   <main class="app" id="appShell">
@@ -326,10 +326,10 @@ input,select,textarea{background:#FBFEFC;border-color:#D6E5DC;color:#14251F;font
     <section id="historico" class="screen dashboard-geral">
       <div class="kpis"><div class="kpi"><small>Total mês</small><b id="hMes">0</b></div><div class="kpi"><small>Atingimento</small><b id="hMeta">0%</b></div><div class="kpi"><small>Ontem</small><b id="hOntem">0</b></div><div class="kpi"><small>Relatórios</small><b id="hQtd">0</b></div></div>
       <div class="card"><div class="card-head"><span>🗓️</span><b>Controle mensal automático</b></div><div class="card-body"><div class="grid2"><div class="field"><label>Mês do dashboard</label><select id="mesDashboard"></select></div><div class="field"><label>Filtrar por rede</label><select id="redeDashboard"><option value="">Todas as redes</option><option>Magalu</option><option>Casas Bahia</option><option>Ponto</option><option>FastShop</option></select></div></div><div class="field"><label>Status</label><input id="statusMesAuto" readonly value="Mês atual filtrado automaticamente"></div><div class="kpis"><div class="kpi"><small>Dias do mês</small><b id="cmDias">0</b></div><div class="kpi"><small>Dias restantes</small><b id="cmRestantes">0</b></div><div class="kpi"><small>Ritmo necessário</small><b id="cmRitmo">0</b></div><div class="kpi"><small>Previsão fechamento</small><b id="cmPrevisto">0</b></div></div><p class="hint" id="cmResumo" style="margin-top:12px">Ao virar o mês, o painel começa zerado automaticamente sem apagar o histórico anterior.</p></div></div>
-      <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Fechamento Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
+      <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
-      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento geral</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
+      <div class="card"><div class="card-head"><span>📊</span><b>Dashboard geral</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
     </section>
 
     <section id="supervisor" class="screen">
@@ -389,6 +389,42 @@ function mesesDasLinhas(rows){ const set=new Set([mesKeyFromDate(today())]); (ro
 function getMesSelecionado(rows){ const meses=mesesDasLinhas(rows); const sel=$('mesDashboard'); const atual=mesKeyFromDate(today()); const valorAtual=sel?.value || atual; if(sel){ sel.innerHTML=meses.map(k=>`<option value="${k}">${mesNomeFromKey(k)}</option>`).join(''); sel.value=meses.includes(valorAtual)?valorAtual:atual; } return sel?.value || atual; }
 function filtrarMes(rows,key){ return (rows||[]).filter(r=>rowMesKey(r)===key); }
 function calcularControleMensal(rowsMes, mesKey, totalMes, metaGeral){ const info=infoMes(mesKey); const total=safe(totalMes); const meta=safe(metaGeral); const mediaDia=info.diaBase?total/info.diaBase:0; const previsto=Math.ceil(mediaDia*info.diasNoMes); const falta=Math.max(0,meta-total); const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0; if($('cmDias'))$('cmDias').textContent=info.diasNoMes; if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes; if($('cmRitmo'))$('cmRitmo').textContent=ritmo; if($('cmPrevisto'))$('cmPrevisto').textContent=previsto; if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome; if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`; }
+function normalizarRelatorioFirestore(d){
+  const data = d?.data ? d.data() : (d || {});
+  const r = { id: d?.id || data.id || '', ...data };
+  if(!r.nome && r.promotor) r.nome = r.promotor;
+  if(!r.rede && r.loja) r.rede = r.loja;
+  if(!r.loja && r.rede) r.loja = r.rede;
+  if(!r.vendas) r.vendas = {};
+  if(!r.total) r.total = totalModelos(r.vendas);
+  if(!r.totalMesInformado) r.totalMesInformado = r.total;
+  if(!r.mesKey && r.data){
+    const partes = String(r.data).split('-');
+    if(partes.length >= 2) r.mesKey = `${partes[0]}-${partes[1]}`;
+  }
+  if(!r.mesKey && r.ano && r.mes) r.mesKey = `${r.ano}-${String(r.mes).padStart(2,'0')}`;
+  if(!r.mesKey) r.mesKey = mesKeyFromDate(r.data || today());
+  return r;
+}
+async function carregarBaseGeral(){
+  if(!cfgOk()) return [];
+  const snap = await getDocs(collection(db,'relatorios'));
+  const rows = [];
+  snap.forEach(d=>rows.push(normalizarRelatorioFirestore(d)));
+  rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')) || String(b.id||'').localeCompare(String(a.id||'')));
+  window.__BASE_GERAL = rows;
+  window.__rowsDashboardRaw = rows;
+  return rows;
+}
+function getDadosFiltrados(){
+  const base = window.__BASE_GERAL || [];
+  const mesAtivo = getMesSelecionado(base);
+  let rows = filtrarMes(base, mesAtivo);
+  const redeFiltro = $('redeDashboard')?.value || '';
+  if(redeFiltro) rows = rows.filter(r=>(r.rede||r.loja||'')===redeFiltro);
+  window.__mesAtivo = mesAtivo;
+  return rows;
+}
 function moneyDate(d){return (d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
 function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
@@ -437,7 +473,7 @@ function initUi(){
   if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
   if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick=adicionarModeloVenda;
   $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();}; $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
-  if($('btnIA')) $('btnIA').onclick=iaDashboard;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor; if($('mesDashboard')) $('mesDashboard').onchange=carregarHistorico; if($('redeDashboard')) $('redeDashboard').onchange=carregarHistorico;
+  if($('btnIA')) $('btnIA').onclick=iaDashboard;$('btnSalvar').onclick=salvarRelatorio;$('btnExport').onclick=exportCsv;$('btnModeloMes').onclick=mostrarModeloMes;$('btnIASupervisor').onclick=iaSupervisor; if($('mesDashboard')) $('mesDashboard').onchange=()=>{carregarHistorico(); if(isSupervisor) carregarSupervisor();}; if($('redeDashboard')) $('redeDashboard').onchange=()=>{carregarHistorico(); if(isSupervisor) carregarSupervisor();};
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
 function preencherFilialPromotor(){
@@ -488,10 +524,12 @@ async function salvarRelatorio(){
   salvarMostruarioPromotor();
   const estoque = Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
   const mostruarioPayload = { modelos: {...mostruario}, modeloExtra: $('mostruarioExtra').value.trim() };
-  const dataRel=$('data').value; const infMes=infoMes(mesKeyFromDate(dataRel)); const perfilAtual=getPerfilSupervisor($('promotor').value); const redeFinal=perfilAtual.rede||$('loja').value; const filialFinal=perfilAtual.filial||$('filial').value.trim(); const totalVendasDia=totalObj(vendas); const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalVendasDia,totalMesInformado:totalVendasDia,estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,updatedAt:serverTimestamp()};
-  await setDoc(doc(db,'relatorios',relatorioDocId($('promotor').value,dataRel)),payload);
+  const dataRel=$('data').value; const infMes=infoMes(mesKeyFromDate(dataRel)); const perfilAtual=getPerfilSupervisor($('promotor').value); const redeFinal=perfilAtual.rede||$('loja').value; const filialFinal=perfilAtual.filial||$('filial').value.trim(); const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,createdAt:serverTimestamp()};
+  await addDoc(collection(db,'relatorios'),payload);
   if($('status')) $('status').className='status';
   popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
+  await carregarBaseGeral();
+  if(isSupervisor){ await carregarHistorico(); await carregarSupervisor(); }
 }
 
 function listaVendasModelo(vendas){
@@ -540,17 +578,11 @@ function relatoriosUnicosPorPromotorData(rows){
 async function carregarHistorico(){
   if(!cfgOk()){$('tbodyHistorico').innerHTML='<div class="base-empty">Nuvem ainda não configurada.</div>';return;}
   try{
-    const snap=await getDocs(collection(db,'relatorios')); let rows=[];
-    snap.forEach(d=>rows.push({id:d.id,...d.data()}));
-    rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-    window.__rowsDashboardRaw=rows;
-    const mesAtivo=getMesSelecionado(rows);
-    rows=filtrarMes(rows,mesAtivo);
-    const redeFiltro=$('redeDashboard')?.value||'';
-    if(redeFiltro) rows=rows.filter(r=>(r.rede||r.loja||'')===redeFiltro);
+    await carregarBaseGeral();
+    const rows=getDadosFiltrados();
     const rowsCalc=relatoriosUnicosPorPromotorData(rows);
+    const mesAtivo=window.__mesAtivo || mesKeyFromDate(today());
     window.__rowsDashboard=rowsCalc;
-    window.__mesAtivo=mesAtivo;
 
     const somaModelos=Object.fromEntries(MODELOS.map(m=>[m,0]));
     rowsCalc.forEach(r=>MODELOS.forEach(m=>somaModelos[m]+=safe(r.vendas?.[m])));
@@ -729,7 +761,7 @@ function ativarCardsSupervisorDetalhes(rows, mesSup){
   const rel=rows.length;
   const promAtivos=new Set(rows.map(r=>r.nome).filter(Boolean)).size;
   const media=rel?Math.ceil(total/rel):0;
-  const maxMes={}; rows.forEach(r=>{maxMes[r.nome]=(maxMes[r.nome]||0)+totalModelos(r.vendas);});
+  const maxMes={}; rows.forEach(r=>{maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
   const ranking=Object.entries(maxMes).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([nome,totalMes],i)=>`${i+1}º ${nome}: ${totalMes}/${getMeta(nome)||0}`).join(' • ');
   const diariaCritica=Object.entries(maxMes).map(([nome,totalMes])=>({nome,totalMes,...metaStats(totalMes,getMeta(nome),mesSup)})).filter(x=>x.diaria>5 && x.pct<100).slice(0,5).map(x=>`${x.nome}: falta ${x.falta} (${x.diaria}/dia)`).join(' • ');
   const modelos=Object.fromEntries(MODELOS.map(m=>[m,0])); rows.forEach(r=>MODELOS.forEach(m=>modelos[m]+=safe(r.vendas?.[m])));
@@ -765,16 +797,19 @@ function ativarCardsSupervisorDetalhes(rows, mesSup){
 
 async function carregarSupervisor(){
   $('supLocked').classList.toggle('hidden',isSupervisor);$('supPanel').classList.toggle('hidden',!isSupervisor); if(!isSupervisor)return; renderConfigPromotores(); if(!cfgOk()){$('ranking').innerHTML='<p class="hint">Nuvem ainda não configurada.</p>';return;}
-  const q=query(collection(db,'relatorios'),orderBy('data','desc')); const snap=await getDocs(q); let rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()})); const mesSup=window.__mesAtivo||mesKeyFromDate(today()); rows=relatoriosUnicosPorPromotorData(filtrarMes(rows,mesSup)); window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
-  const total=rows.reduce((s,r)=>s+totalModelos(r.vendas),0), prom=new Set(rows.map(r=>r.nome));
+  if(!window.__BASE_GERAL) await carregarBaseGeral();
+  const rows=relatoriosUnicosPorPromotorData(getDadosFiltrados());
+  const mesSup=window.__mesAtivo||mesKeyFromDate(today());
+  window.__rowsSupervisorModelo=rows; $('modeloMesBox').classList.remove('hidden');
+  const total=rows.reduce((s,r)=>s+safe(r.total),0), prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0; ativarCardsSupervisorDetalhes(rows,mesSup);
-  const rank={}; const maxMes={}; rows.forEach(r=>{const qtd=totalModelos(r.vendas); rank[r.nome]=(rank[r.nome]||0)+qtd; maxMes[r.nome]=(maxMes[r.nome]||0)+qtd;});
+  const rank={}; const maxMes={}; rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total); maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
   const alertas=Object.keys(maxMes).map(n=>({nome:n,...metaStats(maxMes[n],getMeta(n),mesSup)}));
   if($('gaAjuda')) $('gaAjuda').textContent=alertas.filter(a=>a.pct<60).length;
   if($('gaCritica')) $('gaCritica').textContent=alertas.filter(a=>a.diaria>5 && a.pct<100).length;
   if($('gaBater')) $('gaBater').textContent=alertas.filter(a=>a.pct>=90 || a.diaria<=1).length;
   $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return `<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
-  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome); const loja=r.loja||perfil.rede||''; const filial=r.filial||perfil.filial||''; const meta=safe(r.metaMes)||safe(perfil.meta); const totalDia=totalModelos(r.vendas); const totalMes=rank[r.nome]||totalDia; const st=metaStats(totalMes,meta,mesSup); const mst=statusMostruario(r.mostruario); const most=mostruarioTexto(r.mostruario)||'Não informado'; const obs=(r.obs||'').replace(/"/g,'&quot;'); return `<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit" type="number" id="base_total_${i}" value="${totalDia}"></div><div class="base-num"><small>Total mês</small><input class="base-edit" type="number" id="base_total_mes_${i}" value="${totalMes}"></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions"><button class="base-save" data-save-base="${i}">Salvar</button><button class="base-delete" data-delete-base="${i}" title="Excluir linha">×</button></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit" type="number" id="base_total_mobile_${i}" value="${totalDia}" oninput="document.getElementById('base_total_${i}').value=this.value"></div><div><label>Total mês</label><input class="base-edit" type="number" id="base_total_mes_mobile_${i}" value="${totalMes}" oninput="document.getElementById('base_total_mes_${i}').value=this.value"></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit" id="base_obs_${i}" value="${obs}" placeholder="Sem observação"></div></div></div></div>`}).join('') || '<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
+  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome); const loja=r.loja||perfil.rede||''; const filial=r.filial||perfil.filial||''; const meta=safe(r.metaMes)||safe(perfil.meta); const totalDia=safe(r.total); const totalMes=safe(r.totalMesInformado); const st=metaStats(totalMes,meta,mesSup); const mst=statusMostruario(r.mostruario); const most=mostruarioTexto(r.mostruario)||'Não informado'; const obs=(r.obs||'').replace(/"/g,'&quot;'); return `<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit" type="number" id="base_total_${i}" value="${totalDia}"></div><div class="base-num"><small>Total mês</small><input class="base-edit" type="number" id="base_total_mes_${i}" value="${totalMes}"></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions"><button class="base-save" data-save-base="${i}">Salvar</button><button class="base-delete" data-delete-base="${i}" title="Excluir linha">×</button></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit" type="number" id="base_total_mobile_${i}" value="${totalDia}" oninput="document.getElementById('base_total_${i}').value=this.value"></div><div><label>Total mês</label><input class="base-edit" type="number" id="base_total_mes_mobile_${i}" value="${totalMes}" oninput="document.getElementById('base_total_mes_${i}').value=this.value"></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit" id="base_obs_${i}" value="${obs}" placeholder="Sem observação"></div></div></div></div>`}).join('') || '<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
   window.__rowsSupervisorBase=rows;
   document.querySelectorAll('[data-save-base]').forEach(btn=>btn.onclick=()=>salvarBaseSupervisor(Number(btn.dataset.saveBase)));
   document.querySelectorAll('[data-delete-base]').forEach(btn=>btn.onclick=()=>excluirBaseSupervisor(Number(btn.dataset.deleteBase)));
@@ -797,6 +832,8 @@ async function salvarBaseSupervisor(i){
   const novoTotalMes=safe($('base_total_mes_'+i).value);
   await updateDoc(doc(db,'relatorios',r.id),{total:novoTotal,totalMesInformado:novoTotalMes,vendas,obs:$('base_obs_'+i).value.trim()});
   popupSucesso('Base atualizada','As alterações foram salvas.');
+  await carregarBaseGeral();
+  await carregarHistorico();
   await carregarSupervisor();
 }
 function exportCsv(){
@@ -815,7 +852,6 @@ initUi();
 initLoginRapido();
 
 function slugNome(n){return String(n||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}
-function relatorioDocId(nome,data){return `${slugNome(nome)||'sem_promotor'}_${String(data||today()).replace(/[^0-9-]/g,'')}`}
 function perfilSalvo(){try{return JSON.parse(localStorage.getItem('fenixPerfil')||'null')}catch(e){return null}}
 function salvarPerfil(p){localStorage.setItem('fenixPerfil',JSON.stringify(p))}
 function limparPerfil(){localStorage.removeItem('fenixPerfil')}
