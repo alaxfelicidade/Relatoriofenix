@@ -5,6 +5,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -198,6 +200,7 @@ body.promotor-on [data-tab="supervisor"]{display:none!important;}
           <p class="hint" style="margin-bottom:12px">Use + e - para lançar rápido no celular.</p>
           <div class="model-list" id="modelList"></div>
           <div class="total"><span>Total vendido hoje</span><b id="totalDia">0</b></div>
+          <div class="field" style="margin-top:12px"><label for="acumuladoMes">Acumulado do mês <span style="color:var(--red)">*</span></label><input type="number" id="acumuladoMes" min="0" step="1" placeholder="Quantos aparelhos já vendeu no mês" required><p class="hint" id="acumuladoMesHelp" style="margin-top:6px">Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.</p></div>
           <div class="meta"><div style="display:flex;justify-content:space-between;gap:10px"><span class="hint">Meta do mês</span><b id="metaLabel">0%</b></div><div class="bar"><div class="fill" id="metaFill"></div></div><p class="hint" id="metaHelp" style="margin-top:8px">O percentual acima considera somente as vendas lançadas neste dia.</p></div>
         </div>
       </div>
@@ -437,6 +440,7 @@ function initUi(){
   if($('btnSalvarMostruarioExtra'))$('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
   if($('btnAddModeloVenda'))$('btnAddModeloVenda').onclick=adicionarModeloVenda;
   $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};
+  if($('acumuladoMes'))$('acumuladoMes').oninput=()=>{$('acumuladoMes').dataset.touched='1';renderVendas();};
   $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
   if($('btnIA'))$('btnIA').onclick=iaDashboard;
   $('btnSalvar').onclick=salvarRelatorio;
@@ -461,9 +465,17 @@ function preencherFilialPromotor(){
 }
 function renderVendas(){
   MODELOS.forEach(m=>{$('q_'+idModelo(m)).textContent=vendas[m]||0});
-  const total=totalObj(vendas),meta=getMeta($('promotor').value),totalMes=total,pct=meta?Math.round(totalMes/meta*100):0;
+  const total=totalObj(vendas),meta=getMeta($('promotor').value);
+  const acEl=$('acumuladoMes');
+  if(acEl){
+    if(!acEl.dataset.touched||safe(acEl.value)<total){acEl.value=total;}
+  }
+  const totalMes=acEl?safe(acEl.value):total;
+  const pct=meta?Math.round(totalMes/meta*100):0;
   $('totalDia').textContent=total;$('metaLabel').textContent=pct+'%';$('metaFill').style.width=Math.min(pct,100)+'%';
-  $('metaHelp').textContent=meta?`${totalMes}/${meta} unidades lançadas neste dia.`:'Selecione o promotor para calcular a meta.';
+  $('metaHelp').textContent=meta?`${totalMes}/${meta} unidades acumuladas no mês • Atingimento ${pct}%.`:'Selecione o promotor para calcular a meta.';
+  const acHelp=$('acumuladoMesHelp');
+  if(acHelp){acHelp.textContent=meta?`Você digitou ${totalMes} de ${meta} → Atingimento ${pct}%.`:'Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.';}
   if(total>0)$('s3').classList.add('on');
 }
 function openTab(id){
@@ -476,6 +488,8 @@ function openTab(id){
 async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
+  const acumuladoMesVal=safe($('acumuladoMes')?.value);
+  if(!acumuladoMesVal||acumuladoMesVal<=0){show($('status'),'Informe o Acumulado do mês (obrigatório).','err');$('acumuladoMes')?.focus();return}
   const mostSelecionado=Object.values(mostruario||{}).some(Boolean)||(($('mostruarioExtra')?.value||'').trim().length>0);
   if(!mostSelecionado){show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo ou escreva o modelo do mostruário.','err');$('mostruarioExtra')?.focus();return}
   if(!db){show($('status'),'⚠️ Firestore não conectado. Ative o Firestore no Firebase Console primeiro.','err');document.getElementById('firebaseBanner').classList.add('show');return}
@@ -483,7 +497,7 @@ async function salvarRelatorio(){
   const estoque=Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
   const mostruarioPayload={modelos:{...mostruario},modeloExtra:$('mostruarioExtra').value.trim()};
   const dataRel=$('data').value;const infMes=infoMes(mesKeyFromDate(dataRel));const perfilAtual=getPerfilSupervisor($('promotor').value);const redeFinal=perfilAtual.rede||$('loja').value;const filialFinal=perfilAtual.filial||$('filial').value.trim();
-  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,bloqueadoEdicao:true,statusDocumento:'BLOQUEADO_APOS_SALVAR',createdAt:serverTimestamp()};
+  const payload={uid:user.uid,email:user.email,nome:$('promotor').value,filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),vendas,total:totalObj(vendas),totalMesInformado:safe($('acumuladoMes')?.value)||totalObj(vendas),estoque,mostruario:mostruarioPayload,interessados:safe($('interessados').value),perdidas:safe($('perdidas').value),concorrencia:$('concorrencia').value,obs:$('obs').value,bloqueadoEdicao:true,statusDocumento:'BLOQUEADO_APOS_SALVAR',createdAt:serverTimestamp()};
   try{
     show($('status'),'Salvando...','ok');
     await addDoc(collection(db,'relatorios'),payload);
