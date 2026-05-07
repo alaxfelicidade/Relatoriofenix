@@ -1,12 +1,4 @@
 
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -176,6 +168,7 @@ body.promotor-on [data-tab="supervisor"]{display:none!important;}
     <button class="tab active" data-tab="relatorio">📝<span>Relatório</span></button>
     <button class="tab" data-tab="supervisor">👑<span>Supervisor</span></button>
     <button class="tab" data-tab="historico">📊<span>Dashboard Geral</span></button>
+    <button class="tab" data-tab="historicoDias">📅<span>Histórico</span></button>
   </nav>
 
   <main class="app" id="appShell">
@@ -238,7 +231,11 @@ body.promotor-on [data-tab="supervisor"]{display:none!important;}
       <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
-      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
+       <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
+     </section>
+
+    <section id="historicoDias" class="screen dashboard-geral">
+      <div class="card"><div class="card-head"><span>📅</span><b>Histórico por dia</b></div><div class="card-body"><p class="hint" style="margin-bottom:10px">Clique em um dia para ver os relatórios enviados.</p><div id="tbodyHistoricoDias"></div></div></div>
     </section>
 
     <section id="supervisor" class="screen">
@@ -621,14 +618,38 @@ async function carregarHistorico(){
       $('hMes').textContent=totalEquipe;$('hMeta').textContent=pctEquipe+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=totalRel;
       $('previsao').textContent=lista.length?`Fechamento geral: ${lista.length} promotores, ${totalEquipe} vendas no mês, ${pctEquipe}% da meta geral e ${totalRel} relatórios lançados.`:'Sem lançamentos da equipe ainda.';
       const ultimasVendasDia=ultimaVendaDoDiaPorPromotor(rowsCalc);
-      $('tbodyHistorico').innerHTML=lista.map(r=>{
+      function _cardPromotor(r){
         const meta=getMeta(r.nome),totalMes=safe(r.totalMes),pct=meta?Math.round(totalMes/meta*100):0,cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
         const vendaDia=ultimasVendasDia[r.nome];
         const vendasDia=listaVendasModelo(vendaDia?.vendas);
         const somaModelo=listaVendasModeloFechamento(r.vendas);
         const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
         return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
-      }).join('')||'<div class="base-empty">Sem relatórios ainda.</div>';
+      }
+      const _datasEnvio=[...new Set((rowsCalc||[]).map(r=>r.data).filter(Boolean))].sort();
+      const _ultimaData=_datasEnvio[_datasEnvio.length-1]||'';
+      const _nomesUltimaData=new Set((rowsCalc||[]).filter(r=>r.data===_ultimaData).map(r=>r.nome));
+      const _ultimos=lista.filter(r=>_nomesUltimaData.has(r.nome));
+      const _porData={};
+      (rowsCalc||[]).forEach(rr=>{if(!rr.data||rr.data===_ultimaData)return;(_porData[rr.data]=_porData[rr.data]||[]).push(rr);});
+      const _diasOrdenados=Object.keys(_porData).sort().reverse();
+      let _htmlAccordion='';
+      if(_diasOrdenados.length){
+        _htmlAccordion='<div style="margin-top:18px">'+_diasOrdenados.map(dia=>{
+          const cards=_porData[dia].map(rr=>{
+            const meta=getMeta(rr.nome),totalDia=safe(rr.total),totalMesR=safe(rr.totalMesInformado)||totalDia,pct=meta?Math.round(totalMesR/meta*100):0,cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
+            const vendasDia=listaVendasModelo(rr.vendas);
+            const most=Object.entries(rr.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);if(rr.mostruario?.modeloExtra)most.push(rr.mostruario.modeloExtra);
+            return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${rr.nome||'-'}</b><small>${rr.loja||rr.rede||'Sem loja'}${rr.filial?' • Filial '+rr.filial:''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${totalMesR}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${most.length?most.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${rr.obs||'-'}</div></div></div></div>`;
+          }).join('');
+          return`<details style="margin-bottom:10px;border:1px solid #D8E7DE;border-radius:14px;background:#FBFEFC;padding:10px 14px"><summary style="cursor:pointer;font-weight:800;color:#08746A;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif">📅 ${moneyDate(dia)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_porData[dia].length} relatório(s)</span></summary><div class="dashboard-card-list" style="margin-top:12px">${cards}</div></details>`;
+        }).join('')+'</div>';
+      }
+      const _htmlUltimos=_ultimos.length?_ultimos.map(_cardPromotor).join(''):'<div class="base-empty">Sem relatórios no último dia.</div>';
+      const _hdr=_ultimaData?`<div style="margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif">Último envio: ${moneyDate(_ultimaData)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_ultimos.length} promotor(es)</span></div>`:'';
+      $('tbodyHistorico').innerHTML=_hdr+'<div class="dashboard-card-list">'+_htmlUltimos+'</div>';
+      const _elHistDias=$('tbodyHistoricoDias');
+      if(_elHistDias)_elHistDias.innerHTML=_htmlAccordion||'<div class="base-empty">Sem histórico de dias anteriores.</div>';
       return;
     }
 
@@ -741,7 +762,9 @@ async function carregarSupervisor(){
   if($('gaCritica'))$('gaCritica').textContent=alertas.filter(a=>a.diaria>5&&a.pct<100).length;
   if($('gaBater'))$('gaBater').textContent=alertas.filter(a=>a.pct>=90||a.diaria<=1).length;
   $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
-  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(r.totalMesInformado);const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" id="base_total_mobile_${i}" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" id="base_total_mes_mobile_${i}" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" id="base_obs_${i}" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
+  const baseTotalMesPorPromotor={};const baseModelosMesPorPromotor={};
+  rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;baseTotalMesPorPromotor[n]+=safe(rr.total);if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
+  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(baseTotalMesPorPromotor[r.nome]||r.totalMesInformado);const _somaModTxt=MODELOS.map(m=>safe(r.vendas?.[m])>0?`<div class="base-model-pill"><span>${m}</span>${safe(r.vendas?.[m])}</div>`:'').filter(Boolean).join('')||'<span class="hint">Sem vendas registradas</span>';const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" id="base_total_mobile_${i}" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" id="base_total_mes_mobile_${i}" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" id="base_obs_${i}" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
   window.__rowsSupervisorBase=rows;
   // Edição e exclusão bloqueadas após salvar: botões removidos da Base completa.
   mostrarModeloMes(true);
