@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -109,7 +110,20 @@ body.promotor-on [data-tab="supervisor"]{display:none!important;}
 .base-actions.locked{justify-content:flex-end}
 
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
-.dashboard-card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;overflow:visible}
+.dashboard-card-list{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:18px;
+align-items:start;
+justify-content:center;
+width:100%;
+max-width:1120px;
+margin:0 auto;
+padding:6px;
+overflow:visible
+}
+.dashboard-geral .card-body{overflow:hidden}
+.dashboard-info-card{width:100%;max-width:100%}
 .dashboard-info-card{background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
 .dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}
 .dashboard-info-top b{display:block;color:#10231D;font-size:15px}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900}
@@ -316,6 +330,19 @@ async function initFirebase() {
     await getDocs(collection(db, 'config'));
     console.log("✅ Firestore conectado com sucesso!");
     document.getElementById('firebaseBanner').classList.remove('show');
+
+    await sincronizarEquipeGlobal();
+    await sincronizarModelosGlobais();
+
+    window.addEventListener('focus', async()=>{
+      await sincronizarEquipeGlobal();
+      await sincronizarModelosGlobais();
+
+      if(typeof atualizarSelectPromotores==='function') atualizarSelectPromotores();
+      if(typeof montarModelos==='function') montarModelos();
+      if(typeof montarEstoque==='function') montarEstoque();
+      if(typeof montarMostruario==='function') montarMostruario();
+    });
     return true;
   } catch(e) {
     console.error("❌ Firestore não acessível:", e.message);
@@ -328,6 +355,51 @@ async function initFirebase() {
     return false;
   }
 }
+
+
+async function sincronizarModelosGlobais(){
+  try{
+    const snap = await getDoc(doc(db,'config','modelos_venda'));
+    if(snap.exists()){
+      const dados = snap.data();
+      if(Array.isArray(dados.lista)){
+        MODELOS = [...new Set([...MODELOS_PADRAO, ...dados.lista])];
+        localStorage.setItem('fenix_modelos_venda', JSON.stringify(MODELOS));
+      }
+    }
+  }catch(e){
+    console.error('Falha modelos globais',e);
+  }
+}
+
+async function sincronizarEquipeGlobal(){
+  try{
+    const snap = await getDoc(doc(db,'config','equipe'));
+    if(snap.exists()){
+      const dados = snap.data();
+
+      const equipe = dados.equipe || dados.promotores;
+
+      if(Array.isArray(equipe)){
+        equipeConfig = equipe;
+
+        PROMOTORES = equipeConfig.map(p=>p.nome);
+
+        METAS = Object.fromEntries(
+          equipeConfig.map(p=>[p.nome, Number(p.meta)||0])
+        );
+
+        localStorage.setItem(
+          'fenix_equipe_config',
+          JSON.stringify(equipeConfig)
+        );
+      }
+    }
+  }catch(e){
+    console.error('Erro sincronizar equipe',e);
+  }
+}
+
 
 function cfgOk(){return firebaseConfig.projectId==="fenix-relatorio" && firebaseConfig.apiKey.startsWith("AIza") && !!db}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -718,7 +790,42 @@ function renderConfigPromotores(){
   document.querySelectorAll('[data-save]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.save);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,rede:$('cfg_rede_'+i).value,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();alert('✅ Dados salvos nesta linha.');});
   document.querySelectorAll('[data-remove]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.remove);const nome=equipeConfig[i]?.nome||'este promotor';if(confirm('Remover '+nome+' da lista?')){equipeConfig.splice(i,1);salvarEquipeConfig();renderConfigPromotores();renderVendas();}});
   const addBtn=$('btnAddPromotor');
-  if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim();if(!nome){alert('Digite o nome do promotor.');return}equipeConfig.push({nome,rede:$('novoPromotorRede').value,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)});salvarEquipeConfig();renderConfigPromotores();renderVendas();popupSucesso('Promotor adicionado','A lista foi atualizada.');};}
+  if(addBtn){addBtn.onclick=async()=>{
+    const nome=$('novoPromotorNome').value.trim();
+
+    if(!nome){
+      alert('Digite o nome do promotor.');
+      return;
+    }
+
+    const novo={
+      nome,
+      rede:$('novoPromotorRede').value,
+      filial:$('novoPromotorFilial').value.trim(),
+      meta:Math.max(1,safe($('novoPromotorMeta').value)||1),
+      bloqueado:true,
+      fixo:true
+    };
+
+    equipeConfig.push(novo);
+
+    salvarEquipeConfig();
+
+    try{
+      await setDoc(doc(db,'config','equipe'),{
+        equipe:equipeConfig,
+        updatedAt:serverTimestamp(),
+        fixoGlobal:true
+      },{merge:true});
+    }catch(e){
+      console.error(e);
+    }
+
+    renderConfigPromotores();
+    renderVendas();
+
+    popupSucesso('Promotor adicionado','A lista foi atualizada.');
+  };}
 }
 function mostrarModeloMes(force=false){
   if(!force)$('modeloMesBox').classList.toggle('hidden');
