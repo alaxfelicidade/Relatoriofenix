@@ -54,7 +54,8 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 .base-locked-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 10px;background:#ECFDF5;border:1px solid #86EFAC;color:#166534;font-size:11px;font-weight:900;white-space:nowrap}
 .base-locked-input{background:#F3F4F6!important;color:#374151!important;border-color:#D1D5DB!important;cursor:not-allowed}
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
-.dashboard-card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,420px));gap:14px;width:100%;align-items:start;justify-content:center}
+.dashboard-card-list{display:grid;grid-template-columns:repeat(2,minmax(320px,1fr));gap:14px;width:100%;align-items:start}
+@media(max-width:780px){.dashboard-card-list{grid-template-columns:1fr}}
 .dashboard-geral .card-body{overflow:hidden}
 .dashboard-info-card{width:100%;max-width:100%;background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
 .dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top b{display:block;color:#10231D;font-size:15px}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900}
@@ -67,8 +68,7 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 /* Supervisor cards */
 #supervisor .card:nth-child(3n+1) .card-head{background:linear-gradient(90deg,#EAF8F0,#FFF7E6)}#supervisor .card:nth-child(3n+2) .card-head{background:linear-gradient(90deg,#EFF6FF,#F8FBF9)}#supervisor .card:nth-child(3n+3) .card-head{background:linear-gradient(90deg,#FFF1F2,#F8FBF9)}#supervisor .table th{background:#E9F7F1;color:#075F55;white-space:nowrap}#supervisor .table td{background:#FFFFFF;vertical-align:middle}
 /* Ocultar abas bloqueadas */
-body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]{display:none!important}
-body.supervisor-on [data-tab="relatorio"]{display:none!important}
+body.promotor-on [data-tab="supervisor"]{display:none!important}
 /* Firebase banner */
 #firebaseBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#FEF2F2;border-bottom:2px solid #FCA5A5;padding:12px 18px;font-size:13px;font-weight:700;color:#991B1B;text-align:center;line-height:1.5}#firebaseBanner.show{display:block}#firebaseBanner a{color:#1D4ED8;text-decoration:underline}
 </style>
@@ -483,15 +483,31 @@ function renderVendas(){
   MODELOS.forEach(m=>{const el=$('q_'+idModelo(m));if(el)el.textContent=vendas[m]||0;});
   const total=totalObj(vendas),meta=getMeta($('promotor').value);
   const acEl=$('acumuladoMes');
-  if(acEl){
-    if(!acEl.dataset.touched||safe(acEl.value)<total){acEl.value=total;}
+
+  if(acEl && !acEl.dataset.iniciado){
+    acEl.value=total;
+    acEl.dataset.iniciado='1';
   }
+
   const totalMes=acEl?safe(acEl.value):total;
   const pct=meta?Math.round(totalMes/meta*100):0;
-  $('totalDia').textContent=total;$('metaLabel').textContent=pct+'%';$('metaFill').style.width=Math.min(pct,100)+'%';
-  $('metaHelp').textContent=meta?`${totalMes}/${meta} unidades acumuladas no mês • Atingimento ${pct}%.`:'Selecione o promotor para calcular a meta.';
+
+  $('totalDia').textContent=total;
+  $('metaLabel').textContent=pct+'%';
+  $('metaFill').style.width=Math.min(pct,100)+'%';
+
+  $('metaHelp').textContent=meta
+    ? `${totalMes}/${meta} unidades acumuladas no mês • Atingimento ${pct}%.`
+    : 'Selecione o promotor para calcular a meta.';
+
   const acHelp=$('acumuladoMesHelp');
-  if(acHelp){acHelp.textContent=meta?`Você digitou ${totalMes} de ${meta} → Atingimento ${pct}%.`:'Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.';}
+
+  if(acHelp){
+    acHelp.textContent=meta
+      ? `Você digitou ${totalMes} de ${meta} → Atingimento ${pct}%.`
+      : 'Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.';
+  }
+
   if(total>0)$('s3').classList.add('on');
 }
 
@@ -513,6 +529,21 @@ async function salvarRelatorio(){
   if(_salvandoRelatorio){show($('status'),'Aguarde, já está salvando...','ok');return;}
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
+  const totalVendasDia = totalObj(vendas);
+
+  if(totalVendasDia <= 0){
+    show($('status'),'Preencha obrigatoriamente as vendas do dia.','err');
+    document.getElementById('cardVendas')?.scrollIntoView({behavior:'smooth'});
+    return;
+  }
+
+  const possuiModeloPreenchido = MODELOS.some(m => safe(vendas[m]) > 0);
+
+  if(!possuiModeloPreenchido){
+    show($('status'),'A soma por modelo é obrigatória antes de salvar.','err');
+    document.getElementById('cardVendas')?.scrollIntoView({behavior:'smooth'});
+    return;
+  }
   const acumuladoMesVal=safe($('acumuladoMes')?.value);
   if(!acumuladoMesVal||acumuladoMesVal<=0){show($('status'),'Informe o Acumulado do mês (obrigatório).','err');$('acumuladoMes')?.focus();return}
   const mostSelecionado=Object.values(mostruario||{}).some(Boolean)||(($('mostruarioExtra')?.value||'').trim().length>0);
@@ -819,13 +850,7 @@ function renderConfigPromotores(){
   document.querySelectorAll('[data-save]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.save);equipeConfig[i]={nome:$('cfg_nome_'+i).value.trim()||equipeConfig[i].nome,rede:$('cfg_rede_'+i).value,filial:$('cfg_filial_'+i).value.trim(),meta:safe($('cfg_meta_'+i).value)};salvarEquipeConfig();renderConfigPromotores();renderVendas();alert('✅ Dados salvos nesta linha.');});
   document.querySelectorAll('[data-remove]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.remove);const nome=equipeConfig[i]?.nome||'este promotor';if(confirm('Remover '+nome+' da lista?')){equipeConfig.splice(i,1);salvarEquipeConfig();renderConfigPromotores();renderVendas();}});
   const addBtn=$('btnAddPromotor');
-  if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim();if(!nome){alert('Digite o nome do promotor.');return}if(equipeConfig.some(p=>p.nome.toLowerCase()===nome.toLowerCase())){alert('Promotor já existe na lista.');return}equipeConfig.push({nome,rede:$('novoPromotorRede').value,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)});
-        salvarEquipeConfig();
-        atualizarSelectPromotores();
-        preencherLogin();
-        renderConfigPromotores();
-        renderVendas();
-        popupSucesso('Promotor adicionado','Novo promotor liberado para login e relatório.');};}
+  if(addBtn){addBtn.onclick=()=>{const nome=$('novoPromotorNome').value.trim();if(!nome){alert('Digite o nome do promotor.');return}if(equipeConfig.some(p=>p.nome.toLowerCase()===nome.toLowerCase())){alert('Promotor já existe na lista.');return}equipeConfig.push({nome,rede:$('novoPromotorRede').value,filial:$('novoPromotorFilial').value.trim(),meta:safe($('novoPromotorMeta').value)});salvarEquipeConfig();renderConfigPromotores();renderVendas();popupSucesso('Promotor adicionado','A lista foi atualizada.');};}
 }
 
 function mostrarModeloMes(force=false){
@@ -957,7 +982,7 @@ async function aplicarPerfil(){
     renderVendas();
     openTab('relatorio');
   } else {
-    openTab('supervisor');
+    openTab('relatorio');
   }
 }
 
