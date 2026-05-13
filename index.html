@@ -69,7 +69,7 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 /* Supervisor cards */
 #supervisor .card:nth-child(3n+1) .card-head{background:linear-gradient(90deg,#EAF8F0,#FFF7E6)}#supervisor .card:nth-child(3n+2) .card-head{background:linear-gradient(90deg,#EFF6FF,#F8FBF9)}#supervisor .card:nth-child(3n+3) .card-head{background:linear-gradient(90deg,#FFF1F2,#F8FBF9)}#supervisor .table th{background:#E9F7F1;color:#075F55;white-space:nowrap}#supervisor .table td{background:#FFFFFF;vertical-align:middle}
 /* Ocultar abas bloqueadas */
-body.promotor-on [data-tab="supervisor"]{display:none!important}
+body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"],body.promotor-on [data-tab="historicoDias"]{display:none!important}
 /* Firebase banner */
 #firebaseBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#FEF2F2;border-bottom:2px solid #FCA5A5;padding:12px 18px;font-size:13px;font-weight:700;color:#991B1B;text-align:center;line-height:1.5}#firebaseBanner.show{display:block}#firebaseBanner a{color:#1D4ED8;text-decoration:underline}
 </style>
@@ -513,8 +513,7 @@ function renderVendas(){
 }
 
 function openTab(id){
-  // Promotores podem ver historico (Dashboard Geral) e historicoDias
-  // Supervisor bloqueado via CSS (.promotor-on [data-tab="supervisor"])
+  if(!isSupervisor&&['supervisor','historico','historicoDias'].includes(id))id='relatorio';
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   $('appShell').classList.toggle('super-app',id==='supervisor');
@@ -650,7 +649,13 @@ function consolidarPromotoresMes(rows){
     if(r.obs&&!p.obs.includes(r.obs))p.obs.push(r.obs);
   });
   Object.values(porProm).forEach(p=>{
-    MODELOS.forEach(m=>{p.vendas[m]=safe(p._melhor?.vendas?.[m]);});
+    MODELOS.forEach(m=>{p.vendas[m]=0;});
+    // Soma por modelo no mês (considerando um relatório por dia/promotor em rowsCalc)
+    (rows||[]).forEach(r=>{
+      const n=r.nome||'Sem promotor';
+      if(n!==p.nome)return;
+      MODELOS.forEach(m=>{p.vendas[m]+=safe(r.vendas?.[m]);});
+    });
   });
   return porProm;
 }
@@ -744,7 +749,7 @@ async function carregarHistorico(){
       if(!agrupado[key])agrupado[key]={data:r.data,lojas:new Set(),filiais:new Set(),total:0,totalMes:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),mostruario:[],obs:[]};
       if(r.loja)agrupado[key].lojas.add(r.loja);if(r.filial)agrupado[key].filiais.add(r.filial);
       agrupado[key].total+=safe(r.total);agrupado[key].totalMes=Math.max(agrupado[key].totalMes,valorTotalMesRelatorio(r));
-      MODELOS.forEach(m=>{agrupado[key].vendas[m]=safe(r.vendas?.[m])||agrupado[key].vendas[m];agrupado[key].estoque[m]=Math.max(agrupado[key].estoque[m],safe(r.estoque?.[m]));});
+      MODELOS.forEach(m=>{agrupado[key].vendas[m]+=safe(r.vendas?.[m]);agrupado[key].estoque[m]=Math.max(agrupado[key].estoque[m],safe(r.estoque?.[m]));});
       const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);most.forEach(m=>{if(!agrupado[key].mostruario.includes(m))agrupado[key].mostruario.push(m)});if(r.obs&&!agrupado[key].obs.includes(r.obs))agrupado[key].obs.push(r.obs);
     });
     const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
