@@ -54,21 +54,23 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 .base-locked-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 10px;background:#ECFDF5;border:1px solid #86EFAC;color:#166534;font-size:11px;font-weight:900;white-space:nowrap}
 .base-locked-input{background:#F3F4F6!important;color:#374151!important;border-color:#D1D5DB!important;cursor:not-allowed}
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
-.dashboard-card-list{display:grid;grid-template-columns:repeat(2,minmax(320px,1fr));gap:14px;width:100%;align-items:start}
-@media(max-width:780px){.dashboard-card-list{grid-template-columns:1fr}}
+.dashboard-card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;width:100%;align-items:stretch}
+.dashboard-card-list .dashboard-info-card{height:100%}
+@media(max-width:780px){.dashboard-card-list{grid-template-columns:1fr;gap:12px}}
 .dashboard-geral .card-body{overflow:hidden}
+#tbodyHistorico{width:100%}.fechamento-head{margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}.fechamento-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}@media(max-width:900px){.fechamento-grid{grid-template-columns:1fr;gap:12px}}
 .dashboard-info-card{width:100%;max-width:100%;background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
-.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top b{display:block;color:#10231D;font-size:15px}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900}
-.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{font-size:20px;color:#08746A;font-weight:800;font-variant-numeric:tabular-nums}
-.dashboard-section{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.dashboard-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:11px;min-width:0}.dashboard-box-title{display:block;color:#08746A;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.6px;margin-bottom:7px}.dashboard-model-list{font-size:12px;line-height:1.55;color:#10231D;word-break:break-word}.dashboard-model-list b{color:#08746A}.dashboard-obs{grid-column:1/-1}
-@media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(3,1fr)}}
+.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top>div:first-child{min-width:0}.dashboard-info-top b{display:block;color:#10231D;font-size:15px;overflow-wrap:anywhere}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px;overflow-wrap:anywhere}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900;flex-shrink:0}
+.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px;min-width:0}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{display:block;font-size:18px;color:#08746A;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:break-word}
+.dashboard-section{padding:0 16px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.dashboard-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:11px;min-width:0}.dashboard-box-title{display:block;color:#08746A;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.6px;margin-bottom:7px}.dashboard-model-list{font-size:12px;line-height:1.55;color:#10231D;word-break:break-word;overflow-wrap:anywhere}.dashboard-model-list b{color:#08746A}.dashboard-obs{grid-column:1/-1}
+@media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
 @media(max-width:540px){.login{align-items:flex-start;padding-top:28px}.login-card{border-radius:24px}.card{border-radius:22px}.card-body{padding:15px}.model-row{grid-template-columns:minmax(90px,1fr) 46px 54px 46px;border-radius:18px}.qty{font-size:21px}.mini-btn{height:46px}.tabs{padding-left:8px;padding-right:8px}.tab{border-radius:16px}.screen{padding-bottom:24px}}
 @media(min-width:1024px){.app{max-width:1180px;margin:0 auto}.screen{max-width:1180px;margin:0 auto}#supervisor .kpis,#historico .kpis{grid-template-columns:repeat(4,1fr)}}
 /* Supervisor cards */
 #supervisor .card:nth-child(3n+1) .card-head{background:linear-gradient(90deg,#EAF8F0,#FFF7E6)}#supervisor .card:nth-child(3n+2) .card-head{background:linear-gradient(90deg,#EFF6FF,#F8FBF9)}#supervisor .card:nth-child(3n+3) .card-head{background:linear-gradient(90deg,#FFF1F2,#F8FBF9)}#supervisor .table th{background:#E9F7F1;color:#075F55;white-space:nowrap}#supervisor .table td{background:#FFFFFF;vertical-align:middle}
 /* Ocultar abas bloqueadas */
-body.promotor-on [data-tab="supervisor"]{display:none!important}
+body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"],body.promotor-on [data-tab="historicoDias"]{display:none!important}
 /* Firebase banner */
 #firebaseBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#FEF2F2;border-bottom:2px solid #FCA5A5;padding:12px 18px;font-size:13px;font-weight:700;color:#991B1B;text-align:center;line-height:1.5}#firebaseBanner.show{display:block}#firebaseBanner a{color:#1D4ED8;text-decoration:underline}
 </style>
@@ -171,7 +173,7 @@ body.promotor-on [data-tab="supervisor"]{display:none!important}
       <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
-      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
+      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div id="tbodyHistorico"></div></div></div>
     </section>
 
     <!-- ABA HISTÓRICO -->
@@ -512,8 +514,7 @@ function renderVendas(){
 }
 
 function openTab(id){
-  // Promotores podem ver historico (Dashboard Geral) e historicoDias
-  // Supervisor bloqueado via CSS (.promotor-on [data-tab="supervisor"])
+  if(!isSupervisor&&['supervisor','historico','historicoDias'].includes(id))id='relatorio';
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   $('appShell').classList.toggle('super-app',id==='supervisor');
@@ -649,7 +650,16 @@ function consolidarPromotoresMes(rows){
     if(r.obs&&!p.obs.includes(r.obs))p.obs.push(r.obs);
   });
   Object.values(porProm).forEach(p=>{
-    MODELOS.forEach(m=>{p.vendas[m]=safe(p._melhor?.vendas?.[m]);});
+    MODELOS.forEach(m=>{p.vendas[m]=0;});
+    // Soma por modelo no mês (considerando um relatório por dia/promotor em rowsCalc)
+    (rows||[]).forEach(r=>{
+      const n=r.nome||'Sem promotor';
+      if(n!==p.nome)return;
+      MODELOS.forEach(m=>{p.vendas[m]+=safe(r.vendas?.[m]);});
+    });
+    const somaModelosProm=MODELOS.reduce((acc,m)=>acc+safe(p.vendas?.[m]),0);
+    // Mantém total mês coerente com os lançamentos por modelo e total diário consolidado
+    p.totalMes=Math.max(safe(p.totalMes),safe(p.total),somaModelosProm);
   });
   return porProm;
 }
@@ -724,8 +734,8 @@ async function carregarHistorico(){
         }).join('')+'</div>';
       }
       const _htmlUltimos=_ultimos.length?_ultimos.map(_cardPromotor).join(''):'<div class="base-empty">Sem relatórios no último dia.</div>';
-      const _hdr=_ultimaData?`<div style="margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif">Último envio: ${moneyDate(_ultimaData)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_ultimos.length} promotor(es)</span></div>`:'';
-      $('tbodyHistorico').innerHTML=_hdr+'<div class="dashboard-card-list">'+_htmlUltimos+'</div>';
+      const _hdr=_ultimaData?`<div class="fechamento-head">Último envio: ${moneyDate(_ultimaData)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_ultimos.length} promotor(es)</span></div>`:'';
+      $('tbodyHistorico').innerHTML=_hdr+'<div class="fechamento-grid">'+_htmlUltimos+'</div>';
       const _elHistDias=$('tbodyHistoricoDias');
       if(_elHistDias)_elHistDias.innerHTML=_htmlAccordion||'<div class="base-empty">Sem histórico de dias anteriores.</div>';
       return;
@@ -743,7 +753,7 @@ async function carregarHistorico(){
       if(!agrupado[key])agrupado[key]={data:r.data,lojas:new Set(),filiais:new Set(),total:0,totalMes:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),mostruario:[],obs:[]};
       if(r.loja)agrupado[key].lojas.add(r.loja);if(r.filial)agrupado[key].filiais.add(r.filial);
       agrupado[key].total+=safe(r.total);agrupado[key].totalMes=Math.max(agrupado[key].totalMes,valorTotalMesRelatorio(r));
-      MODELOS.forEach(m=>{agrupado[key].vendas[m]=safe(r.vendas?.[m])||agrupado[key].vendas[m];agrupado[key].estoque[m]=Math.max(agrupado[key].estoque[m],safe(r.estoque?.[m]));});
+      MODELOS.forEach(m=>{agrupado[key].vendas[m]+=safe(r.vendas?.[m]);agrupado[key].estoque[m]=Math.max(agrupado[key].estoque[m],safe(r.estoque?.[m]));});
       const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);most.forEach(m=>{if(!agrupado[key].mostruario.includes(m))agrupado[key].mostruario.push(m)});if(r.obs&&!agrupado[key].obs.includes(r.obs))agrupado[key].obs.push(r.obs);
     });
     const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
@@ -752,11 +762,11 @@ async function carregarHistorico(){
     $('hMes').textContent=totalMes;$('hMeta').textContent=pct+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
     $('previsao').textContent=meta?`Fechamento: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
     const somaPromotorModelo=consolidado?.vendas||Object.fromEntries(MODELOS.map(m=>[m,0]));
-    $('tbodyHistorico').innerHTML=linhasDia.map(r=>{
+    $('tbodyHistorico').innerHTML='<div class="fechamento-grid">'+linhasDia.map(r=>{
       const totalDia=r.total,totalMesR=r.totalMes,pctDia=meta?Math.round(totalMesR/meta*100):0,cls=pctDia>=100?'pct-ok':pctDia>=50?'pct-mid':'pct-low';
       const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
       return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b><small>${[...r.lojas].join(', ')||'Sem loja'}${[...r.filiais].join(', ')?' • Filial '+[...r.filiais].join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pctDia}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMesR}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${listaVendasModeloFechamento(somaPromotorModelo)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
-    }).join('')||'<div class="base-empty">Sem relatórios ainda.</div>';
+    }).join('')+'</div>'||'<div class="base-empty">Sem relatórios ainda.</div>';
 
     // Histórico por dia (promotor)
     const _elHistDias=$('tbodyHistoricoDias');
@@ -895,7 +905,8 @@ async function carregarSupervisor(){
   const mesSup=window.__mesAtivo||mesKeyFromDate(today());
   window.__rowsSupervisorModelo=rows;
   $('modeloMesBox').classList.remove('hidden');
-  const total=rows.reduce((s,r)=>s+safe(r.total),0),prom=new Set(rows.map(r=>r.nome));
+  const consolidadoSup=consolidarPromotoresMes(rows);
+  const total=totalEquipeConsolidado(consolidadoSup),prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
   ativarCardsSupervisorDetalhes(rows,mesSup);
   const rank={};const maxMes={};rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total);maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
@@ -905,8 +916,8 @@ async function carregarSupervisor(){
   if($('gaBater'))$('gaBater').textContent=alertas.filter(a=>a.pct>=90||a.diaria<=1).length;
   $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
   const baseTotalMesPorPromotor={};const baseModelosMesPorPromotor={};
-  rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;baseTotalMesPorPromotor[n]+=safe(rr.total);if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
-  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(baseTotalMesPorPromotor[r.nome]||r.totalMesInformado);const _somaModTxt=MODELOS.map(m=>safe(r.vendas?.[m])>0?`<div class="base-model-pill"><span>${m}</span>${safe(r.vendas?.[m])}</div>`:'').filter(Boolean).join('')||'<span class="hint">Sem vendas registradas</span>';const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
+  rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;baseTotalMesPorPromotor[n]=Math.max(baseTotalMesPorPromotor[n],valorTotalMesRelatorio(rr));if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
+  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(baseTotalMesPorPromotor[r.nome]||r.totalMesInformado);const vendasMesProm=baseModelosMesPorPromotor[r.nome]||Object.fromEntries(MODELOS.map(m=>[m,0]));const _somaModTxt=MODELOS.map(m=>safe(vendasMesProm?.[m])>0?`<div class="base-model-pill"><span>${m}</span>${safe(vendasMesProm?.[m])}</div>`:'').filter(Boolean).join('')||'<span class="hint">Sem vendas registradas</span>';const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(vendasMesProm?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(vendasMesProm?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(vendasMesProm?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(vendasMesProm?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
   window.__rowsSupervisorBase=rows;
   mostrarModeloMes(true);
 }
