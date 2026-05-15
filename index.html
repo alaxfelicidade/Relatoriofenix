@@ -615,6 +615,15 @@ function relatoriosUnicosPorPromotorData(rows){
   return Object.values(mapa);
 }
 
+function dataNum(d){
+  const s=String(d||'');
+  if(!s)return 0;
+  const n=Date.parse(s);
+  if(!Number.isNaN(n))return n;
+  const m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if(m)return new Date(Number(m[1]),Number(m[2])-1,Number(m[3])).getTime();
+  return 0;
+}
 function valorTotalMesRelatorio(r){
   if(!r)return 0;
   const v=safe(r.totalMesInformado);if(v>0)return v;
@@ -623,9 +632,11 @@ function valorTotalMesRelatorio(r){
 }
 function melhorRelatorioMes(a,b){
   if(!a)return b;
+  const ta=dataNum(a.data),tb=dataNum(b.data);
+  if(tb>ta)return b;if(tb<ta)return a;
   const va=valorTotalMesRelatorio(a),vb=valorTotalMesRelatorio(b);
   if(vb>va)return b;if(vb<va)return a;
-  return String(b.data||'')>String(a.data||'')?b:a;
+  return b;
 }
 
 function consolidarPromotoresMes(rows){
@@ -643,7 +654,10 @@ function consolidarPromotoresMes(rows){
     p.filiais.add(r.filial||'');
     if(r.data===ontemKey)p.ontem+=safe(r.total);
     p._melhor=melhorRelatorioMes(p._melhor,r);
-    if(!p._ultimoAcumulado||String(r.data||'')>String(p._ultimoAcumulado.data||''))p._ultimoAcumulado=r;
+    const temAcumulado=safe(r.totalMesInformado)>0;
+    const atualTemAcumulado=safe(p._ultimoAcumulado?.totalMesInformado)>0;
+    const rData=dataNum(r.data),uData=dataNum(p._ultimoAcumulado?.data);
+    if(!p._ultimoAcumulado||(temAcumulado&&!atualTemAcumulado)||(temAcumulado===atualTemAcumulado&&rData>=uData))p._ultimoAcumulado=r;
     MODELOS.forEach(m=>{p.estoque[m]=Math.max(p.estoque[m],safe(r.estoque?.[m]));});
     const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
     if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
@@ -911,14 +925,14 @@ async function carregarSupervisor(){
   const total=totalEquipeConsolidado(consolidadoSup),prom=new Set(rows.map(r=>r.nome));
   $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
   ativarCardsSupervisorDetalhes(rows,mesSup);
-  const rank={};const maxMes={};const maxMesData={};rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total);const dt=String(r.data||'');if(!maxMesData[r.nome]||dt>maxMesData[r.nome]){maxMesData[r.nome]=dt;maxMes[r.nome]=safe(r.totalMesInformado)||safe(r.total);}});
+  const rank={};const maxMes={};const maxMesRow={};rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total);const atual=maxMesRow[r.nome];const temAcumulado=safe(r.totalMesInformado)>0;const atualTemAcumulado=safe(atual?.totalMesInformado)>0;const rData=dataNum(r.data),aData=dataNum(atual?.data);if(!atual||(temAcumulado&&!atualTemAcumulado)||(temAcumulado===atualTemAcumulado&&rData>=aData)){maxMesRow[r.nome]=r;maxMes[r.nome]=safe(r.totalMesInformado)||safe(r.total);}});
   const alertas=Object.keys(maxMes).map(n=>({nome:n,...metaStats(maxMes[n],getMeta(n),mesSup)}));
   if($('gaAjuda'))$('gaAjuda').textContent=alertas.filter(a=>a.pct<60).length;
   if($('gaCritica'))$('gaCritica').textContent=alertas.filter(a=>a.diaria>5&&a.pct<100).length;
   if($('gaBater'))$('gaBater').textContent=alertas.filter(a=>a.pct>=90||a.diaria<=1).length;
   $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
   const baseTotalMesPorPromotor={};const baseModelosMesPorPromotor={};
-  const _dtBase={};rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;const dt=String(rr.data||'');if(!_dtBase[n]||dt>_dtBase[n]){_dtBase[n]=dt;baseTotalMesPorPromotor[n]=safe(rr.totalMesInformado)||safe(rr.total);}if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
+  const _baseRow={};rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;const atual=_baseRow[n];const temAcumulado=safe(rr.totalMesInformado)>0;const atualTemAcumulado=safe(atual?.totalMesInformado)>0;const rrData=dataNum(rr.data),atData=dataNum(atual?.data);if(!atual||(temAcumulado&&!atualTemAcumulado)||(temAcumulado===atualTemAcumulado&&rrData>=atData)){_baseRow[n]=rr;baseTotalMesPorPromotor[n]=safe(rr.totalMesInformado)||safe(rr.total);}if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
   $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(baseTotalMesPorPromotor[r.nome]||r.totalMesInformado);const vendasMesProm=baseModelosMesPorPromotor[r.nome]||Object.fromEntries(MODELOS.map(m=>[m,0]));const _somaModTxt=MODELOS.map(m=>safe(vendasMesProm?.[m])>0?`<div class="base-model-pill"><span>${m}</span>${safe(vendasMesProm?.[m])}</div>`:'').filter(Boolean).join('')||'<span class="hint">Sem vendas registradas</span>';const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(vendasMesProm?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(vendasMesProm?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(vendasMesProm?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(vendasMesProm?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
   window.__rowsSupervisorBase=rows;
   mostrarModeloMes(true);
