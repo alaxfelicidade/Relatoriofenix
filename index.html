@@ -645,20 +645,20 @@ async function salvarRelatorio(){
   const totalVendasDia = totalObj(vendas);
 const semVendasHoje = totalVendasDia === 0;
   
+const acumuladoMesVal =
+  safe($('acumuladoMes').value);
 
-  const possuiModeloPreenchido = MODELOS.some(m => safe(vendas[m]) > 0);
+if(acumuladoMesVal < 0){
+  show(
+    $('status'),
+    'Informe um acumulado válido.',
+    'err'
+  );
 
-  if(!possuiModeloPreenchido){
-    show($('status'),'A soma por modelo é obrigatória antes de salvar.','err');
-    document.getElementById('cardVendas')?.scrollIntoView({behavior:'smooth'});
-    return;
-  }
-  const acumuladoMesVal=safe($('acumuladoMes')?.value);
-  if(!acumuladoMesVal||acumuladoMesVal<=0){show($('status'),'Informe o Acumulado do mês (obrigatório).','err');$('acumuladoMes')?.focus();return}
-  const mostSelecionado=Object.values(mostruario||{}).some(Boolean)||(($('mostruarioExtra')?.value||'').trim().length>0);
-  if(!mostSelecionado){show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo ou escreva o modelo do mostruário.','err');$('mostruarioExtra')?.focus();return}
-  if(!db){show($('status'),'⚠️ Firestore não conectado. Ative o Firestore no Firebase Console primeiro.','err');document.getElementById('firebaseBanner').classList.add('show');return}
+  $('acumuladoMes').focus();
 
+  return;
+}
   // Ativa trava + desabilita botão
   _salvandoRelatorio=true;
   const btnSalvar=$('btnSalvar');
