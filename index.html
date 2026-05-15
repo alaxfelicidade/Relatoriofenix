@@ -673,7 +673,7 @@ if(acumuladoMesVal < 0){
     const perfilAtual=getPerfilSupervisor($('promotor').value);
     const redeFinal=perfilAtual.rede||$('loja').value;
     const filialFinal=perfilAtual.filial||$('filial').value.trim();
-  const payload = {
+ const payload = {
 
   uid: user.uid,
   email: user.email,
@@ -692,7 +692,7 @@ if(acumuladoMesVal < 0){
 
   ano: infMes.ano,
 
-  infMesKey: infMes.key,
+  mesKey: infMes.key,
 
   mesNome: infMes.nome,
 
@@ -710,7 +710,7 @@ if(acumuladoMesVal < 0){
 
   totalMesInformado: safe($('acumuladoMes').value),
 
-  estoque: estoquePayload,
+  estoque: estoque,
 
   mostruario: mostruarioPayload,
 
