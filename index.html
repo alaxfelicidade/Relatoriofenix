@@ -664,91 +664,182 @@ if(acumuladoMesVal < 0){
   const btnSalvar=$('btnSalvar');
   if(btnSalvar){btnSalvar.disabled=true;btnSalvar.textContent='Salvando...';}
 
-  try{
-    salvarMostruarioPromotor();
-    const estoque=Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
-    const mostruarioPayload={modelos:{...mostruario},modeloExtra:$('mostruarioExtra').value.trim()};
-    const dataRel=$('data').value;
-    const infMes=infoMes(mesKeyFromDate(dataRel));
-    const perfilAtual=getPerfilSupervisor($('promotor').value);
-    const redeFinal=perfilAtual.rede||$('loja').value;
-    const filialFinal=perfilAtual.filial||$('filial').value.trim();
- const payload = {
+try{
 
-  uid: user.uid,
-  email: user.email,
+  salvarMostruarioPromotor();
 
-  nome: $('promotor').value,
+  const estoque = Object.fromEntries(
+    MODELOS.map(m => [
+      m,
+      safe($('est_' + idModelo(m))?.value)
+    ])
+  );
 
-  filial: filialFinal,
+  const mostruarioPayload = {
+    modelos: { ...mostruario },
+    modeloExtra: $('mostruarioExtra')?.value?.trim() || ''
+  };
 
-  loja: redeFinal,
+  const dataRel = $('data').value;
 
-  rede: redeFinal,
+  const infMes = infoMes(
+    mesKeyFromDate(dataRel)
+  );
 
-  data: dataRel,
+  const perfilAtual =
+    getPerfilSupervisor(
+      $('promotor').value
+    ) || {};
 
-  mes: infMes.mes,
+  const redeFinal =
+    perfilAtual.rede ||
+    $('loja').value;
 
-  ano: infMes.ano,
+  const filialFinal =
+    perfilAtual.filial ||
+    $('filial').value.trim();
 
-  mesKey: infMes.key,
+  const payload = {
 
-  mesNome: infMes.nome,
+    uid: user.uid,
 
-  diaMes: parseDataLocal(dataRel).getDate(),
+    email: user.email,
 
-  diasNoMes: infMes.diasNoMes,
+    nome: $('promotor').value,
 
-  diasRestantes: infMes.diasRestantes,
+    filial: filialFinal,
 
-  metaMes: getMeta($('promotor').value),
+    loja: redeFinal,
 
-  vendas: { ...vendas },
+    rede: redeFinal,
 
-  total: totalObj(vendas),
+    data: dataRel,
 
-  totalMesInformado: safe($('acumuladoMes').value),
+    mes: infMes?.mes || '',
 
-  estoque: estoque,
+    ano: infMes?.ano || '',
 
-  mostruario: mostruarioPayload,
+    mesKey: infMes?.key || '',
 
-  interessados: safe($('interessados').value),
+    mesNome: infMes?.nome || '',
 
-  perdidas: safe($('perdidas').value),
+    diaMes:
+      parseDataLocal(dataRel)?.getDate?.() || 0,
 
-  concorrencia: $('concorrencia').value,
+    diasNoMes:
+      infMes?.diasNoMes || 0,
 
-  obs: $('obs').value,
+    diasRestantes:
+      infMes?.diasRestantes || 0,
 
-  semVendas: totalObj(vendas) === 0,
+    metaMes:
+      getMeta($('promotor').value) || 0,
 
-  bloqueadoEdicao: true,
+    vendas: { ...vendas },
 
-  statusDocumento: 'BLOQUEADO_APOS_SALVAR',
+    total:
+      totalObj(vendas),
 
-  createdAt: serverTimestamp()
+    totalMesInformado:
+      safe($('acumuladoMes').value),
 
-};
-    show($('status'),'Salvando...','ok');
-    await addDoc(collection(db,'relatorios'),payload);
-    if($('status'))$('status').className='status';
-    popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
-    await carregarBaseGeral();
-    if(isSupervisor){await carregarHistorico();await carregarSupervisor();}
-  }catch(e){
-    show($('status'),'Erro ao salvar: '+e.message+'. Verifique se o Firestore está ativo.','err');
-    console.error('Erro ao salvar relatório:',e);
-  }finally{
-    // Libera trava após 3 segundos (evita spam mas permite novo envio)
-    setTimeout(()=>{
-      _salvandoRelatorio=false;
-      if(btnSalvar){btnSalvar.disabled=false;btnSalvar.textContent='🔥 Salvar relatório online';}
-    },3000);
+    estoque: { ...estoque },
+
+    mostruario: {
+      ...mostruarioPayload
+    },
+
+    interessados:
+      safe($('interessados').value),
+
+    perdidas:
+      safe($('perdidas').value),
+
+    concorrencia:
+      $('concorrencia').value || '',
+
+    obs:
+      $('obs').value || '',
+
+    semVendas:
+      totalObj(vendas) === 0,
+
+    bloqueadoEdicao: true,
+
+    statusDocumento:
+      'BLOQUEADO_APOS_SALVAR',
+
+    createdAt:
+      serverTimestamp()
+
+  };
+
+  show(
+    $('status'),
+    'Salvando...',
+    'ok'
+  );
+
+  await addDoc(
+    collection(db,'relatorios'),
+    payload
+  );
+
+  if($('status')){
+    $('status').className = 'status';
   }
-}
 
+  popupSucesso(
+    'Relatório enviado com sucesso',
+    'Os dados foram salvos na nuvem.'
+  );
+
+  await carregarBaseGeral();
+
+  if(isSupervisor){
+
+    await carregarHistorico();
+
+    await carregarSupervisor();
+
+  }
+
+}catch(e){
+
+  console.error(
+    'Erro ao salvar relatório:',
+    e
+  );
+
+  show(
+    $('status'),
+    'Erro ao salvar: ' +
+    e.message +
+    '. Verifique se o Firestore está ativo.',
+    'err'
+  );
+
+}finally{
+
+  setTimeout(()=>{
+
+    _salvandoRelatorio = false;
+
+    const btnSalvar =
+      $('btnSalvar');
+
+    if(btnSalvar){
+
+      btnSalvar.disabled = false;
+
+      btnSalvar.textContent =
+        '🔥 Salvar relatório online';
+
+    }
+
+  },3000);
+
+}
 function listaVendasModelo(vendas){return Object.entries(vendas||{}).filter(([_,v])=>safe(v)>0).map(([m,v])=>`${m}: ${safe(v)}`).join('<br>')||'-';}
 function listaVendasModeloFechamento(vendas){const linhas=[];MODELOS.forEach(m=>{const qtd=safe(vendas?.[m]);if(qtd>0)linhas.push(`${m}: ${qtd}`);});return linhas.length?linhas.join('<br>'):'-';}
 function totalModelos(vendas){return MODELOS.reduce((s,m)=>s+safe(vendas?.[m]),0);}
