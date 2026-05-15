@@ -595,16 +595,13 @@ function renderVendas(){
 
   const acEl = $('acumuladoMes');
 
-  // Inicialização única
   if(acEl && !acEl.dataset.iniciado){
     acEl.value = totalDia || 0;
     acEl.dataset.iniciado = '1';
   }
 
-  // Valor REAL informado pelo promotor
   let totalMes = safe(acEl?.value);
 
-  // Nunca deixar abaixo do total do dia
   if(totalMes < totalDia){
     totalMes = totalDia;
     acEl.value = totalDia;
@@ -624,9 +621,8 @@ function renderVendas(){
   $('metaHelp').textContent = meta
     ? `${totalMes} vendido(s) no mês de meta ${meta}.`
     : 'Defina uma meta para acompanhar o desempenho.';
-}
 
-$('s3').classList.add('on');
+  $('s3').classList.add('on');
 }
 
 function openTab(id){
@@ -648,7 +644,7 @@ async function salvarRelatorio(){
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
   const totalVendasDia = totalObj(vendas);
 const semVendasHoje = totalVendasDia === 0;
-  }
+  
 
   const possuiModeloPreenchido = MODELOS.some(m => safe(vendas[m]) > 0);
 
