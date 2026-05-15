@@ -54,21 +54,116 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 .base-locked-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 10px;background:#ECFDF5;border:1px solid #86EFAC;color:#166534;font-size:11px;font-weight:900;white-space:nowrap}
 .base-locked-input{background:#F3F4F6!important;color:#374151!important;border-color:#D1D5DB!important;cursor:not-allowed}
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
-.dashboard-card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;width:100%;align-items:stretch}
-.dashboard-card-list .dashboard-info-card{height:100%}
-@media(max-width:780px){.dashboard-card-list{grid-template-columns:1fr;gap:12px}}
+.dashboard-card-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  width:100%;
+  align-items:stretch
+}
+
+.dashboard-card-list .dashboard-info-card{
+  height:100%
+}
+
+.fechamento-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  width:100%;
+  align-items:stretch
+}
+
+.fechamento-grid .dashboard-info-card{
+  height:100%
+}
+
+@media(max-width:900px){
+  .dashboard-card-list,
+  .fechamento-grid{
+    grid-template-columns:1fr;
+    gap:12px
+  }
+}
 .dashboard-geral .card-body{overflow:hidden}
 #tbodyHistorico{width:100%}.fechamento-head{margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}.fechamento-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}@media(max-width:900px){.fechamento-grid{grid-template-columns:1fr;gap:12px}}
 .dashboard-info-card{width:100%;max-width:100%;background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
 .dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top>div:first-child{min-width:0}.dashboard-info-top b{display:block;color:#10231D;font-size:15px;overflow-wrap:anywhere}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px;overflow-wrap:anywhere}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900;flex-shrink:0}
 .dashboard-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px;min-width:0}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{display:block;font-size:18px;color:#08746A;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:break-word}
-#tbodyHistorico{width:100%}.fechamento-head{margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}.fechamento-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;width:100%}@media(max-width:780px){.fechamento-grid{grid-template-columns:1fr;gap:12px}}
-.dashboard-info-card{width:100%;max-width:100%;background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
-.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top>div:first-child{min-width:0}.dashboard-info-top b{display:block;color:#10231D;font-size:15px;overflow-wrap:anywhere}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px;overflow-wrap:anywhere}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900;flex-shrink:0}
-.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px;min-width:0}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{display:block;font-size:clamp(17px,2.1vw,20px);color:#08746A;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:anywhere}
-.dashboard-section{padding:0 16px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.dashboard-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:11px;min-width:0}.dashboard-box-title{display:block;color:#08746A;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.6px;margin-bottom:7px}.dashboard-model-list{font-size:12px;line-height:1.55;color:#10231D;word-break:break-word;overflow-wrap:anywhere}.dashboard-model-list b{color:#08746A}.dashboard-obs{grid-column:1/-1}
-@media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
+.dashboard-obs{
+  grid-column:1/-1;
+}
+.dashboard-section{
+  padding:0 16px 14px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.dashboard-box{
+  background:#FBFEFC;
+  border:1px solid #D8E7DE;
+  border-radius:14px;
+  padding:11px;
+  min-width:0;
+}
+
+.dashboard-box-title{
+  display:block;
+  color:#08746A;
+  text-transform:uppercase;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.6px;
+  margin-bottom:7px;
+}
+
+.dashboard-model-list{
+  font-size:12px;
+  line-height:1.55;
+  color:#10231D;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+.dashboard-model-list b{
+  color:#08746A;
+}
+
+.dashboard-obs{
+  grid-column:1/-1;
+}
+.dashboard-box{
+  background:#FBFEFC;
+  border:1px solid #D8E7DE;
+  border-radius:14px;
+  padding:11px;
+  min-width:0;
+}
+
+.dashboard-box-title{
+  display:block;
+  color:#08746A;
+  text-transform:uppercase;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.6px;
+  margin-bottom:7px;
+}
+
+.dashboard-model-list{
+  font-size:12px;
+  line-height:1.55;
+  color:#10231D;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+.dashboard-model-list b{
+  color:#08746A;
+}
+  @media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
 @media(max-width:540px){.login{align-items:flex-start;padding-top:28px}.login-card{border-radius:24px}.card{border-radius:22px}.card-body{padding:15px}.model-row{grid-template-columns:minmax(90px,1fr) 46px 54px 46px;border-radius:18px}.qty{font-size:21px}.mini-btn{height:46px}.tabs{padding-left:8px;padding-right:8px}.tab{border-radius:16px}.screen{padding-bottom:24px}}
 @media(min-width:1024px){.app{max-width:1180px;margin:0 auto}.screen{max-width:1180px;margin:0 auto}#supervisor .kpis,#historico .kpis{grid-template-columns:repeat(4,1fr)}}
 /* Supervisor cards */
@@ -486,35 +581,52 @@ function preencherFilialPromotor(){
 }
 
 function renderVendas(){
-  MODELOS.forEach(m=>{const el=$('q_'+idModelo(m));if(el)el.textContent=vendas[m]||0;});
-  const total=totalObj(vendas),meta=getMeta($('promotor').value);
-  const acEl=$('acumuladoMes');
 
+  MODELOS.forEach(m=>{
+    const el = $('q_'+idModelo(m));
+    if(el){
+      el.textContent = vendas[m] || 0;
+    }
+  });
+
+  const totalDia = totalObj(vendas);
+
+  const meta = getMeta($('promotor').value);
+
+  const acEl = $('acumuladoMes');
+
+  // Inicialização única
   if(acEl && !acEl.dataset.iniciado){
-    acEl.value=total;
-    acEl.dataset.iniciado='1';
+    acEl.value = totalDia || 0;
+    acEl.dataset.iniciado = '1';
   }
 
-  const totalMes=acEl?safe(acEl.value):total;
-  const pct=meta?Math.round(totalMes/meta*100):0;
+  // Valor REAL informado pelo promotor
+  let totalMes = safe(acEl?.value);
 
-  $('totalDia').textContent=total;
-  $('metaLabel').textContent=pct+'%';
-  $('metaFill').style.width=Math.min(pct,100)+'%';
-
-  $('metaHelp').textContent=meta
-    ? `${totalMes}/${meta} unidades acumuladas no mês • Atingimento ${pct}%.`
-    : 'Selecione o promotor para calcular a meta.';
-
-  const acHelp=$('acumuladoMesHelp');
-
-  if(acHelp){
-    acHelp.textContent=meta
-      ? `Você digitou ${totalMes} de ${meta} → Atingimento ${pct}%.`
-      : 'Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.';
+  // Nunca deixar abaixo do total do dia
+  if(totalMes < totalDia){
+    totalMes = totalDia;
+    acEl.value = totalDia;
   }
 
-  if(total>0)$('s3').classList.add('on');
+  const pct = meta
+    ? Math.round((totalMes/meta)*100)
+    : 0;
+
+  $('totalDia').textContent = totalDia;
+
+  $('metaLabel').textContent = pct+'%';
+
+  $('metaFill').style.width =
+    Math.min(pct,100)+'%';
+
+  $('metaHelp').textContent = meta
+    ? `${totalMes} vendido(s) no mês de meta ${meta}.`
+    : 'Defina uma meta para acompanhar o desempenho.';
+}
+
+$('s3').classList.add('on');
 }
 
 function openTab(id){
@@ -535,11 +647,7 @@ async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
   const totalVendasDia = totalObj(vendas);
-
-  if(totalVendasDia <= 0){
-    show($('status'),'Preencha obrigatoriamente as vendas do dia.','err');
-    document.getElementById('cardVendas')?.scrollIntoView({behavior:'smooth'});
-    return;
+const semVendasHoje = totalVendasDia === 0;
   }
 
   const possuiModeloPreenchido = MODELOS.some(m => safe(vendas[m]) > 0);
