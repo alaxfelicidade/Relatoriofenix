@@ -427,7 +427,7 @@ function totalObj(o={}){
 }
 
 function totalRelatorio(r={}){
-  return totalModelos(r.vendas || {});
+  return safe(r.real || r.total || 0);
 }
 function show(el,msg,type='ok'){if(el){el.textContent=msg;el.className='status '+type}}
 function carregarMostruarioExtra(){try{return JSON.parse(localStorage.getItem(LS_MOSTRUARIO)||'{}')}catch(e){return{}}}
@@ -631,6 +631,11 @@ async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
   const totalVendasDia = totalObj(vendas);
+ const realCalculado =
+  totalVendasDia
+  - safe(vendas['Reno13F'])
+  - safe(vendas['Reno14F'])
+  - safe(vendas['A6 Pro']); 
   // Ativa trava + desabilita botão
   _salvandoRelatorio=true;
   const btnSalvar=$('btnSalvar');
@@ -709,7 +714,12 @@ try{
 
     vendas: { ...vendas },
 
-    total: totalVendasDia,
+    total: realCalculado,
+real: realCalculado,
+reno:
+  safe(vendas['Reno13F']) +
+  safe(vendas['Reno14F']),
+a6pro: safe(vendas['A6 Pro']),
 
     estoque: { ...estoque },
 
