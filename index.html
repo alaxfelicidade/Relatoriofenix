@@ -427,6 +427,9 @@ function totalObj(o={}){
 }
 
 function totalRelatorio(r={}){
+  if(r?.vendas){
+    return totalModelos(r.vendas);
+  }
   return safe(r.real || r.total || 0);
 }
 function show(el,msg,type='ok'){if(el){el.textContent=msg;el.className='status '+type}}
@@ -869,28 +872,34 @@ function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromot
 function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
   const mesRef = mesKeyFromDate(dataRef);
 
-  const rows = (window.__BASE_GERAL || []).filter(r =>
+  let rows = (window.__BASE_GERAL || []).filter(r =>
     r.nome === nome &&
     rowMesKey(r) === mesRef
   );
 
+  const relatoriosUnicos = {};
+
+  rows.forEach(r => {
+    const chave = `${r.nome}_${r.data}`;
+    if(!relatoriosUnicos[chave]){
+      relatoriosUnicos[chave] = {...r, vendas:{...(r.vendas||{})}};
+    }else{
+      MODELOS.forEach(m=>{
+        relatoriosUnicos[chave].vendas[m] =
+          safe(relatoriosUnicos[chave].vendas?.[m]) +
+          safe(r.vendas?.[m]);
+      });
+    }
+  });
+
+  rows = Object.values(relatoriosUnicos);
+
   let totalMes = 0;
-  let dias = 0;
+  let dias = rows.length;
 
- let totalMes = 0;
-let dias = 0;
-
-const relatoriosUnicos = {};
-
-rows.forEach(r => {
-
-  const chave = `${r.nome}_${r.data}`;
-
-  relatoriosUnicos[chave] = r;
-
-});
-
-rows = Object.values(relatoriosUnicos);
+  rows.forEach(r=>{
+    totalMes += totalModelos(r.vendas || {});
+  });
 
   const totalDia = totalModelos(vendasAtuais);
 
@@ -920,41 +929,117 @@ function ultimaVendaDoDiaPorPromotor(rows){
 }
 function consolidarPromotoresMes(rows){
 
-const relatoriosUnicos = {};
+  const relatoriosUnicos = {};
 
-rows.forEach(r => {
+  rows.forEach(r => {
+    const chave = `${r.nome}_${r.data}`;
+    if(!relatoriosUnicos[chave]){
+      relatoriosUnicos[chave] = {...r, vendas:{...(r.vendas||{})}};
+    }else{
+      MODELOS.forEach(m=>{
+        relatoriosUnicos[chave].vendas[m] =
+          safe(relatoriosUnicos[chave].vendas?.[m]) +
+          safe(r.vendas?.[m]);
+      });
+    }
+  });
 
-  const chave = `${r.nome}_${r.data}`;
+  rows = Object.values(relatoriosUnicos);
 
-  relatoriosUnicos[chave] = r;
+  const porProm = {};
 
-});
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate()-1);
 
-rows = Object.values(relatoriosUnicos);
+  const ontemKey =
+    ontem.getFullYear() + '-' +
+    String(ontem.getMonth()+1).padStart(2,'0') + '-' +
+    String(ontem.getDate()).padStart(2,'0');
 
-const porProm={}
-    const dia=totalRelatorio(d);
-    p.relatorios+=safe(d.relatoriosNoDia)||1;
+  rows.forEach(d=>{
+
+    if(!porProm[d.nome]){
+      porProm[d.nome]={
+        nome:d.nome,
+        totalMes:0,
+        total:0,
+        real:0,
+        reno:0,
+        a6Pro:0,
+        relatorios:0,
+        ontem:0,
+        lojas:new Set(),
+        filiais:new Set(),
+        vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),
+        estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),
+        mostruario:[],
+        obs:[]
+      };
+    }
+
+    const p = porProm[d.nome];
+
+    const dia = totalRelatorio(d);
+
+    p.relatorios += safe(d.relatoriosNoDia) || 1;
+
     if(d.loja)p.lojas.add(d.loja);
     if(d.rede)p.lojas.add(d.rede);
     if(d.filial)p.filiais.add(d.filial);
-    if(d.data===ontemKey)p.ontem+=dia;
+
+    if(d.data===ontemKey){
+      p.ontem += dia;
+    }
+
     MODELOS.forEach(m=>{
-      p.vendas[m]+=safe(d.vendas[m]);
-      p.estoque[m]=Math.max(p.estoque[m],safe(d.estoque[m]));
+      p.vendas[m] += safe(d.vendas?.[m]);
+      p.estoque[m] = Math.max(
+        p.estoque[m],
+        safe(d.estoque?.[m])
+      );
     });
-    const most=Object.entries(d.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
-    if(d.mostruario?.modeloExtra)most.push(d.mostruario.modeloExtra);
-    most.forEach(m=>{if(!p.mostruario.includes(m))p.mostruario.push(m)});
-    (Array.isArray(d.obs)?d.obs:[d.obs]).forEach(o=>{if(o&&!p.obs.includes(o))p.obs.push(o);});
+
+    const most =
+      Object.entries(d.mostruario?.modelos || {})
+      .filter(([_,v])=>v)
+      .map(([m])=>m);
+
+    if(d.mostruario?.modeloExtra){
+      most.push(d.mostruario.modeloExtra);
+    }
+
+    most.forEach(m=>{
+      if(!p.mostruario.includes(m)){
+        p.mostruario.push(m);
+      }
+    });
+
+    (Array.isArray(d.obs)?d.obs:[d.obs])
+    .forEach(o=>{
+      if(o && !p.obs.includes(o)){
+        p.obs.push(o);
+      }
+    });
+
   });
+
   Object.values(porProm).forEach(p=>{
+
     p.totalMes = totalModelos(p.vendas);
+
     p.total = safe(p.totalMes);
+
     p.real = totalModelos(p.vendas);
-    p.reno = safe(p.vendas['Reno13F']) + safe(p.vendas['Reno14F']);
-    p.a6Pro = safe(p.vendas['A6 Pro']);
+
+    p.reno =
+      safe(p.vendas['Reno13F']) +
+      safe(p.vendas['Reno14F']);
+
+    p.a6Pro =
+      safe(p.vendas['A6 Pro']);
+
   });
+
   return porProm;
 }
 
