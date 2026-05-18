@@ -419,7 +419,7 @@ function getDadosFiltrados(){
 function moneyDate(d){return(d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
 function totalModelos(obj={}){
-  return Object.values(obj).reduce((s,v)=>s + safe(v),0);
+  return Object.values(obj || {}).reduce((s,v)=>s + safe(v),0);
 }
 
 function totalObj(o={}){
@@ -810,10 +810,9 @@ try{
 
 }
 }
-function totalModelos(vendas){return MODELOS.reduce((s,m)=>s+safe(vendas?.[m]),0);}
 function totalDiaRelatorio(r){
   if(!r)return 0;
-  return totalModelos(r.vendas);
+  return totalRelatorio(r);
 }
 function chavePromotorData(r){return (r.nome||'Sem promotor')+'__'+(r.data||'Sem data');}
 function agregarRelatoriosPorPromotorDia(rows){
@@ -897,7 +896,6 @@ function consolidarPromotoresMes(rows){
     if(!porProm[n])porProm[n]={nome:n,total:0,totalMes:0,relatorios:0,ontem:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),lojas:new Set(),filiais:new Set(),mostruario:[],obs:[]};
     const p=porProm[n];
     const dia=totalRelatorio(d);
-    p.totalMes+=dia;
     p.relatorios+=safe(d.relatoriosNoDia)||1;
     if(d.loja)p.lojas.add(d.loja);
     if(d.rede)p.lojas.add(d.rede);
