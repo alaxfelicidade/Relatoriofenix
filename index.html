@@ -371,7 +371,7 @@ function rowMesKey(r){return r.mesKey||(r.ano&&r.mes?`${r.ano}-${String(r.mes).p
 function mesesDasLinhas(rows){const set=new Set([mesKeyFromDate(today())]);(rows||[]).forEach(r=>set.add(rowMesKey(r)));return[...set].sort().reverse();}
 function getMesSelecionado(rows){const meses=mesesDasLinhas(rows);const sel=$('mesDashboard');const atual=mesKeyFromDate(today());const valorAtual=sel?.value||atual;if(sel){sel.innerHTML=meses.map(k=>`<option value="${k}">${mesNomeFromKey(k)}</option>`).join('');sel.value=meses.includes(valorAtual)?valorAtual:atual;}return sel?.value||atual;}
 function filtrarMes(rows,key){return(rows||[]).filter(r=>rowMesKey(r)===key);}
-function calcularControleMensal(rowsMes,mesKey,totalMes,metaGeral){const info=infoMes(mesKey);const total=safe(totalMes);const meta=safe(metaGeral);const mediaDia=info.diaBase?total/info.diaBase:0;const previsto=Math.ceil(mediaDia*info.diasNoMes);const falta=Math.max(0,meta-total);const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0;if($('cmDias'))$('cmDias').textContent=info.diasNoMes;if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes;if($('cmRitmo'))$('cmRitmo').textContent=ritmo;if($('cmPrevisto'))$('cmPrevisto').textContent=previsto;if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome;if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`;}
+function calcularControleMensal(rowsMes,mesKey,totalMes,metaGeral){const info=infoMes(mesKey);const total=Math.max(0,safe(totalMes));const meta=safe(metaGeral);const mediaDia=info.diaBase?total/info.diaBase:0;const previsto=Math.ceil(mediaDia*info.diasNoMes);const falta=Math.max(0,meta-total);const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0;if($('cmDias'))$('cmDias').textContent=info.diasNoMes;if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes;if($('cmRitmo'))$('cmRitmo').textContent=ritmo;if($('cmPrevisto'))$('cmPrevisto').textContent=previsto;if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome;if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`;}
 function normalizarRelatorioFirestore(d){
   const data=d?.data?d.data():(d||{});
   const r={id:d?.id||data.id||'',...data};
@@ -425,6 +425,32 @@ function totalModelos(obj={}){
 function totalObj(o={}){
   return totalModelos(o);
 }
+
+
+function normalizarLinhasUnicas(rows=[]){
+  const mapa = {};
+
+  rows.forEach(r=>{
+
+    const chave = r.id
+      ? String(r.id)
+      : `${r.nome}_${r.data}_${JSON.stringify(r.vendas||{})}`;
+
+    if(!mapa[chave]){
+
+      mapa[chave] = {
+        ...r,
+        vendas:{...(r.vendas||{})},
+        estoque:{...(r.estoque||{})}
+      };
+
+    }
+
+  });
+
+  return Object.values(mapa);
+}
+
 
 function totalRelatorio(r={}){
   if(r?.vendas){
@@ -869,7 +895,9 @@ function agregarRelatoriosPorPromotorDia(rows){
 }
 function relatoriosUnicosPorPromotorDia(rows){return agregarRelatoriosPorPromotorDia(rows);}
 function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromotorDia(rows);}
+
 function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
+
   const mesRef = mesKeyFromDate(dataRef);
 
   let rows = (window.__BASE_GERAL || []).filter(r =>
@@ -877,25 +905,9 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
     rowMesKey(r) === mesRef
   );
 
-  const relatoriosUnicos = {};
-
-  rows.forEach(r => {
-    const chave = `${r.nome}_${r.data}`;
-    if(!relatoriosUnicos[chave]){
-      relatoriosUnicos[chave] = {...r, vendas:{...(r.vendas||{})}};
-    }else{
-      MODELOS.forEach(m=>{
-        relatoriosUnicos[chave].vendas[m] =
-          safe(relatoriosUnicos[chave].vendas?.[m]) +
-          safe(r.vendas?.[m]);
-      });
-    }
-  });
-
-  rows = Object.values(relatoriosUnicos);
+  rows = normalizarLinhasUnicas(rows);
 
   let totalMes = 0;
-  let dias = rows.length;
 
   rows.forEach(r=>{
     totalMes += totalModelos(r.vendas || {});
@@ -903,145 +915,17 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
 
   const totalDia = totalModelos(vendasAtuais);
 
+  const existeHoje = rows.some(r=>r.data===dataRef);
+
   return {
     totalDia,
-    totalMes: totalMes + totalDia,
-    dias
+    totalMes: existeHoje ? totalMes : totalMes + totalDia,
+    dias: rows.length
   };
 }
-function listaVendasModelo(vendas){return renderGridModelos(vendas,{compact:true});}
-function listaVendasModeloFechamento(vendas){return renderGridModelos(vendas,{compact:false});}
-function renderGridModelos(vendas,opts={}){
-  const compact=!!opts.compact;
-  const itens=MODELOS.map(m=>({m,q:safe(vendas?.[m])})).filter(x=>x.q>0).sort((a,b)=>b.q-a.q||a.m.localeCompare(b.m));
-  if(!itens.length)return'<span class="hint">Sem vendas registradas</span>';
-  const total=itens.reduce((s,x)=>s+x.q,0);
-  const pills=itens.map(x=>`<div class="base-model-pill"${compact?' style="padding:6px 8px;font-size:11px"':''}><span>${x.m}</span><b style="color:#08746A;font-size:${compact?'14':'16'}px">${x.q}</b></div>`).join('');
-  return`<div class="base-premium-grid" style="grid-template-columns:repeat(auto-fill,minmax(${compact?88:100}px,1fr));gap:6px">${pills}</div><p class="hint" style="margin-top:8px;font-weight:800">Total: <b style="color:#08746A">${total}</b> aparelho(s)</p>`;
-}
-function ultimaVendaDoDiaPorPromotor(rows){
-  const ult={};
-  agregarRelatoriosPorPromotorDia(rows).forEach(d=>{
-    const n=d.nome||'Sem promotor';
-    if(!ult[n]||String(d.data||'')>String(ult[n].data||''))ult[n]=d;
-  });
-  return ult;
-}
+
+
 function consolidarPromotoresMes(rows){
-
-  const relatoriosUnicos = {};
-
-  rows.forEach(r => {
-    const chave = `${r.nome}_${r.data}`;
-    if(!relatoriosUnicos[chave]){
-      relatoriosUnicos[chave] = {...r, vendas:{...(r.vendas||{})}};
-    }else{
-      MODELOS.forEach(m=>{
-        relatoriosUnicos[chave].vendas[m] =
-          safe(relatoriosUnicos[chave].vendas?.[m]) +
-          safe(r.vendas?.[m]);
-      });
-    }
-  });
-
-  rows = Object.values(relatoriosUnicos);
-
-  const porProm = {};
-
-  const ontem = new Date();
-  ontem.setDate(ontem.getDate()-1);
-
-  const ontemKey =
-    ontem.getFullYear() + '-' +
-    String(ontem.getMonth()+1).padStart(2,'0') + '-' +
-    String(ontem.getDate()).padStart(2,'0');
-
-  rows.forEach(d=>{
-
-    if(!porProm[d.nome]){
-      porProm[d.nome]={
-        nome:d.nome,
-        totalMes:0,
-        total:0,
-        real:0,
-        reno:0,
-        a6Pro:0,
-        relatorios:0,
-        ontem:0,
-        lojas:new Set(),
-        filiais:new Set(),
-        vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        mostruario:[],
-        obs:[]
-      };
-    }
-
-    const p = porProm[d.nome];
-
-    const dia = totalRelatorio(d);
-
-    p.relatorios += safe(d.relatoriosNoDia) || 1;
-
-    if(d.loja)p.lojas.add(d.loja);
-    if(d.rede)p.lojas.add(d.rede);
-    if(d.filial)p.filiais.add(d.filial);
-
-    if(d.data===ontemKey){
-      p.ontem += dia;
-    }
-
-    MODELOS.forEach(m=>{
-      p.vendas[m] += safe(d.vendas?.[m]);
-      p.estoque[m] = Math.max(
-        p.estoque[m],
-        safe(d.estoque?.[m])
-      );
-    });
-
-    const most =
-      Object.entries(d.mostruario?.modelos || {})
-      .filter(([_,v])=>v)
-      .map(([m])=>m);
-
-    if(d.mostruario?.modeloExtra){
-      most.push(d.mostruario.modeloExtra);
-    }
-
-    most.forEach(m=>{
-      if(!p.mostruario.includes(m)){
-        p.mostruario.push(m);
-      }
-    });
-
-    (Array.isArray(d.obs)?d.obs:[d.obs])
-    .forEach(o=>{
-      if(o && !p.obs.includes(o)){
-        p.obs.push(o);
-      }
-    });
-
-  });
-
-  Object.values(porProm).forEach(p=>{
-
-    p.totalMes = totalModelos(p.vendas);
-
-    p.total = safe(p.totalMes);
-
-    p.real = totalModelos(p.vendas);
-
-    p.reno =
-      safe(p.vendas['Reno13F']) +
-      safe(p.vendas['Reno14F']);
-
-    p.a6Pro =
-      safe(p.vendas['A6 Pro']);
-
-  });
-
-  return porProm;
-}
 
 function somaModelosConsolidado(porProm){
   const soma=Object.fromEntries(MODELOS.map(m=>[m,0]));
