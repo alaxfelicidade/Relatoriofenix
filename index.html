@@ -631,11 +631,7 @@ async function salvarRelatorio(){
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
   const totalVendasDia = totalObj(vendas);
- const realCalculado =
-  totalVendasDia
-  - safe(vendas['Reno13F'])
-  - safe(vendas['Reno14F'])
-  - safe(vendas['A6 Pro']); 
+const realCalculado = totalVendasDia;
   // Ativa trava + desabilita botão
   _salvandoRelatorio=true;
   const btnSalvar=$('btnSalvar');
@@ -758,10 +754,25 @@ a6pro: safe(vendas['A6 Pro']),
     'ok'
   );
 
-  await addDoc(
-    collection(db,'relatorios'),
-    payload
-  );
+const q = query(
+  collection(db, 'relatorios'),
+  where('nome', '==', $('promotor').value),
+  where('data', '==', dataRel)
+);
+
+const snap = await getDocs(q);
+
+if (!snap.empty) {
+
+  const antigo = snap.docs[0];
+
+  await updateDoc(antigo.ref, payload);
+
+} else {
+
+  await addDoc(collection(db,'relatorios'), payload);
+
+}
 
   if($('status')){
     $('status').className = 'status';
@@ -866,10 +877,20 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
   let totalMes = 0;
   let dias = 0;
 
-  rows.forEach(r=>{
-    totalMes += totalRelatorio(r);
-    dias++;
-  });
+ let totalMes = 0;
+let dias = 0;
+
+const relatoriosUnicos = {};
+
+rows.forEach(r => {
+
+  const chave = `${r.nome}_${r.data}`;
+
+  relatoriosUnicos[chave] = r;
+
+});
+
+rows = Object.values(relatoriosUnicos);
 
   const totalDia = totalModelos(vendasAtuais);
 
@@ -898,13 +919,20 @@ function ultimaVendaDoDiaPorPromotor(rows){
   return ult;
 }
 function consolidarPromotoresMes(rows){
-  const porProm={};
-  const y=new Date();y.setDate(y.getDate()-1);
-  const ontemKey=`${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
-  agregarRelatoriosPorPromotorDia(rows).forEach(d=>{
-    const n=d.nome||'Sem promotor';
-    if(!porProm[n])porProm[n]={nome:n,total:0,totalMes:0,relatorios:0,ontem:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),lojas:new Set(),filiais:new Set(),mostruario:[],obs:[]};
-    const p=porProm[n];
+
+const relatoriosUnicos = {};
+
+rows.forEach(r => {
+
+  const chave = `${r.nome}_${r.data}`;
+
+  relatoriosUnicos[chave] = r;
+
+});
+
+rows = Object.values(relatoriosUnicos);
+
+const porProm={}
     const dia=totalRelatorio(d);
     p.relatorios+=safe(d.relatoriosNoDia)||1;
     if(d.loja)p.lojas.add(d.loja);
