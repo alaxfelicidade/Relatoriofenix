@@ -380,8 +380,7 @@ function normalizarRelatorioFirestore(d){
   if(!r.loja&&r.rede)r.loja=r.rede;
   if(!r.vendas)r.vendas={};
   const somaMod=totalModelos(r.vendas);
-  if(somaMod>0 && !r.total) r.total=somaMod;
-  else if(!r.total) r.total=0;
+  r.total = somaMod;
   if(!r.mesKey&&r.data){const partes=String(r.data).split('-');if(partes.length>=2)r.mesKey=`${partes[0]}-${partes[1]}`;}
   if(!r.mesKey&&r.ano&&r.mes)r.mesKey=`${r.ano}-${String(r.mes).padStart(2,'0')}`;
   if(!r.mesKey)r.mesKey=mesKeyFromDate(r.data||today());
@@ -421,7 +420,9 @@ function getDadosFiltrados(){
 function moneyDate(d){return(d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
 function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
-function totalRelatorio(r){return safe(r?.total)>0?safe(r.total):totalModelos(r.vendas)}
+function totalRelatorio(r){
+  return totalModelos(r.vendas);
+}
 function show(el,msg,type='ok'){if(el){el.textContent=msg;el.className='status '+type}}
 function carregarMostruarioExtra(){try{return JSON.parse(localStorage.getItem(LS_MOSTRUARIO)||'{}')}catch(e){return{}}}
 function salvarMostruarioExtra(){localStorage.setItem(LS_MOSTRUARIO,JSON.stringify(mostruarioExtraPorPromotor||{}))}
@@ -806,10 +807,7 @@ try{
 function totalModelos(vendas){return MODELOS.reduce((s,m)=>s+safe(vendas?.[m]),0);}
 function totalDiaRelatorio(r){
   if(!r)return 0;
-  const soma=totalModelos(r.vendas);
-  const total=safe(r.total);
-  if(total>0)return Math.max(total,soma);
-  return soma;
+  return totalModelos(r.vendas);
 }
 function chavePromotorData(r){return (r.nome||'Sem promotor')+'__'+(r.data||'Sem data');}
 function agregarRelatoriosPorPromotorDia(rows){
@@ -827,7 +825,6 @@ function agregarRelatoriosPorPromotorDia(rows){
     }
     const a=mapa[key];
     a.relatoriosNoDia+=1;
-    a.total += totalRelatorio(r);
     MODELOS.forEach(m=>{
       a.vendas[m]+=safe(r.vendas?.[m]);
       a.estoque[m]=Math.max(a.estoque[m],safe(r.estoque?.[m]));
@@ -836,7 +833,7 @@ function agregarRelatoriosPorPromotorDia(rows){
     if(r.mostruario)a.mostruario=r.mostruario;
   });
   return Object.values(mapa).map(a=>{
-    if(!a.total) a.total = totalModelos(a.vendas);
+    a.total = totalModelos(a.vendas);
     a.relatorios=a.relatoriosNoDia;
     return a;
   });
@@ -910,9 +907,9 @@ function consolidarPromotoresMes(rows){
     (Array.isArray(d.obs)?d.obs:[d.obs]).forEach(o=>{if(o&&!p.obs.includes(o))p.obs.push(o);});
   });
   Object.values(porProm).forEach(p=>{
-    if(!p.totalMes) p.totalMes = totalModelos(p.vendas);
+    p.totalMes = totalModelos(p.vendas);
     p.total = safe(p.totalMes);
-    p.real = safe(p.totalMes);
+    p.real = totalModelos(p.vendas);
     p.reno = safe(p.vendas['Reno13F']) + safe(p.vendas['Reno14F']);
     p.a6Pro = safe(p.vendas['A6 Pro']);
   });
@@ -1014,12 +1011,12 @@ async function carregarHistorico(){
     const linhasDia=rowsPromPorDia.map(r=>{
       const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
       if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
-      return{data:r.data,lojas:new Set(r.loja?[r.loja]:[]),filiais:new Set(r.filial?[r.filial]:[]),total:safe(r.total),relatorios:safe(r.relatoriosNoDia),vendas:{...r.vendas},estoque:{...r.estoque},mostruario:most,obs:[...(r.obs||[])]};
+      return{data:r.data,lojas:new Set(r.loja?[r.loja]:[]),filiais:new Set(r.filial?[r.filial]:[]),total:totalDiaRelatorio(r),relatorios:safe(r.relatoriosNoDia),vendas:{...r.vendas},estoque:{...r.estoque},mostruario:most,obs:[...(r.obs||[])]};
     }).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
     $('previsao').textContent=meta?`Fechamento: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
     const clsMes=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
     $('tbodyHistorico').innerHTML='<div class="fechamento-grid">'+linhasDia.map(r=>{
-      const totalDia=r.total;
+      const totalDia=totalDiaRelatorio(r);
       const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
       return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b><small>${[...r.lojas].join(', ')||'Sem loja'}${[...r.filiais].join(', ')?' • Filial '+[...r.filiais].join(', '):''}</small></div><div class="dashboard-percent ${clsMes}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo (dia)</span><div class="dashboard-model-list">${listaVendasModeloFechamento(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
     }).join('')+'</div>'||'<div class="base-empty">Sem relatórios ainda.</div>';
@@ -1027,7 +1024,7 @@ async function carregarHistorico(){
     // Histórico por dia (promotor)
     const _elHistDias=$('tbodyHistoricoDias');
     if(_elHistDias)_elHistDias.innerHTML=linhasDia.length>1?linhasDia.slice(1).map(r=>{
-      const tDia=r.total,tMes=totalMes,p2=meta?Math.round(tMes/meta*100):0,cls2=p2>=100?'pct-ok':p2>=50?'pct-mid':'pct-low';
+      const tDia=totalDiaRelatorio(r),tMes=totalMes,p2=meta?Math.round(tMes/meta*100):0,cls2=p2>=100?'pct-ok':p2>=50?'pct-mid':'pct-low';
       return`<details style="margin-bottom:10px;border:1px solid #D8E7DE;border-radius:14px;background:#FBFEFC;padding:10px 14px"><summary style="cursor:pointer;font-weight:800;color:#08746A">📅 ${moneyDate(r.data)} <span style="color:#60736A;font-weight:600;font-size:12px">• Total dia: ${tDia}</span></summary><div style="margin-top:12px"><div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b></div><div class="dashboard-percent ${cls2}">${p2}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${tDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${tMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.join(', ')||'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div></div></details>`;
     }).join(''):'<div class="base-empty">Sem histórico de dias anteriores ainda.</div>';
 
@@ -1189,7 +1186,7 @@ async function carregarSupervisor(){
 function exportCsv(){
   const headers=['Data','Promotor','Loja','Filial','Total dia','Total mês','Real','Reno','A6 Pro','Total','A5 Pro','Reno13F','Reno14F','Mostruario','Obs'];
   const rows=window.__rowsSupervisorBase||[];
-  const linhas=rows.map((r,i)=>{const totalMes=$('base_total_mes_'+i)?.value||(window.__totaisSupervisorMes||{})[r.nome];const real=safe(totalMes);const reno=safe(r.vendas?.['Reno13F'])+safe(r.vendas?.['Reno14F']);const a6Pro=safe(r.vendas?.['A6 Pro']);return[moneyDate(r.data),r.nome||'',r.loja||r.rede||'',r.filial||'',$('base_total_'+i)?.value||safe(r.total),totalMes,real,reno,a6Pro,totalMes,safe(r.vendas?.['A5 Pro']),safe(r.vendas?.['Reno13F']),safe(r.vendas?.['Reno14F']),mostruarioTexto(r.mostruario),$('base_obs_'+i)?.value||r.obs||''].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';');});
+  const linhas=rows.map((r,i)=>{const totalMes=$('base_total_mes_'+i)?.value||(window.__totaisSupervisorMes||{})[r.nome];const real=safe(totalMes);const reno=safe(r.vendas?.['Reno13F'])+safe(r.vendas?.['Reno14F']);const a6Pro=safe(r.vendas?.['A6 Pro']);return[moneyDate(r.data),r.nome||'',r.loja||r.rede||'',r.filial||'',totalDiaRelatorio(r),totalMes,real,reno,a6Pro,totalMes,safe(r.vendas?.['A5 Pro']),safe(r.vendas?.['Reno13F']),safe(r.vendas?.['Reno14F']),mostruarioTexto(r.mostruario),$('base_obs_'+i)?.value||r.obs||''].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';');});
   const csv=headers.join(';')+'\n'+linhas.join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix_'+(window.__mesAtivo||mesKeyFromDate(today()))+'.csv';a.click();
 }
