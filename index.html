@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -299,8 +300,29 @@ body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]
 <div id="toastOk" class="toast-ok"><span class="toast-title">Relatório enviado com sucesso</span><span class="toast-sub">Os dados foram salvos na nuvem.</span></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+// Firebase carregado dinamicamente para não bloquear o app se CDN falhar
+let initializeApp, getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, enableIndexedDbPersistence;
+try {
+  const fbApp = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+  const fbStore = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+  initializeApp = fbApp.initializeApp;
+  getFirestore = fbStore.getFirestore;
+  collection = fbStore.collection;
+  addDoc = fbStore.addDoc;
+  getDocs = fbStore.getDocs;
+  query = fbStore.query;
+  where = fbStore.where;
+  orderBy = fbStore.orderBy;
+  serverTimestamp = fbStore.serverTimestamp;
+  doc = fbStore.doc;
+  updateDoc = fbStore.updateDoc;
+  deleteDoc = fbStore.deleteDoc;
+  setDoc = fbStore.setDoc;
+  getDoc = fbStore.getDoc;
+  enableIndexedDbPersistence = fbStore.enableIndexedDbPersistence;
+} catch(e) {
+  console.warn("Firebase CDN não carregou:", e.message);
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyApkEb5MZs33tU9HSh7STE5plSbiHk2UuY",
@@ -992,14 +1014,75 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
 
 
 
-function consolidarPromotoresMes(rows){
-
 function somaModelosConsolidado(porProm){
   const soma=Object.fromEntries(MODELOS.map(m=>[m,0]));
   Object.values(porProm||{}).forEach(p=>MODELOS.forEach(m=>soma[m]+=safe(p.vendas?.[m])));
   return soma;
 }
 function totalEquipeConsolidado(porProm){return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);}
+
+function consolidarPromotoresMes(rows){
+  const mapa={};
+  (rows||[]).forEach(r=>{
+    const nome=r.nome||'';
+    if(!mapa[nome]){
+      mapa[nome]={
+        nome,
+        totalMes:0,
+        relatorios:0,
+        ontem:0,
+        lojas:new Set(),
+        filiais:new Set(),
+        vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),
+        estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),
+        mostruario:[],
+        obs:[],
+        real:0,
+        reno:0,
+        a6Pro:0
+      };
+    }
+    const p=mapa[nome];
+    p.totalMes+=safe(r.total||totalModelos(r.vendas||{}));
+    p.relatorios+=1;
+    if(r.loja||r.rede)p.lojas.add(r.loja||r.rede);
+    if(r.filial)p.filiais.add(r.filial);
+    MODELOS.forEach(m=>{
+      p.vendas[m]=(p.vendas[m]||0)+safe(r.vendas?.[m]);
+      p.estoque[m]=Math.max(p.estoque[m]||0,safe(r.estoque?.[m]));
+    });
+    p.real+=safe(r.real||r.total||totalModelos(r.vendas||{}));
+    p.reno+=safe(r.vendas?.['Reno13F'])+safe(r.vendas?.['Reno14F']);
+    p.a6Pro+=safe(r.vendas?.['A6 Pro']);
+    if(r.obs){const o=String(r.obs).trim();if(o&&!p.obs.includes(o))p.obs.push(o);}
+    if(r.mostruario)p.mostruario=r.mostruario;
+    // Calcula ontem
+    const ontemKey=new Date();ontemKey.setDate(ontemKey.getDate()-1);
+    const yk=ontemKey.getFullYear()+'-'+String(ontemKey.getMonth()+1).padStart(2,'0')+'-'+String(ontemKey.getDate()).padStart(2,'0');
+    if(r.data===yk)p.ontem+=safe(r.total||totalModelos(r.vendas||{}));
+  });
+  return mapa;
+}
+
+/* ── FUNÇÕES AUXILIARES DE LISTAGEM ── */
+function listaVendasModelo(vendas){
+  if(!vendas)return'-';
+  const itens=Object.entries(vendas).filter(([,v])=>safe(v)>0).map(([m,v])=>`<b>${m}:</b> ${v}`);
+  return itens.length?itens.join(' • '):'-';
+}
+function listaVendasModeloFechamento(vendas){
+  if(!vendas)return'-';
+  const itens=Object.entries(vendas).filter(([,v])=>safe(v)>0).map(([m,v])=>`<div class="base-model-pill"><span>${m}</span>${v}</div>`);
+  return itens.length?itens.join(''):'<div class="base-model-pill"><span>Sem vendas</span>0</div>';
+}
+function ultimaVendaDoDiaPorPromotor(rows){
+  const mapa={};
+  (rows||[]).forEach(r=>{
+    const nome=r.nome||'';
+    if(!mapa[nome]||String(r.data||'')>String(mapa[nome].data||''))mapa[nome]=r;
+  });
+  return mapa;
+}
 
 async function carregarHistorico(){
   if(!db){$('tbodyHistorico').innerHTML='<div class="base-empty">⚠️ Firestore não conectado. Ative o banco no Firebase Console.</div>';return;}
@@ -1043,7 +1126,7 @@ async function carregarHistorico(){
         const vendasDia=listaVendasModelo(vendaDia?.vendas);
         const somaModelo=listaVendasModeloFechamento(r.vendas);
         const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
-        return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo (mês)</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Real / Reno / A6 Pro</span><div class="dashboard-model-list">Real: ${safe(r.real)} • Reno: ${safe(r.reno)} • A6 Pro: ${safe(r.a6Pro)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
+        return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo (mês)</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Real / Reno / A6 Pro</span><div class="dashboard-model-list">Real: ${totalMes} • Reno: ${safe(r.reno)} • A6 Pro: ${safe(r.a6Pro)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${Array.isArray(r.mostruario)?r.mostruario.join(', '):(r.mostruario?mostruarioTexto(r.mostruario):'-')}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${(Array.isArray(r.obs)?r.obs.join(' | '):String(r.obs||''))||'-'}</div></div></div></div>`;
       }
       const _datasEnvio=[...new Set(rowsPorDia.map(r=>r.data).filter(Boolean))].sort();
       const _ultimaData=_datasEnvio[_datasEnvio.length-1]||'';
