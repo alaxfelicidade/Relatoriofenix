@@ -379,8 +379,7 @@ function normalizarRelatorioFirestore(d){
   if(!r.rede&&r.loja)r.rede=r.loja;
   if(!r.loja&&r.rede)r.loja=r.rede;
   if(!r.vendas)r.vendas={};
-  const somaMod=totalModelos(r.vendas);
-  r.total = somaMod;
+  r.total = totalRelatorio(r);
   if(!r.mesKey&&r.data){const partes=String(r.data).split('-');if(partes.length>=2)r.mesKey=`${partes[0]}-${partes[1]}`;}
   if(!r.mesKey&&r.ano&&r.mes)r.mesKey=`${r.ano}-${String(r.mes).padStart(2,'0')}`;
   if(!r.mesKey)r.mesKey=mesKeyFromDate(r.data||today());
@@ -419,9 +418,16 @@ function getDadosFiltrados(){
 
 function moneyDate(d){return(d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
-function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
-function totalRelatorio(r){
-  return totalModelos(r.vendas);
+function totalModelos(obj={}){
+  return Object.values(obj).reduce((s,v)=>s + safe(v),0);
+}
+
+function totalObj(o={}){
+  return totalModelos(o);
+}
+
+function totalRelatorio(r={}){
+  return totalModelos(r.vendas || {});
 }
 function show(el,msg,type='ok'){if(el){el.textContent=msg;el.className='status '+type}}
 function carregarMostruarioExtra(){try{return JSON.parse(localStorage.getItem(LS_MOSTRUARIO)||'{}')}catch(e){return{}}}
@@ -840,29 +846,29 @@ function agregarRelatoriosPorPromotorDia(rows){
 }
 function relatoriosUnicosPorPromotorDia(rows){return agregarRelatoriosPorPromotorDia(rows);}
 function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromotorDia(rows);}
-function calcularMesPromotor(nome,dataRef,vendasForm){
-  const n=String(nome||'').trim();
-  const vazias=Object.fromEntries(MODELOS.map(m=>[m,0]));
-  if(!n)return{totalMes:0,totalDia:0,vendas:vazias,dias:0};
-  const dataHoje=String(dataRef||$('data')?.value||today());
-  const mesKey=mesKeyFromDate(dataHoje);
-  const rows=(window.__BASE_GERAL||[]).filter(r=>(r.nome||'')===n&&rowMesKey(r)===mesKey);
-  const porDia=agregarRelatoriosPorPromotorDia(rows);
-  const vendas={...vazias};
-  let totalMes=0;
-  const diasSet=new Set();
-  porDia.forEach(d=>{
-    if(d.data===dataHoje)return;
-    totalMes+=totalRelatorio(d);
-    diasSet.add(d.data);
-    MODELOS.forEach(m=>{vendas[m]+=safe(d.vendas[m]);});
+function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
+  const mesRef = mesKeyFromDate(dataRef);
+
+  const rows = (window.__BASE_GERAL || []).filter(r =>
+    r.nome === nome &&
+    rowMesKey(r) === mesRef
+  );
+
+  let totalMes = 0;
+  let dias = 0;
+
+  rows.forEach(r=>{
+    totalMes += totalRelatorio(r);
+    dias++;
   });
-  const vf=vendasForm||{};
-  const totalDia=totalObj(vf);
-  totalMes+=totalDia;
-  MODELOS.forEach(m=>{vendas[m]+=safe(vf[m]);});
-  if(totalDia>0||porDia.some(d=>d.data===dataHoje))diasSet.add(dataHoje);
-  return{totalMes,totalDia,vendas,dias:diasSet.size};
+
+  const totalDia = totalModelos(vendasAtuais);
+
+  return {
+    totalDia,
+    totalMes: totalMes + totalDia,
+    dias
+  };
 }
 function listaVendasModelo(vendas){return renderGridModelos(vendas,{compact:true});}
 function listaVendasModeloFechamento(vendas){return renderGridModelos(vendas,{compact:false});}
