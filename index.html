@@ -386,25 +386,75 @@ function normalizarRelatorioFirestore(d){
   return r;
 }
 
+
 async function carregarBaseGeral(){
   if(!db){return[];}
+
   try{
-    const snap=await getDocs(collection(db,'relatorios'));
-    const rows=[];
-    snap.forEach(d=>rows.push(normalizarRelatorioFirestore(d)));
-    rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-    window.__BASE_GERAL=rows;
-    window.__rowsDashboardRaw=rows;
+
+    const snap = await getDocs(collection(db,'relatorios'));
+
+    const mapa = {};
+    const rows = [];
+
+    snap.forEach(d=>{
+
+      const r = normalizarRelatorioFirestore(d);
+
+      const chave =
+        (r.nome||'') + '_' +
+        (r.data||'') + '_' +
+        (r.loja||r.rede||'');
+
+      if(!mapa[chave]){
+
+        mapa[chave] = {
+          ...r,
+          vendas:{...(r.vendas||{})},
+          estoque:{...(r.estoque||{})}
+        };
+
+      }else{
+
+        MODELOS.forEach(m=>{
+
+          mapa[chave].vendas[m] =
+            Math.max(
+              safe(mapa[chave].vendas?.[m]),
+              safe(r.vendas?.[m])
+            );
+
+        });
+
+      }
+
+    });
+
+    Object.values(mapa).forEach(r=>{
+      r.total = totalModelos(r.vendas||{});
+      rows.push(r);
+    });
+
+    rows.sort((a,b)=>
+      String(b.data||'').localeCompare(
+        String(a.data||'')
+      )
+    );
+
+    window.__BASE_GERAL = rows;
+    window.__rowsDashboardRaw = rows;
+
     return rows;
+
   }catch(e){
+
     console.error('Erro ao carregar base:',e.message);
-    if(e.message&&(e.message.includes('400')||e.message.includes('NOT_FOUND')||e.message.includes('failed')||e.message.includes('PERMISSION'))){
-      document.getElementById('firebaseBanner').classList.add('show');
-      document.body.style.paddingTop='60px';
-    }
-    return[];
+
+    return [];
+
   }
 }
+
 
 function getDadosFiltrados(){
   const base=window.__BASE_GERAL||[];
@@ -427,22 +477,36 @@ function totalObj(o={}){
 }
 
 
+
 function normalizarLinhasUnicas(rows=[]){
+
   const mapa = {};
 
   rows.forEach(r=>{
 
-    const chave = r.id
-      ? String(r.id)
-      : `${r.nome}_${r.data}_${JSON.stringify(r.vendas||{})}`;
+    const chave =
+      (r.nome||'') + '_' +
+      (r.data||'') + '_' +
+      (r.loja||r.rede||'');
 
     if(!mapa[chave]){
 
       mapa[chave] = {
         ...r,
-        vendas:{...(r.vendas||{})},
-        estoque:{...(r.estoque||{})}
+        vendas:{...(r.vendas||{})}
       };
+
+    }else{
+
+      MODELOS.forEach(m=>{
+
+        mapa[chave].vendas[m] =
+          Math.max(
+            safe(mapa[chave].vendas?.[m]),
+            safe(r.vendas?.[m])
+          );
+
+      });
 
     }
 
@@ -450,6 +514,7 @@ function normalizarLinhasUnicas(rows=[]){
 
   return Object.values(mapa);
 }
+
 
 
 function totalRelatorio(r={}){
@@ -896,6 +961,7 @@ function agregarRelatoriosPorPromotorDia(rows){
 function relatoriosUnicosPorPromotorDia(rows){return agregarRelatoriosPorPromotorDia(rows);}
 function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromotorDia(rows);}
 
+
 function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
 
   const mesRef = mesKeyFromDate(dataRef);
@@ -910,19 +976,20 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
   let totalMes = 0;
 
   rows.forEach(r=>{
-    totalMes += totalModelos(r.vendas || {});
+    totalMes += totalModelos(r.vendas||{});
   });
+
+  const hojeExiste = rows.some(r=>r.data===dataRef);
 
   const totalDia = totalModelos(vendasAtuais);
 
-  const existeHoje = rows.some(r=>r.data===dataRef);
-
   return {
     totalDia,
-    totalMes: existeHoje ? totalMes : totalMes + totalDia,
+    totalMes: hojeExiste ? totalMes : totalMes + totalDia,
     dias: rows.length
   };
 }
+
 
 
 function consolidarPromotoresMes(rows){
