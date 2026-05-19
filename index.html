@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -56,125 +55,51 @@ input,select,textarea{width:100%;background:#FBFDFC;border:1px solid #D8E5DE;col
 .base-locked-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 10px;background:#ECFDF5;border:1px solid #86EFAC;color:#166534;font-size:11px;font-weight:900;white-space:nowrap}
 .base-locked-input{background:#F3F4F6!important;color:#374151!important;border-color:#D1D5DB!important;cursor:not-allowed}
 @media(max-width:900px){.base-card-top{grid-template-columns:1fr 1fr}.base-actions{justify-content:flex-start}.base-card-body{grid-template-columns:1fr}.base-edit-line{grid-template-columns:1fr}}
-.dashboard-card-list{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-  width:100%;
-  align-items:stretch
-}
-
-.dashboard-card-list .dashboard-info-card{
-  height:100%
-}
-
-.fechamento-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px;
-  width:100%;
-  align-items:stretch
-}
-
-.fechamento-grid .dashboard-info-card{
-  height:100%
-}
-
-@media(max-width:900px){
-  .dashboard-card-list,
-  .fechamento-grid{
-    grid-template-columns:1fr;
-    gap:12px
-  }
-}
+.dashboard-card-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;align-items:start}
 .dashboard-geral .card-body{overflow:hidden}
-#tbodyHistorico{width:100%}.fechamento-head{margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif}.fechamento-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}@media(max-width:900px){.fechamento-grid{grid-template-columns:1fr;gap:12px}}
 .dashboard-info-card{width:100%;max-width:100%;background:#FFFFFF;border:1px solid #D8E7DE;border-radius:20px;box-shadow:0 12px 30px rgba(20,37,31,.07);overflow:hidden}
-.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top>div:first-child{min-width:0}.dashboard-info-top b{display:block;color:#10231D;font-size:15px;overflow-wrap:anywhere}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px;overflow-wrap:anywhere}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900;flex-shrink:0}
-.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px;min-width:0}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{display:block;font-size:18px;color:#08746A;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;overflow-wrap:break-word}
-.dashboard-obs{
-  grid-column:1/-1;
-}
-.dashboard-section{
-  padding:0 16px 14px;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-
-.dashboard-box{
-  background:#FBFEFC;
-  border:1px solid #D8E7DE;
-  border-radius:14px;
-  padding:11px;
-  min-width:0;
-}
-
-.dashboard-box-title{
-  display:block;
-  color:#08746A;
-  text-transform:uppercase;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.6px;
-  margin-bottom:7px;
-}
-
-.dashboard-model-list{
-  font-size:12px;
-  line-height:1.55;
-  color:#10231D;
-  word-break:break-word;
-  overflow-wrap:anywhere;
-}
-
-.dashboard-model-list b{
-  color:#08746A;
-}
-
-.dashboard-obs{
-  grid-column:1/-1;
-}
-.dashboard-box{
-  background:#FBFEFC;
-  border:1px solid #D8E7DE;
-  border-radius:14px;
-  padding:11px;
-  min-width:0;
-}
-
-.dashboard-box-title{
-  display:block;
-  color:#08746A;
-  text-transform:uppercase;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:.6px;
-  margin-bottom:7px;
-}
-
-.dashboard-model-list{
-  font-size:12px;
-  line-height:1.55;
-  color:#10231D;
-  word-break:break-word;
-  overflow-wrap:anywhere;
-}
-
-.dashboard-model-list b{
-  color:#08746A;
-}
-  @media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
+.dashboard-info-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:14px 16px;background:linear-gradient(90deg,#EFFAF4,#FFF8EA);border-bottom:1px solid #D8E7DE}.dashboard-info-top b{display:block;color:#10231D;font-size:15px}.dashboard-info-top small{display:block;color:#60736A;font-size:11px;margin-top:3px}.dashboard-percent{min-width:58px;text-align:center;border-radius:999px;padding:8px 10px;background:#F8FAF9;border:1px solid #D8E7DE;font-weight:900}
+.dashboard-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px}.dashboard-mini{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:10px}.dashboard-mini small{display:block;color:#60736A;text-transform:uppercase;font-size:10px;font-weight:900;margin-bottom:5px}.dashboard-mini b{font-size:20px;color:#08746A;font-weight:800;font-variant-numeric:tabular-nums}
+.dashboard-section{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.dashboard-box{background:#FBFEFC;border:1px solid #D8E7DE;border-radius:14px;padding:11px;min-width:0}.dashboard-box-title{display:block;color:#08746A;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.6px;margin-bottom:7px}.dashboard-model-list{font-size:12px;line-height:1.55;color:#10231D;word-break:break-word}.dashboard-model-list b{color:#08746A}.dashboard-obs{grid-column:1/-1}
+@media(max-width:900px){.dashboard-card-list{grid-template-columns:1fr}.dashboard-info-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:540px){.dashboard-info-top{flex-direction:column}.dashboard-percent{text-align:left}.dashboard-info-grid,.dashboard-section{grid-template-columns:1fr}.dashboard-mini b{font-size:18px}}
 @media(max-width:540px){.login{align-items:flex-start;padding-top:28px}.login-card{border-radius:24px}.card{border-radius:22px}.card-body{padding:15px}.model-row{grid-template-columns:minmax(90px,1fr) 46px 54px 46px;border-radius:18px}.qty{font-size:21px}.mini-btn{height:46px}.tabs{padding-left:8px;padding-right:8px}.tab{border-radius:16px}.screen{padding-bottom:24px}}
 @media(min-width:1024px){.app{max-width:1180px;margin:0 auto}.screen{max-width:1180px;margin:0 auto}#supervisor .kpis,#historico .kpis{grid-template-columns:repeat(4,1fr)}}
 /* Supervisor cards */
 #supervisor .card:nth-child(3n+1) .card-head{background:linear-gradient(90deg,#EAF8F0,#FFF7E6)}#supervisor .card:nth-child(3n+2) .card-head{background:linear-gradient(90deg,#EFF6FF,#F8FBF9)}#supervisor .card:nth-child(3n+3) .card-head{background:linear-gradient(90deg,#FFF1F2,#F8FBF9)}#supervisor .table th{background:#E9F7F1;color:#075F55;white-space:nowrap}#supervisor .table td{background:#FFFFFF;vertical-align:middle}
 /* Ocultar abas bloqueadas */
-body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"],body.promotor-on [data-tab="historicoDias"]{display:none!important}
+body.promotor-on [data-tab="supervisor"]{display:none!important}
 /* Firebase banner */
 #firebaseBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#FEF2F2;border-bottom:2px solid #FCA5A5;padding:12px 18px;font-size:13px;font-weight:700;color:#991B1B;text-align:center;line-height:1.5}#firebaseBanner.show{display:block}#firebaseBanner a{color:#1D4ED8;text-decoration:underline}
 </style>
+
+<style id="fix-centralizacao-final">
+.fechamento-diario,
+.dashboard-cards,
+.cards-container,
+.cards-grid{
+    width:100% !important;
+    display:flex !important;
+    flex-wrap:wrap !important;
+    justify-content:center !important;
+    align-items:flex-start !important;
+    gap:18px !important;
+    margin:0 auto !important;
+}
+
+.fechamento-diario .card,
+.dashboard-cards .card,
+.cards-container .card{
+    margin:0 !important;
+}
+
+.base-completa,
+.dashboard-wrapper,
+.main-dashboard{
+    width:100% !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -235,8 +160,8 @@ body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]
           <p class="hint" style="margin-bottom:12px">Use + e - para lançar rápido no celular.</p>
           <div class="model-list" id="modelList"></div>
           <div class="total"><span>Total vendido hoje</span><b id="totalDia">0</b></div>
-          <div class="total" style="margin-top:12px;background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,122,104,.08));border-color:#BFDBFE"><span>Total no mês (soma dos dias)</span><b id="totalMes">0</b></div>
-          <div class="meta"><div style="display:flex;justify-content:space-between;gap:10px"><span class="hint">Meta do mês</span><b id="metaLabel">0%</b></div><div class="bar"><div class="fill" id="metaFill"></div></div><p class="hint" id="metaHelp" style="margin-top:8px">Soma automática de cada relatório diário salvo no mês.</p></div>
+          <div class="field" style="margin-top:12px"><label for="acumuladoMes">Acumulado do mês <span style="color:var(--red)">*</span></label><input type="number" id="acumuladoMes" min="0" step="1" placeholder="Quantos aparelhos já vendeu no mês" required><p class="hint" id="acumuladoMesHelp" style="margin-top:6px">Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.</p></div>
+          <div class="meta"><div style="display:flex;justify-content:space-between;gap:10px"><span class="hint">Meta do mês</span><b id="metaLabel">0%</b></div><div class="bar"><div class="fill" id="metaFill"></div></div><p class="hint" id="metaHelp" style="margin-top:8px">O percentual acima considera as vendas acumuladas no mês.</p></div>
         </div>
       </div>
       <div class="card">
@@ -274,7 +199,7 @@ body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]
       <div class="card"><div class="card-head"><span>🤖</span><b>Análise IA — Dashboard Geral</b></div><div class="card-body"><button class="btn blue" id="btnIA" style="margin-bottom:12px">✨ Analisar dashboard com IA</button><p class="hint" id="previsao">Carregando dados...</p></div></div>
       <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Resumo mensal por modelo</div><div class="model-month-grid" id="dashboardModeloMes"></div></div></div>
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
-      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div id="tbodyHistorico"></div></div></div>
+      <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
     </section>
 
     <!-- ABA HISTÓRICO -->
@@ -301,96 +226,8 @@ body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]
 <div id="toastOk" class="toast-ok"><span class="toast-title">Relatório enviado com sucesso</span><span class="toast-sub">Os dados foram salvos na nuvem.</span></div>
 
 <script type="module">
-/* ============================================================
-   RECONSTRUÇÃO COMPLETA DA LÓGICA DE DADOS DO DASHBOARD
-   ============================================================
-   
-   PROBLEMAS IDENTIFICADOS E CORRIGIDOS:
-   
-   1. Total da equipe inflado (386 → valor real esperado ~261)
-   2. Promotores com total mês incorreto (ex: Thais Otoni 172 → valor real menor)
-   3. Cards reutilizando/acumulando dados antigos
-   4. Duplicação na consolidação mensal
-   
-   CAUSAS RAIZ IDENTIFICADAS:
-   
-   - Função `normalizarLinhasUnicas` usava chave "nome_data_loja" causando duplicatas
-   - Função `consolidarPromotoresMes` acumulava valores de relatórios duplicados
-   - Função `agregarRelatoriosPorPromotorDia` usava chave com loja
-   - Sistema reutilizava totais já consolidados em vez de recalcular do zero
-   
-   SOLUÇÃO IMPLEMENTADA:
-   
-   - Criada função central `recalcularDashboardPeloHistorico()` que:
-     * Lê APENAS relatórios diários do Firestore
-     * Elimina duplicatas usando chave "nome_data" (SEM loja)
-     * Mantém apenas o último relatório por promotor por dia (baseado em createdAt)
-     * Recalcula TODOS os totais do zero
-     * Gera tabela de auditoria no console
-     * Valida promotores específicos automaticamente
-   
-   - Funções atualizadas para usar nova lógica:
-     * calcularMesPromotor()
-     * carregarHistorico()
-     * carregarSupervisor()
-     * mostrarModeloMes()
-     * iaSupervisor()
-     * ativarCardsSupervisorDetalhes()
-     * iaDashboard()
-   
-   - Funções removidas (causavam inflação):
-     * normalizarLinhasUnicas (antiga)
-     * consolidarPromotoresMes (antiga)
-   
-   - Função auxiliar atualizada:
-     * agregarRelatoriosPorPromotorDia (agora usa chave sem loja)
-   
-   REGRAS OBRIGATÓRIAS IMPLEMENTADAS:
-   
-   1. Ler SOMENTE relatórios existentes no histórico diário
-   2. Cada relatório diário vale apenas UMA vez
-   3. NÃO reutilizar totais já consolidados
-   4. NÃO usar soma acumulada salva anteriormente
-   5. NÃO carregar valores prontos de total mês
-   6. Recalcular TUDO do zero sempre que renderizar
-   7. Total do promotor = soma exata dos modelos vendidos nos relatórios diários
-   8. Total da equipe = soma exata de todos os relatórios únicos do mês
-   9. Se existir mais de um relatório do mesmo promotor no mesmo dia: usar SOMENTE o último
-   10. Remover completamente: inflação, duplicações, merges automáticos, reaproveitamento
-   
-   AUDITORIA AUTOMÁTICA:
-   
-   - Tabela no console mostra: promotor, total histórico, relatórios únicos, dias trabalhados
-   - Validação específica para: Thais Otoni, Taynara Ferreira, Gabriela Oliveira, Elias Alves
-   - Mostra total equipe atual vs valor esperado (~261)
-   - Registra duplicatas removidas com motivo
-   
-   DATA: 18/05/2026
-   ============================================================ */
-
-// Firebase carregado dinamicamente para não bloquear o app se CDN falhar
-let initializeApp, getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, enableIndexedDbPersistence;
-try {
-  const fbApp = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
-  const fbStore = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
-  initializeApp = fbApp.initializeApp;
-  getFirestore = fbStore.getFirestore;
-  collection = fbStore.collection;
-  addDoc = fbStore.addDoc;
-  getDocs = fbStore.getDocs;
-  query = fbStore.query;
-  where = fbStore.where;
-  orderBy = fbStore.orderBy;
-  serverTimestamp = fbStore.serverTimestamp;
-  doc = fbStore.doc;
-  updateDoc = fbStore.updateDoc;
-  deleteDoc = fbStore.deleteDoc;
-  setDoc = fbStore.setDoc;
-  getDoc = fbStore.getDoc;
-  enableIndexedDbPersistence = fbStore.enableIndexedDbPersistence;
-} catch(e) {
-  console.warn("Firebase CDN não carregou:", e.message);
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyApkEb5MZs33tU9HSh7STE5plSbiHk2UuY",
@@ -461,7 +298,7 @@ function rowMesKey(r){return r.mesKey||(r.ano&&r.mes?`${r.ano}-${String(r.mes).p
 function mesesDasLinhas(rows){const set=new Set([mesKeyFromDate(today())]);(rows||[]).forEach(r=>set.add(rowMesKey(r)));return[...set].sort().reverse();}
 function getMesSelecionado(rows){const meses=mesesDasLinhas(rows);const sel=$('mesDashboard');const atual=mesKeyFromDate(today());const valorAtual=sel?.value||atual;if(sel){sel.innerHTML=meses.map(k=>`<option value="${k}">${mesNomeFromKey(k)}</option>`).join('');sel.value=meses.includes(valorAtual)?valorAtual:atual;}return sel?.value||atual;}
 function filtrarMes(rows,key){return(rows||[]).filter(r=>rowMesKey(r)===key);}
-function calcularControleMensal(rowsMes,mesKey,totalMes,metaGeral){const info=infoMes(mesKey);const total=Math.max(0,safe(totalMes));const meta=safe(metaGeral);const mediaDia=info.diaBase?total/info.diaBase:0;const previsto=Math.ceil(mediaDia*info.diasNoMes);const falta=Math.max(0,meta-total);const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0;if($('cmDias'))$('cmDias').textContent=info.diasNoMes;if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes;if($('cmRitmo'))$('cmRitmo').textContent=ritmo;if($('cmPrevisto'))$('cmPrevisto').textContent=previsto;if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome;if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`;}
+function calcularControleMensal(rowsMes,mesKey,totalMes,metaGeral){const info=infoMes(mesKey);const total=safe(totalMes);const meta=safe(metaGeral);const mediaDia=info.diaBase?total/info.diaBase:0;const previsto=Math.ceil(mediaDia*info.diasNoMes);const falta=Math.max(0,meta-total);const ritmo=info.diasRestantes>0?Math.ceil(falta/info.diasRestantes):0;if($('cmDias'))$('cmDias').textContent=info.diasNoMes;if($('cmRestantes'))$('cmRestantes').textContent=info.diasRestantes;if($('cmRitmo'))$('cmRitmo').textContent=ritmo;if($('cmPrevisto'))$('cmPrevisto').textContent=previsto;if($('statusMesAuto'))$('statusMesAuto').value=info.isAtual?'Mês atual filtrado automaticamente':'Histórico de '+info.nome;if($('cmResumo'))$('cmResumo').textContent=`${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, os cards começam do zero e o mês anterior fica salvo no histórico.`;}
 function normalizarRelatorioFirestore(d){
   const data=d?.data?d.data():(d||{});
   const r={id:d?.id||data.id||'',...data};
@@ -469,68 +306,33 @@ function normalizarRelatorioFirestore(d){
   if(!r.rede&&r.loja)r.rede=r.loja;
   if(!r.loja&&r.rede)r.loja=r.rede;
   if(!r.vendas)r.vendas={};
-  r.total = totalRelatorio(r);
+  if(!r.total)r.total=totalModelos(r.vendas);
+  if(!r.totalMesInformado)r.totalMesInformado=r.total;
   if(!r.mesKey&&r.data){const partes=String(r.data).split('-');if(partes.length>=2)r.mesKey=`${partes[0]}-${partes[1]}`;}
   if(!r.mesKey&&r.ano&&r.mes)r.mesKey=`${r.ano}-${String(r.mes).padStart(2,'0')}`;
   if(!r.mesKey)r.mesKey=mesKeyFromDate(r.data||today());
   return r;
 }
 
-
 async function carregarBaseGeral(){
   if(!db){return[];}
-
   try{
-
-    const snap = await getDocs(collection(db,'relatorios'));
-
-    const mapa = {};
-
-    snap.forEach(d=>{
-
-      const r = normalizarRelatorioFirestore(d);
-
-      const chave =
-        (r.nome||'') + '_' +
-        (r.data||'') + '_' +
-        (r.loja||r.rede||'');
-
-      // Usa apenas o último relatório salvo (com createdAt mais recente)
-      if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
-        mapa[chave] = {
-          ...r,
-          vendas:{...(r.vendas||{})},
-          estoque:{...(r.estoque||{})}
-        };
-      }
-
-    });
-
-    const rows = Object.values(mapa).map(r=>{
-      r.total = totalModelos(r.vendas||{});
-      return r;
-    });
-
-    rows.sort((a,b)=>
-      String(b.data||'').localeCompare(
-        String(a.data||'')
-      )
-    );
-
-    window.__BASE_GERAL = rows;
-    window.__rowsDashboardRaw = rows;
-
+    const snap=await getDocs(collection(db,'relatorios'));
+    const rows=[];
+    snap.forEach(d=>rows.push(normalizarRelatorioFirestore(d)));
+    rows.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+    window.__BASE_GERAL=rows;
+    window.__rowsDashboardRaw=rows;
     return rows;
-
   }catch(e){
-
     console.error('Erro ao carregar base:',e.message);
-
-    return [];
-
+    if(e.message&&(e.message.includes('400')||e.message.includes('NOT_FOUND')||e.message.includes('failed')||e.message.includes('PERMISSION'))){
+      document.getElementById('firebaseBanner').classList.add('show');
+      document.body.style.paddingTop='60px';
+    }
+    return[];
   }
 }
-
 
 function getDadosFiltrados(){
   const base=window.__BASE_GERAL||[];
@@ -544,241 +346,7 @@ function getDadosFiltrados(){
 
 function moneyDate(d){return(d||'').split('-').reverse().join('/')}
 function safe(v){return Number(v||0)}
-function totalModelos(obj={}){
-  return Object.values(obj || {}).reduce((s,v)=>s + safe(v),0);
-}
-
-function totalObj(o={}){
-  return totalModelos(o);
-}
-
-
-
-/* ============================================================
-   NOVA FUNÇÃO CENTRAL - RECONSTRUÇÃO COMPLETA DA LÓGICA
-   Esta função substitui TODA a lógica antiga de consolidação
-   ============================================================ */
-function recalcularDashboardPeloHistorico(rowsRaw = []){
-  console.log('🔍 INICIANDO RECONSTRUÇÃO COMPLETA DO DASHBOARD');
-  console.log('📊 Total de relatórios brutos carregados:', rowsRaw.length);
-  
-  // PASSO 1: Normalizar todos os relatórios
-  const rowsNormalizados = rowsRaw.map(r => normalizarRelatorioFirestore(r));
-  
-  // PASSO 2: Eliminar duplicatas - manter APENAS o último relatório por promotor por dia
-  // A chave é SOMENTE nome + data (ignora loja para evitar duplicação)
-  const mapaUnico = {};
-  const duplicatasRemovidas = [];
-  
-  rowsNormalizados.forEach(r => {
-    const chave = (r.nome || '') + '_' + (r.data || '');
-    
-    if (!mapaUnico[chave]) {
-      // Primeira ocorrência
-      mapaUnico[chave] = {
-        ...r,
-        vendas: {...(r.vendas || {})},
-        estoque: {...(r.estoque || {})},
-        total: totalModelos(r.vendas || {})
-      };
-    } else {
-      // Já existe - verificar se este é mais recente
-      const existente = mapaUnico[chave];
-      if (r.createdAt && (!existente.createdAt || r.createdAt > existente.createdAt)) {
-        // Este é mais recente - substituir
-        duplicatasRemovidas.push({
-          removido: existente,
-          mantido: r,
-          motivo: 'Relatório mais recente encontrado'
-        });
-        mapaUnico[chave] = {
-          ...r,
-          vendas: {...(r.vendas || {})},
-          estoque: {...(r.estoque || {})},
-          total: totalModelos(r.vendas || {})
-        };
-      } else {
-        // Manter o existente, registrar duplicata
-        duplicatasRemovidas.push({
-          removido: r,
-          mantido: existente,
-          motivo: 'Relatório mais antigo ignorado'
-        });
-      }
-    }
-  });
-  
-  const rowsUnicos = Object.values(mapaUnico);
-  console.log('✅ Relatórios únicos após deduplicação:', rowsUnicos.length);
-  console.log('🗑️ Duplicatas removidas:', duplicatasRemovidas.length);
-  
-  // PASSO 3: Agrupar por mês
-  const porMes = {};
-  rowsUnicos.forEach(r => {
-    const mesKey = rowMesKey(r);
-    if (!porMes[mesKey]) {
-      porMes[mesKey] = [];
-    }
-    porMes[mesKey].push(r);
-  });
-  
-  // PASSO 4: Consolidar por promotor para cada mês
-  const consolidadoPorMes = {};
-  Object.keys(porMes).forEach(mesKey => {
-    const rowsMes = porMes[mesKey];
-    const mapaPromotor = {};
-    
-    rowsMes.forEach(r => {
-      const nome = r.nome || '';
-      if (!mapaPromotor[nome]) {
-        mapaPromotor[nome] = {
-          nome,
-          totalMes: 0,
-          relatorios: 0,
-          ontem: 0,
-          lojas: new Set(),
-          filiais: new Set(),
-          vendas: Object.fromEntries(MODELOS.map(m => [m, 0])),
-          estoque: Object.fromEntries(MODELOS.map(m => [m, 0])),
-          mostruario: [],
-          obs: [],
-          real: 0,
-          reno: 0,
-          a6Pro: 0,
-          datas: [] // Armazena as datas dos relatórios
-        };
-      }
-      
-      const p = mapaPromotor[nome];
-      const totalDia = totalModelos(r.vendas || {});
-      
-      // Acumula valores
-      p.totalMes += totalDia;
-      p.relatorios += 1;
-      p.datas.push(r.data);
-      
-      if (r.loja || r.rede) p.lojas.add(r.loja || r.rede);
-      if (r.filial) p.filiais.add(r.filial);
-      
-      MODELOS.forEach(m => {
-        p.vendas[m] = (p.vendas[m] || 0) + safe(r.vendas?.[m]);
-        p.estoque[m] = Math.max(p.estoque[m] || 0, safe(r.estoque?.[m]));
-      });
-      
-      p.real += totalDia;
-      p.reno += safe(r.vendas?.['Reno13F']) + safe(r.vendas?.['Reno14F']);
-      p.a6Pro += safe(r.vendas?.['A6 Pro']);
-      
-      if (r.obs) {
-        const o = String(r.obs).trim();
-        if (o && !p.obs.includes(o)) p.obs.push(o);
-      }
-      if (r.mostruario) p.mostruario = r.mostruario;
-    });
-    
-    consolidadoPorMes[mesKey] = mapaPromotor;
-  });
-  
-  // PASSO 5: Calcular ontem para o mês atual
-  const mesAtual = mesKeyFromDate(today());
-  const ontemKey = new Date();
-  ontemKey.setDate(ontemKey.getDate() - 1);
-  const yk = ontemKey.getFullYear() + '-' + String(ontemKey.getMonth() + 1).padStart(2, '0') + '-' + String(ontemKey.getDate()).padStart(2, '0');
-  
-  if (consolidadoPorMes[mesAtual]) {
-    rowsUnicos.forEach(r => {
-      if (rowMesKey(r) === mesAtual && r.data === yk) {
-        const nome = r.nome || '';
-        if (consolidadoPorMes[mesAtual][nome]) {
-          consolidadoPorMes[mesAtual][nome].ontem += totalModelos(r.vendas || {});
-        }
-      }
-    });
-  }
-  
-  // PASSO 6: Gerar tabela de auditoria
-  console.log('\n📋 TABELA DE AUDITORIA - RECONSTRUÇÃO COMPLETA');
-  console.log('═'.repeat(100));
-  console.log('PROMOTOR'.padEnd(30) + 'TOTAL HISTÓRICO'.padEnd(20) + 'RELATÓRIROS ÚNICOS'.padEnd(20) + 'DIAS TRABALHADOS');
-  console.log('─'.repeat(100));
-  
-  const auditData = [];
-  Object.keys(consolidadoPorMes).forEach(mesKey => {
-    const mapa = consolidadoPorMes[mesKey];
-    Object.keys(mapa).forEach(nome => {
-      const p = mapa[nome];
-      const diasUnicos = new Set(p.datas).size;
-      auditData.push({
-        promotor: nome,
-        mes: mesKey,
-        totalHistorico: p.totalMes,
-        relatorios: p.relatorios,
-        diasUnicos: diasUnicos,
-        diferenca: p.relatorios - diasUnicos
-      });
-      
-      console.log(
-        nome.padEnd(30) + 
-        String(p.totalMes).padEnd(20) + 
-        String(p.relatorios).padEnd(20) + 
-        String(diasUnicos)
-      );
-    });
-  });
-  console.log('═'.repeat(100));
-  
-  // Validar promotores específicos
-  const promotoresValidar = ['Thais Otoni', 'Taynara Ferreira', 'Gabriela Oliveira', 'Elias Alves'];
-  console.log('\n🔍 VALIDAÇÃO DE PROMOTORES ESPECÍFICOS:');
-  promotoresValidar.forEach(nome => {
-    const encontrado = auditData.find(a => a.promotor === nome);
-    if (encontrado) {
-      console.log(`✅ ${nome}: Total=${encontrado.totalHistorico}, Relatórios=${encontrado.relatorios}, Dias=${encontrado.diasUnicos}`);
-    } else {
-      console.log(`❌ ${nome}: Não encontrado nos dados`);
-    }
-  });
-  
-  // Calcular total da equipe
-  let totalEquipe = 0;
-  Object.keys(consolidadoPorMes).forEach(mesKey => {
-    if (mesKey === mesAtual) {
-      const mapa = consolidadoPorMes[mesKey];
-      Object.keys(mapa).forEach(nome => {
-        totalEquipe += mapa[nome].totalMes;
-      });
-    }
-  });
-  
-  console.log(`\n📊 TOTAL EQUIPE (MÊS ATUAL ${mesAtual}): ${totalEquipe}`);
-  console.log(`🎯 VALOR ESPERADO: ~261`);
-  console.log(`⚠️ DIFERENÇA: ${totalEquipe - 261}`);
-  
-  // Retornar estrutura limpa
-  return {
-    rowsUnicos,
-    consolidadoPorMes,
-    duplicatasRemovidas,
-    auditData,
-    totalEquipe
-  };
-}
-
-/* ============================================================
-   FUNÇÕES ANTIGAS REMOVIDAS - CAUSAVAM INFLAÇÃO
-   - normalizarLinhasUnicas (removida - usava chave com loja)
-   - agregarRelatoriosPorPromotorDia (removida - duplicação)
-   - consolidarPromotoresMes (removida - acumulação errada)
-   ============================================================ */
-
-
-
-function totalRelatorio(r={}){
-  if(r?.vendas){
-    return totalModelos(r.vendas);
-  }
-  return safe(r.real || r.total || 0);
-}
+function totalObj(o){return MODELOS.reduce((s,m)=>s+safe(o[m]),0)}
 function show(el,msg,type='ok'){if(el){el.textContent=msg;el.className='status '+type}}
 function carregarMostruarioExtra(){try{return JSON.parse(localStorage.getItem(LS_MOSTRUARIO)||'{}')}catch(e){return{}}}
 function salvarMostruarioExtra(){localStorage.setItem(LS_MOSTRUARIO,JSON.stringify(mostruarioExtraPorPromotor||{}))}
@@ -913,8 +481,8 @@ function initUi(){
   renderModelosInputs();
   if($('btnSalvarMostruarioExtra'))$('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
   if($('btnAddModeloVenda'))$('btnAddModeloVenda').onclick=adicionarModeloVenda;
-  $('promotor').onchange=async()=>{preencherFilialPromotor();carregarMostruarioPromotor();if(db)await carregarBaseGeral();renderVendas();};
-  if($('data'))$('data').onchange=()=>renderVendas();
+  $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};
+  if($('acumuladoMes'))$('acumuladoMes').oninput=()=>{$('acumuladoMes').dataset.touched='1';renderVendas();};
   $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
   if($('btnIA'))$('btnIA').onclick=iaDashboard;
   $('btnSalvar').onclick=salvarRelatorio;
@@ -940,29 +508,24 @@ function preencherFilialPromotor(){
 }
 
 function renderVendas(){
-  MODELOS.forEach(m=>{
-    const el=$('q_'+idModelo(m));
-    if(el)el.textContent=vendas[m]||0;
-  });
-  const nome=$('promotor')?.value||'';
-  const dataRef=$('data')?.value||today();
-  const calc=calcularMesPromotor(nome,dataRef,vendas);
-  const totalDia=calc.totalDia;
-  const totalMes=calc.totalMes;
-  const meta=getMeta(nome);
+  MODELOS.forEach(m=>{const el=$('q_'+idModelo(m));if(el)el.textContent=vendas[m]||0;});
+  const total=totalObj(vendas),meta=getMeta($('promotor').value);
+  const acEl=$('acumuladoMes');
+  if(acEl){
+    if(!acEl.dataset.touched||safe(acEl.value)<total){acEl.value=total;}
+  }
+  const totalMes=acEl?safe(acEl.value):total;
   const pct=meta?Math.round(totalMes/meta*100):0;
-  $('totalDia').textContent=totalDia;
-  if($('totalMes'))$('totalMes').textContent=totalMes;
-  $('metaLabel').textContent=pct+'%';
-  $('metaFill').style.width=Math.min(pct,100)+'%';
-  $('metaHelp').textContent=meta
-    ? `${totalMes} no mês (soma de ${calc.dias} dia(s)) • meta ${meta}. Hoje: ${totalDia}.`
-    : 'Defina uma meta para acompanhar o desempenho.';
-  $('s3').classList.add('on');
+  $('totalDia').textContent=total;$('metaLabel').textContent=pct+'%';$('metaFill').style.width=Math.min(pct,100)+'%';
+  $('metaHelp').textContent=meta?`${totalMes}/${meta} unidades acumuladas no mês • Atingimento ${pct}%.`:'Selecione o promotor para calcular a meta.';
+  const acHelp=$('acumuladoMesHelp');
+  if(acHelp){acHelp.textContent=meta?`Você digitou ${totalMes} de ${meta} → Atingimento ${pct}%.`:'Atualizado automaticamente com o total do dia. Edite se já houver vendas anteriores no mês.';}
+  if(total>0)$('s3').classList.add('on');
 }
 
 function openTab(id){
-  if(!isSupervisor&&['supervisor','historico','historicoDias'].includes(id))id='relatorio';
+  // Promotores podem ver historico (Dashboard Geral) e historicoDias
+  // Supervisor bloqueado via CSS (.promotor-on [data-tab="supervisor"])
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   $('appShell').classList.toggle('super-app',id==='supervisor');
@@ -976,256 +539,118 @@ function openTab(id){
 async function salvarRelatorio(){
   // Trava de clique duplo
   if(_salvandoRelatorio){show($('status'),'Aguarde, já está salvando...','ok');return;}
-  if(!user){show($('status'),'Sessão expirada. Faça login novamente.','err');return;}
-  if(!db){show($('status'),'Firestore não conectado. Ative o banco no Firebase Console.','err');return;}
   if(!$('promotor').value||!$('loja').value||!$('filial').value||!$('data').value){show($('status'),'Preencha promotor, loja, filial e data.','err');return}
   if(!getMeta($('promotor').value)){show($('status'),'Este promotor está sem meta. Defina a meta no painel Supervisor.','err');return}
-  const totalVendasDia = totalObj(vendas);
-const realCalculado = totalVendasDia;
+  const acumuladoMesVal=safe($('acumuladoMes')?.value);
+  if(!acumuladoMesVal||acumuladoMesVal<=0){show($('status'),'Informe o Acumulado do mês (obrigatório).','err');$('acumuladoMes')?.focus();return}
+  const mostSelecionado=Object.values(mostruario||{}).some(Boolean)||(($('mostruarioExtra')?.value||'').trim().length>0);
+  if(!mostSelecionado){show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo ou escreva o modelo do mostruário.','err');$('mostruarioExtra')?.focus();return}
+  if(!db){show($('status'),'⚠️ Firestore não conectado. Ative o Firestore no Firebase Console primeiro.','err');document.getElementById('firebaseBanner').classList.add('show');return}
+
   // Ativa trava + desabilita botão
   _salvandoRelatorio=true;
   const btnSalvar=$('btnSalvar');
   if(btnSalvar){btnSalvar.disabled=true;btnSalvar.textContent='Salvando...';}
 
-try{
-
-  salvarMostruarioPromotor();
-
-  const estoque = Object.fromEntries(
-    MODELOS.map(m => [
-      m,
-      safe($('est_' + idModelo(m))?.value)
-    ])
-  );
-
-  const mostruarioPayload = {
-    modelos: { ...mostruario },
-    modeloExtra: $('mostruarioExtra')?.value?.trim() || ''
-  };
-
-  const dataRel = $('data').value;
-
-  const infMes = infoMes(
-    mesKeyFromDate(dataRel)
-  );
-
-  const perfilAtual =
-    getPerfilSupervisor(
-      $('promotor').value
-    ) || {};
-
-  const redeFinal =
-    perfilAtual.rede ||
-    $('loja').value;
-
-  const filialFinal =
-    perfilAtual.filial ||
-    $('filial').value.trim();
-
-  const payload = {
-
-    uid: user.uid,
-
-    email: user.email,
-
-    nome: $('promotor').value,
-
-    filial: filialFinal,
-
-    loja: redeFinal,
-
-    rede: redeFinal,
-
-    data: dataRel,
-
-    mes: infMes?.mes || '',
-
-    ano: infMes?.ano || '',
-
-    mesKey: infMes?.key || '',
-
-    mesNome: infMes?.nome || '',
-
-    diaMes:
-      parseDataLocal(dataRel)?.getDate?.() || 0,
-
-    diasNoMes:
-      infMes?.diasNoMes || 0,
-
-    diasRestantes:
-      infMes?.diasRestantes || 0,
-
-    metaMes:
-      getMeta($('promotor').value) || 0,
-
-    vendas: { ...vendas },
-
-    total: realCalculado,
-real: realCalculado,
-reno:
-  safe(vendas['Reno13F']) +
-  safe(vendas['Reno14F']),
-a6pro: safe(vendas['A6 Pro']),
-
-    estoque: { ...estoque },
-
-    mostruario: {
-      ...mostruarioPayload
-    },
-
-    interessados:
-      safe($('interessados').value),
-
-    perdidas:
-      safe($('perdidas').value),
-
-    concorrencia:
-      $('concorrencia').value || '',
-
-    obs:
-      $('obs').value || '',
-
-    semVendas:
-      totalObj(vendas) === 0,
-
-    bloqueadoEdicao: true,
-
-    statusDocumento:
-      'BLOQUEADO_APOS_SALVAR',
-
-    createdAt:
-      serverTimestamp()
-
-  };
-
-  show(
-    $('status'),
-    'Salvando...',
-    'ok'
-  );
-
-const q = query(
-  collection(db, 'relatorios'),
-  where('nome', '==', $('promotor').value),
-  where('data', '==', dataRel)
-);
-
-const snap = await getDocs(q);
-
-if (!snap.empty) {
-
-  const antigo = snap.docs[0];
-
-  await updateDoc(antigo.ref, payload);
-
-} else {
-
-  await addDoc(collection(db,'relatorios'), payload);
-
-}
-
-  if($('status')){
-    $('status').className = 'status';
+  try{
+    salvarMostruarioPromotor();
+    const estoque=Object.fromEntries(MODELOS.map(m=>[m,safe($('est_'+idModelo(m))?.value)]));
+    const mostruarioPayload={modelos:{...mostruario},modeloExtra:$('mostruarioExtra').value.trim()};
+    const dataRel=$('data').value;
+    const infMes=infoMes(mesKeyFromDate(dataRel));
+    const perfilAtual=getPerfilSupervisor($('promotor').value);
+    const redeFinal=perfilAtual.rede||$('loja').value;
+    const filialFinal=perfilAtual.filial||$('filial').value.trim();
+    const payload={
+      uid:user.uid,email:user.email,nome:$('promotor').value,
+      filial:filialFinal,loja:redeFinal,rede:redeFinal,data:dataRel,
+      mes:infMes.mes,ano:infMes.ano,mesKey:infMes.key,mesNome:infMes.nome,
+      diaMes:parseDataLocal(dataRel).getDate(),diasNoMes:infMes.diasNoMes,
+      diasRestantes:infMes.diasRestantes,metaMes:getMeta($('promotor').value),
+      vendas,total:totalObj(vendas),
+      totalMesInformado:safe($('acumuladoMes')?.value)||totalObj(vendas),
+      estoque,mostruario:mostruarioPayload,
+      interessados:safe($('interessados').value),
+      perdidas:safe($('perdidas').value),
+      concorrencia:$('concorrencia').value,
+      obs:$('obs').value,
+      bloqueadoEdicao:true,statusDocumento:'BLOQUEADO_APOS_SALVAR',
+      createdAt:serverTimestamp()
+    };
+    show($('status'),'Salvando...','ok');
+    await addDoc(collection(db,'relatorios'),payload);
+    if($('status'))$('status').className='status';
+    popupSucesso('Relatório enviado com sucesso','Os dados foram salvos na nuvem.');
+    await carregarBaseGeral();
+    if(isSupervisor){await carregarHistorico();await carregarSupervisor();}
+  }catch(e){
+    show($('status'),'Erro ao salvar: '+e.message+'. Verifique se o Firestore está ativo.','err');
+    console.error('Erro ao salvar relatório:',e);
+  }finally{
+    // Libera trava após 3 segundos (evita spam mas permite novo envio)
+    setTimeout(()=>{
+      _salvandoRelatorio=false;
+      if(btnSalvar){btnSalvar.disabled=false;btnSalvar.textContent='🔥 Salvar relatório online';}
+    },3000);
   }
-
-  popupSucesso(
-    'Relatório enviado com sucesso',
-    'Os dados foram salvos na nuvem.'
-  );
-
-  await carregarBaseGeral();
-  renderVendas();
-
-  if(isSupervisor){
-
-    await carregarHistorico();
-
-    await carregarSupervisor();
-
-  }
-
-}catch(e){
-
-  console.error(
-    'Erro ao salvar relatório:',
-    e
-  );
-
-  show(
-    $('status'),
-    'Erro ao salvar: ' +
-    e.message +
-    '. Verifique se o Firestore está ativo.',
-    'err'
-  );
-
-}finally{
-
-  setTimeout(()=>{
-
-    _salvandoRelatorio = false;
-
-    const btnSalvar =
-      $('btnSalvar');
-
-    if(btnSalvar){
-
-      btnSalvar.disabled = false;
-
-      btnSalvar.textContent =
-        '🔥 Salvar relatório online';
-
-    }
-
-  },3000);
-
 }
+
+function listaVendasModelo(vendas){return Object.entries(vendas||{}).filter(([_,v])=>safe(v)>0).map(([m,v])=>`${m}: ${safe(v)}`).join('<br>')||'-';}
+function listaVendasModeloFechamento(vendas){const linhas=[];MODELOS.forEach(m=>{const qtd=safe(vendas?.[m]);if(qtd>0)linhas.push(`${m}: ${qtd}`);});return linhas.length?linhas.join('<br>'):'-';}
+function totalModelos(vendas){return MODELOS.reduce((s,m)=>s+safe(vendas?.[m]),0);}
+function ultimaVendaDoDiaPorPromotor(rows){const ult={};(rows||[]).forEach(r=>{const n=r.nome||'Sem promotor';if(!ult[n]||String(r.data||'')>String(ult[n].data||''))ult[n]=r;});return ult;}
+
+function relatoriosUnicosPorPromotorData(rows){
+  const mapa={};
+  (rows||[]).forEach(r=>{
+    const key=(r.nome||'Sem promotor')+'___'+(r.data||'Sem data');
+    const atual=mapa[key];
+    const rMes=valorTotalMesRelatorio(r),aMes=valorTotalMesRelatorio(atual||{});
+    if(!atual||rMes>aMes||(rMes===aMes&&safe(r.total)>=safe(atual?.total)))mapa[key]=r;
+  });
+  return Object.values(mapa);
 }
-function totalDiaRelatorio(r){
+
+function valorTotalMesRelatorio(r){
   if(!r)return 0;
-  return totalRelatorio(r);
+  const v=safe(r.totalMesInformado);if(v>0)return v;
+  const t=safe(r.total);if(t>0)return t;
+  return totalModelos(r.vendas);
+}
+function melhorRelatorioMes(a,b){
+  if(!a)return b;
+  const va=valorTotalMesRelatorio(a),vb=valorTotalMesRelatorio(b);
+  if(vb>va)return b;if(vb<va)return a;
+  return String(b.data||'')>String(a.data||'')?b:a;
 }
 
-/* ============================================================
-   FUNÇÃO ATUALIZADA - Usa nova lógica de consolidação
-   ============================================================ */
-function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
-  const mesRef = mesKeyFromDate(dataRef);
-  const baseRaw = window.__BASE_GERAL || [];
-  
-  // Usa a nova função central de reconstrução
-  const resultado = recalcularDashboardPeloHistorico(baseRaw);
-  const consolidadoMes = resultado.consolidadoPorMes[mesRef] || {};
-  const dadosPromotor = consolidadoMes[nome] || { totalMes: 0, relatorios: 0, datas: [] };
-  
-  const totalMes = dadosPromotor.totalMes || 0;
-  const diasTrabalhados = new Set(dadosPromotor.datas || []).size;
-  const totalDia = totalModelos(vendasAtuais);
-  
-  // Verifica se hoje já existe nos dados
-  const hojeExiste = (dadosPromotor.datas || []).includes(dataRef);
-  
-  // Se hoje já existe, substitui pelo valor atual
-  let totalMesFinal = totalMes;
-  if(hojeExiste){
-    // Encontra o total do hoje na base
-    const rowsHoje = baseRaw.filter(r => r.nome === nome && r.data === dataRef && rowMesKey(r) === mesRef);
-    const totalHojeNaBase = rowsHoje.reduce((sum, r) => sum + totalModelos(r.vendas || {}), 0);
-    totalMesFinal = totalMes - totalHojeNaBase + totalDia;
-  } else {
-    totalMesFinal = totalMes + totalDia;
-  }
-  
-  return {
-    totalDia,
-    totalMes: totalMesFinal,
-    dias: diasTrabalhados + (hojeExiste ? 0 : 1)
-  };
+function consolidarPromotoresMes(rows){
+  const porProm={};
+  const y=new Date();y.setDate(y.getDate()-1);
+  const ontemKey=`${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
+  (rows||[]).forEach(r=>{
+    const n=r.nome||'Sem promotor';
+    if(!porProm[n])porProm[n]={nome:n,total:0,totalMes:0,relatorios:0,ontem:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),lojas:new Set(),filiais:new Set(),mostruario:[],obs:[],_melhor:null};
+    const p=porProm[n];
+    p.total+=safe(r.total);
+    p.totalMes=Math.max(p.totalMes,valorTotalMesRelatorio(r));
+    p.relatorios+=1;
+    p.lojas.add(r.loja||r.rede||'');
+    p.filiais.add(r.filial||'');
+    if(r.data===ontemKey)p.ontem+=safe(r.total);
+    p._melhor=melhorRelatorioMes(p._melhor,r);
+    MODELOS.forEach(m=>{p.estoque[m]=Math.max(p.estoque[m],safe(r.estoque?.[m]));});
+    const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
+    if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
+    most.forEach(m=>{if(!p.mostruario.includes(m))p.mostruario.push(m)});
+    if(r.obs&&!p.obs.includes(r.obs))p.obs.push(r.obs);
+  });
+  Object.values(porProm).forEach(p=>{
+    MODELOS.forEach(m=>{p.vendas[m]=safe(p._melhor?.vendas?.[m]);});
+  });
+  return porProm;
 }
 
-/* ============================================================
-   FUNÇÕES AUXILIARES - Atualizadas para usar nova lógica
-   ============================================================ */
 function somaModelosConsolidado(porProm){
   const soma=Object.fromEntries(MODELOS.map(m=>[m,0]));
   Object.values(porProm||{}).forEach(p=>MODELOS.forEach(m=>soma[m]+=safe(p.vendas?.[m])));
@@ -1233,67 +658,19 @@ function somaModelosConsolidado(porProm){
 }
 function totalEquipeConsolidado(porProm){return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);}
 
-/* ── FUNÇÕES AUXILIARES DE LISTAGEM ── */
-function listaVendasModelo(vendas){
-  if(!vendas)return'-';
-  const itens=Object.entries(vendas).filter(([,v])=>safe(v)>0).map(([m,v])=>`<b>${m}:</b> ${v}`);
-  return itens.length?itens.join(' • '):'-';
-}
-function listaVendasModeloFechamento(vendas){
-  if(!vendas)return'-';
-  const itens=Object.entries(vendas).filter(([,v])=>safe(v)>0).map(([m,v])=>`<div class="base-model-pill"><span>${m}</span>${v}</div>`);
-  return itens.length?itens.join(''):'<div class="base-model-pill"><span>Sem vendas</span>0</div>';
-}
-function ultimaVendaDoDiaPorPromotor(rows){
-  const mapa={};
-  (rows||[]).forEach(r=>{
-    const nome=r.nome||'';
-    if(!mapa[nome]||String(r.data||'')>String(mapa[nome].data||''))mapa[nome]=r;
-  });
-  return mapa;
-}
-
-/* ============================================================
-   FUNÇÃO AUXILIAR - Agrega relatórios por promotor/dia (NOVA LÓGICA)
-   Usa apenas nome + data como chave (sem loja)
-   ============================================================ */
-function agregarRelatoriosPorPromotorDia(rows){
-  const mapa={};
-  (rows||[]).forEach(r=>{
-    const chave = (r.nome||'') + '_' + (r.data||'');
-    // Usa apenas o último relatório salvo por promotor/data
-    if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
-      mapa[chave]={
-        nome:r.nome,data:r.data,mesKey:rowMesKey(r),uid:r.uid,createdAt:r.createdAt,
-        loja:r.loja||r.rede,rede:r.rede||r.loja,filial:r.filial,
-        vendas:{...(r.vendas||{})},
-        estoque:{...(r.estoque||{})},
-        total:totalModelos(r.vendas||{}),
-        mostruario:r.mostruario,obs:r.obs?String(r.obs).trim():''
-      };
-    }
-  });
-  return Object.values(mapa);
-}
-
 async function carregarHistorico(){
   if(!db){$('tbodyHistorico').innerHTML='<div class="base-empty">⚠️ Firestore não conectado. Ative o banco no Firebase Console.</div>';return;}
   try{
     await carregarBaseGeral();
     const rows=getDadosFiltrados();
+    const rowsCalc=relatoriosUnicosPorPromotorData(rows);
     const mesAtivo=window.__mesAtivo||mesKeyFromDate(today());
-    
-    // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-    const resultado = recalcularDashboardPeloHistorico(rows);
-    const rowsPorDia = resultado.rowsUnicos;
-    const porPromConsolidado = resultado.consolidadoPorMes[mesAtivo] || {};
-    
-    window.__rowsDashboard=rowsPorDia;
-    window.__rowsDashboardRaw=rows;
+    const porPromConsolidado=consolidarPromotoresMes(rowsCalc);
+    window.__rowsDashboard=rowsCalc;
     window.__dashboardConsolidado=porPromConsolidado;
 
     const somaModelos=somaModelosConsolidado(porPromConsolidado);
-    if($('dashboardModeloMes'))$('dashboardModeloMes').innerHTML=MODELOS.map(m=>({m,q:somaModelos[m]})).filter(x=>x.q>0).sort((a,b)=>b.q-a.q||a.m.localeCompare(b.m)).map(x=>`<div class="model-month-item"><small>${x.m}</small><b>${x.q}</b></div>`).join('')||'<p class="hint">Sem vendas por modelo neste mês.</p>';
+    if($('dashboardModeloMes'))$('dashboardModeloMes').innerHTML=MODELOS.map(m=>`<div class="model-month-item"><small>${m}</small><b>${somaModelos[m]}</b></div>`).join('');
 
     if($('rankingRedeDashboard')){
       const porRede={};
@@ -1312,34 +689,30 @@ async function carregarHistorico(){
       const lista=Object.values(porPromConsolidado).sort((a,b)=>safe(b.totalMes)-safe(a.totalMes));
       const totalEquipe=totalEquipeConsolidado(porPromConsolidado),totalRel=lista.reduce((s,r)=>s+r.relatorios,0),ontem=lista.reduce((s,r)=>s+r.ontem,0);
       const metaEquipe=lista.reduce((s,r)=>s+getMeta(r.nome),0),pctEquipe=metaEquipe?Math.round(totalEquipe/metaEquipe*100):0;
-      calcularControleMensal(rowsPorDia,mesAtivo,totalEquipe,metaEquipe);
+      calcularControleMensal(rowsCalc,mesAtivo,totalEquipe,metaEquipe);
       $('hMes').textContent=totalEquipe;$('hMeta').textContent=pctEquipe+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=totalRel;
       $('previsao').textContent=lista.length?`Fechamento geral: ${lista.length} promotores, ${totalEquipe} vendas no mês, ${pctEquipe}% da meta geral e ${totalRel} relatórios lançados.`:'Sem lançamentos da equipe ainda.';
-      const ultimasVendasDia=ultimaVendaDoDiaPorPromotor(rows);
+      const ultimasVendasDia=ultimaVendaDoDiaPorPromotor(rowsCalc);
       function _cardPromotor(r){
         const meta=getMeta(r.nome),totalMes=safe(r.totalMes),pct=meta?Math.round(totalMes/meta*100):0,cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
         const vendaDia=ultimasVendasDia[r.nome];
         const vendasDia=listaVendasModelo(vendaDia?.vendas);
         const somaModelo=listaVendasModeloFechamento(r.vendas);
         const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
-        return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo (mês)</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Real / Reno / A6 Pro</span><div class="dashboard-model-list">Real: ${totalMes} • Reno: ${safe(r.reno)} • A6 Pro: ${safe(r.a6Pro)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${Array.isArray(r.mostruario)?r.mostruario.join(', '):(r.mostruario?mostruarioTexto(r.mostruario):'-')}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${(Array.isArray(r.obs)?r.obs.join(' | '):String(r.obs||''))||'-'}</div></div></div></div>`;
+        return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${r.nome}</b><small>${r.relatorios} relatórios • ${[...r.lojas].filter(Boolean).join(', ')||'Sem loja'}${[...r.filiais].filter(Boolean).length?' • Filial '+[...r.filiais].filter(Boolean).join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Último dia</small><b>${vendaDia?.data?moneyDate(vendaDia.data):'-'}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${somaModelo}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
       }
-      const _datasEnvio=[...new Set(rowsPorDia.map(r=>r.data).filter(Boolean))].sort();
+      const _datasEnvio=[...new Set((rowsCalc||[]).map(r=>r.data).filter(Boolean))].sort();
       const _ultimaData=_datasEnvio[_datasEnvio.length-1]||'';
-      const _nomesUltimaData=new Set(rowsPorDia.filter(r=>r.data===_ultimaData).map(r=>r.nome));
+      const _nomesUltimaData=new Set((rowsCalc||[]).filter(r=>r.data===_ultimaData).map(r=>r.nome));
       const _ultimos=lista.filter(r=>_nomesUltimaData.has(r.nome));
       const _porData={};
-      rowsPorDia.forEach(rr=>{if(!rr.data||rr.data===_ultimaData)return;(_porData[rr.data]=_porData[rr.data]||[]).push(rr);});
+      (rowsCalc||[]).forEach(rr=>{if(!rr.data||rr.data===_ultimaData)return;(_porData[rr.data]=_porData[rr.data]||[]).push(rr);});
       const _diasOrdenados=Object.keys(_porData).sort().reverse();
       let _htmlAccordion='';
       if(_diasOrdenados.length){
         _htmlAccordion='<div style="margin-top:18px">'+_diasOrdenados.map(dia=>{
           const cards=_porData[dia].map(rr=>{
-            const meta=getMeta(rr.nome),
-      totalDia=totalDiaRelatorio(rr),
-      totalMesR=safe(porPromConsolidado[rr.nome]?.totalMes)||totalDia,
-      pct=meta?Math.round(totalMesR/meta*100):0,
-      cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
+            const meta=getMeta(rr.nome),totalDia=safe(rr.total),totalMesR=safe(rr.totalMesInformado)||totalDia,pct=meta?Math.round(totalMesR/meta*100):0,cls=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
             const vendasDia=listaVendasModelo(rr.vendas);
             const most=Object.entries(rr.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);if(rr.mostruario?.modeloExtra)most.push(rr.mostruario.modeloExtra);
             return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${rr.nome||'-'}</b><small>${rr.loja||rr.rede||'Sem loja'}${rr.filial?' • Filial '+rr.filial:''}</small></div><div class="dashboard-percent ${cls}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${totalMesR}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${vendasDia}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${most.length?most.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${rr.obs||'-'}</div></div></div></div>`;
@@ -1348,8 +721,8 @@ async function carregarHistorico(){
         }).join('')+'</div>';
       }
       const _htmlUltimos=_ultimos.length?_ultimos.map(_cardPromotor).join(''):'<div class="base-empty">Sem relatórios no último dia.</div>';
-      const _hdr=_ultimaData?`<div class="fechamento-head">Último envio: ${moneyDate(_ultimaData)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_ultimos.length} promotor(es)</span></div>`:'';
-      $('tbodyHistorico').innerHTML=_hdr+'<div class="fechamento-grid">'+_htmlUltimos+'</div>';
+      const _hdr=_ultimaData?`<div style="margin:0 0 10px;color:#08746A;font-weight:800;font-family:'Plus Jakarta Sans','Manrope',Arial,sans-serif">Último envio: ${moneyDate(_ultimaData)} <span style="color:#60736A;font-weight:600;font-size:12px">• ${_ultimos.length} promotor(es)</span></div>`:'';
+      $('tbodyHistorico').innerHTML=_hdr+'<div class="dashboard-card-list">'+_htmlUltimos+'</div>';
       const _elHistDias=$('tbodyHistoricoDias');
       if(_elHistDias)_elHistDias.innerHTML=_htmlAccordion||'<div class="base-empty">Sem histórico de dias anteriores.</div>';
       return;
@@ -1357,33 +730,35 @@ async function carregarHistorico(){
 
     /* ── PROMOTOR: vê apenas seus próprios dados ── */
     const nomeAtual=(perfilSalvo()?.nome||$('promotor').value||'').trim();
-    const rowsPromotor=rows.filter(r=>r.uid===user.uid||r.nome===nomeAtual);
-    // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-    const resultadoPromotor = recalcularDashboardPeloHistorico(rowsPromotor);
-    const porPromAtual = resultadoPromotor.consolidadoPorMes[mesAtivo] || {};
+    const rowsPromotor=rowsCalc.filter(r=>r.uid===user.uid||r.nome===nomeAtual);
+    const porPromAtual=consolidarPromotoresMes(rowsPromotor);
     const consolidado=porPromAtual[nomeAtual]||Object.values(porPromAtual)[0]||null;
     const ontem=consolidado?safe(consolidado.ontem):0;
-    const rowsPromPorDia=agregarRelatoriosPorPromotorDia(rowsPromotor);
+    const agrupado={};
+    rowsPromotor.forEach(r=>{
+      const key=r.data||'Sem data';
+      if(!agrupado[key])agrupado[key]={data:r.data,lojas:new Set(),filiais:new Set(),total:0,totalMes:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),mostruario:[],obs:[]};
+      if(r.loja)agrupado[key].lojas.add(r.loja);if(r.filial)agrupado[key].filiais.add(r.filial);
+      agrupado[key].total+=safe(r.total);agrupado[key].totalMes=Math.max(agrupado[key].totalMes,valorTotalMesRelatorio(r));
+      MODELOS.forEach(m=>{agrupado[key].vendas[m]=safe(r.vendas?.[m])||agrupado[key].vendas[m];agrupado[key].estoque[m]=Math.max(agrupado[key].estoque[m],safe(r.estoque?.[m]));});
+      const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);most.forEach(m=>{if(!agrupado[key].mostruario.includes(m))agrupado[key].mostruario.push(m)});if(r.obs&&!agrupado[key].obs.includes(r.obs))agrupado[key].obs.push(r.obs);
+    });
+    const linhasDia=Object.values(agrupado).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
     const meta=getMeta(nomeAtual),totalMes=consolidado?safe(consolidado.totalMes):0,pct=meta?Math.round(totalMes/meta*100):0;
-    calcularControleMensal(rowsPromPorDia,mesAtivo,totalMes,meta);
-    $('hMes').textContent=totalMes;$('hMeta').textContent=pct+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=consolidado?safe(consolidado.relatorios):rowsPromotor.length;
-    const linhasDia=rowsPromPorDia.map(r=>{
-      const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
-      if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
-      return{data:r.data,lojas:new Set(r.loja?[r.loja]:[]),filiais:new Set(r.filial?[r.filial]:[]),total:totalDiaRelatorio(r),relatorios:1,vendas:{...r.vendas},estoque:{...r.estoque},mostruario:most,obs:r.obs?[r.obs]:[]};
-    }).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
+    calcularControleMensal(rowsPromotor,mesAtivo,totalMes,meta);
+    $('hMes').textContent=totalMes;$('hMeta').textContent=pct+'%';$('hOntem').textContent=ontem;$('hQtd').textContent=linhasDia.length;
     $('previsao').textContent=meta?`Fechamento: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
-    const clsMes=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
-    $('tbodyHistorico').innerHTML='<div class="fechamento-grid">'+linhasDia.map(r=>{
-      const totalDia=totalDiaRelatorio(r);
+    const somaPromotorModelo=consolidado?.vendas||Object.fromEntries(MODELOS.map(m=>[m,0]));
+    $('tbodyHistorico').innerHTML=linhasDia.map(r=>{
+      const totalDia=r.total,totalMesR=r.totalMes,pctDia=meta?Math.round(totalMesR/meta*100):0,cls=pctDia>=100?'pct-ok':pctDia>=50?'pct-mid':'pct-low';
       const estoque=Object.entries(r.estoque||{}).map(([m,v])=>`${m}: ${v}`).join('<br>')||'-';
-      return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b><small>${[...r.lojas].join(', ')||'Sem loja'}${[...r.filiais].join(', ')?' • Filial '+[...r.filiais].join(', '):''}</small></div><div class="dashboard-percent ${clsMes}">${pct}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${totalMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo (dia)</span><div class="dashboard-model-list">${listaVendasModeloFechamento(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
-    }).join('')+'</div>'||'<div class="base-empty">Sem relatórios ainda.</div>';
+      return`<div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b><small>${[...r.lojas].join(', ')||'Sem loja'}${[...r.filiais].join(', ')?' • Filial '+[...r.filiais].join(', '):''}</small></div><div class="dashboard-percent ${cls}">${pctDia}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total mês</small><b>${totalMesR}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div><div class="dashboard-mini"><small>Total dia</small><b>${totalDia}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas do dia</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Soma por modelo</span><div class="dashboard-model-list">${listaVendasModeloFechamento(somaPromotorModelo)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Estoque</span><div class="dashboard-model-list">${estoque}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.length?r.mostruario.join(', '):'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div>`;
+    }).join('')||'<div class="base-empty">Sem relatórios ainda.</div>';
 
     // Histórico por dia (promotor)
     const _elHistDias=$('tbodyHistoricoDias');
     if(_elHistDias)_elHistDias.innerHTML=linhasDia.length>1?linhasDia.slice(1).map(r=>{
-      const tDia=totalDiaRelatorio(r),tMes=totalMes,p2=meta?Math.round(tMes/meta*100):0,cls2=p2>=100?'pct-ok':p2>=50?'pct-mid':'pct-low';
+      const tDia=r.total,tMes=r.totalMes,p2=meta?Math.round(tMes/meta*100):0,cls2=p2>=100?'pct-ok':p2>=50?'pct-mid':'pct-low';
       return`<details style="margin-bottom:10px;border:1px solid #D8E7DE;border-radius:14px;background:#FBFEFC;padding:10px 14px"><summary style="cursor:pointer;font-weight:800;color:#08746A">📅 ${moneyDate(r.data)} <span style="color:#60736A;font-weight:600;font-size:12px">• Total dia: ${tDia}</span></summary><div style="margin-top:12px"><div class="dashboard-info-card"><div class="dashboard-info-top"><div><b>${moneyDate(r.data)}</b></div><div class="dashboard-percent ${cls2}">${p2}%</div></div><div class="dashboard-info-grid"><div class="dashboard-mini"><small>Total dia</small><b>${tDia}</b></div><div class="dashboard-mini"><small>Total mês</small><b>${tMes}</b></div><div class="dashboard-mini"><small>Meta</small><b>${meta||0}</b></div></div><div class="dashboard-section"><div class="dashboard-box"><span class="dashboard-box-title">Vendas</span><div class="dashboard-model-list">${listaVendasModelo(r.vendas)}</div></div><div class="dashboard-box"><span class="dashboard-box-title">Mostruário</span><div class="dashboard-model-list">${r.mostruario.join(', ')||'-'}</div></div><div class="dashboard-box dashboard-obs"><span class="dashboard-box-title">Obs</span><div class="dashboard-model-list">${r.obs.join(' | ')||'-'}</div></div></div></div></div></details>`;
     }).join(''):'<div class="base-empty">Sem histórico de dias anteriores ainda.</div>';
 
@@ -1392,10 +767,7 @@ async function carregarHistorico(){
 
 function iaDashboard(){
   const rows=window.__rowsDashboard||[];
-  const mesAtivo=window.__mesAtivo||mesKeyFromDate(today());
-  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-  const resultado = recalcularDashboardPeloHistorico(rows);
-  const cons = resultado.consolidadoPorMes[mesAtivo] || {};
+  const cons=window.__dashboardConsolidado||{};
   if(!rows.length){$('previsao').textContent='Sem dados para analisar ainda.';return;}
   const total=totalEquipeConsolidado(cons);
   const prom=Object.keys(cons).length||new Set(rows.map(r=>r.nome).filter(Boolean)).size;
@@ -1482,39 +854,19 @@ function mostrarModeloMes(force=false){
   if(!force)$('modeloMesBox').classList.toggle('hidden');
   if($('modeloMesBox').classList.contains('hidden'))return;
   const rows=window.__rowsSupervisorModelo||[];
-  const mesSup=window.__mesAtivo||mesKeyFromDate(today());
-  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-  const resultado = recalcularDashboardPeloHistorico(rows);
-  const consolidado = resultado.consolidadoPorMes[mesSup] || {};
-  const sum=somaModelosConsolidado(consolidado);
-  $('modeloMesBox').innerHTML=MODELOS.map(m=>({m,q:sum[m]})).filter(x=>x.q>0).sort((a,b)=>b.q-a.q||a.m.localeCompare(b.m)).map(x=>`<div class="model-month-item"><small>${x.m}</small><b>${x.q}</b></div>`).join('')||'<p class="hint">Sem vendas por modelo neste mês.</p>';
+  const sum=Object.fromEntries(MODELOS.map(m=>[m,0]));
+  rows.forEach(r=>MODELOS.forEach(m=>sum[m]+=safe(r.vendas?.[m])));
+  $('modeloMesBox').innerHTML=MODELOS.map(m=>`<div class="model-month-item"><small>${m}</small><b>${sum[m]}</b></div>`).join('');
 }
 
-function iaSupervisor(){
-  const rows=window.__rowsSupervisorModelo||[];
-  const mesSup=window.__mesAtivo||mesKeyFromDate(today());
-  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-  const resultado = recalcularDashboardPeloHistorico(rows);
-  const cons = resultado.consolidadoPorMes[mesSup] || {};
-  const total=totalEquipeConsolidado(cons);
-  const prom=Object.keys(cons).length;
-  const sum=somaModelosConsolidado(cons);
-  const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';
-  show($('iaSupervisorBox'),rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.',rows.length?'ok':'err');
-}
+function iaSupervisor(){const rows=window.__rowsSupervisorModelo||[];const total=rows.reduce((s,r)=>s+safe(r.total),0);const prom=new Set(rows.map(r=>r.nome)).size;const sum=Object.fromEntries(MODELOS.map(m=>[m,0]));rows.forEach(r=>MODELOS.forEach(m=>sum[m]+=safe(r.vendas?.[m])));const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';show($('iaSupervisorBox'),rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.',rows.length?'ok':'err');}
 
 function ativarCardsSupervisorDetalhes(rows,mesSup){
-  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-  const resultado = recalcularDashboardPeloHistorico(rows);
-  const consDet = resultado.consolidadoPorMes[mesSup] || {};
-  const total=totalEquipeConsolidado(consDet);
-  const rel=Object.values(consDet).reduce((s,p)=>s+safe(p.relatorios),0);
-  const promAtivos=Object.keys(consDet).length;
-  const media=rel?Math.ceil(total/rel):0;
-  const maxMes=Object.fromEntries(Object.entries(consDet).map(([n,p])=>[n,p.totalMes]));
+  const total=rows.reduce((s,r)=>s+safe(r.total),0);const rel=rows.length;const promAtivos=new Set(rows.map(r=>r.nome).filter(Boolean)).size;const media=rel?Math.ceil(total/rel):0;
+  const maxMes={};rows.forEach(r=>{maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
   const ranking=Object.entries(maxMes).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([nome,totalMes],i)=>`${i+1}º ${nome}: ${totalMes}/${getMeta(nome)||0}`).join(' • ');
   const diariaCritica=Object.entries(maxMes).map(([nome,totalMes])=>({nome,totalMes,...metaStats(totalMes,getMeta(nome),mesSup)})).filter(x=>x.diaria>5&&x.pct<100).slice(0,5).map(x=>`${x.nome}: falta ${x.falta} (${x.diaria}/dia)`).join(' • ');
-  const modelos=somaModelosConsolidado(consDet);
+  const modelos=Object.fromEntries(MODELOS.map(m=>[m,0]));rows.forEach(r=>MODELOS.forEach(m=>modelos[m]+=safe(r.vendas?.[m])));
   const topModelos=Object.entries(modelos).filter(([_,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,v])=>`${m}: ${v}`).join(' • ');
   const preview=$('superKpiPreview');
   const abrirPrevia=(titulo,texto)=>{if(preview){preview.classList.remove('hidden');preview.innerHTML=`<b>${titulo}</b><p>${texto}</p>`;}};
@@ -1536,40 +888,30 @@ async function carregarSupervisor(){
   renderConfigPromotores();
   if(!db){$('ranking').innerHTML='<p class="hint">⚠️ Firestore não conectado.</p>';return;}
   if(!window.__BASE_GERAL)await carregarBaseGeral();
-  const rowsRaw=getDadosFiltrados();
+  const rows=relatoriosUnicosPorPromotorData(getDadosFiltrados());
   const mesSup=window.__mesAtivo||mesKeyFromDate(today());
-  window.__rowsSupervisorModelo=rowsRaw;
+  window.__rowsSupervisorModelo=rows;
   $('modeloMesBox').classList.remove('hidden');
-  
-  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
-  const resultado = recalcularDashboardPeloHistorico(rowsRaw);
-  const rowsPorDia = resultado.rowsUnicos;
-  const consolidadoSup = resultado.consolidadoPorMes[mesSup] || {};
-  
-  const total=totalEquipeConsolidado(consolidadoSup);
-  const totalRel=Object.values(consolidadoSup).reduce((s,p)=>s+safe(p.relatorios),0);
-  const prom=Object.keys(consolidadoSup);
-  $('sMes').textContent=total;$('sRel').textContent=totalRel;$('sProm').textContent=prom.length;$('sMedia').textContent=totalRel?Math.ceil(total/totalRel):0;
-  ativarCardsSupervisorDetalhes(rowsRaw,mesSup);
-  const maxMes=Object.fromEntries(Object.entries(consolidadoSup).map(([n,p])=>[n,p.totalMes]));
-  const rank={...maxMes};
+  const total=rows.reduce((s,r)=>s+safe(r.total),0),prom=new Set(rows.map(r=>r.nome));
+  $('sMes').textContent=total;$('sRel').textContent=rows.length;$('sProm').textContent=prom.size;$('sMedia').textContent=rows.length?Math.ceil(total/rows.length):0;
+  ativarCardsSupervisorDetalhes(rows,mesSup);
+  const rank={};const maxMes={};rows.forEach(r=>{rank[r.nome]=(rank[r.nome]||0)+safe(r.total);maxMes[r.nome]=Math.max(maxMes[r.nome]||0,safe(r.totalMesInformado)||safe(r.total));});
   const alertas=Object.keys(maxMes).map(n=>({nome:n,...metaStats(maxMes[n],getMeta(n),mesSup)}));
   if($('gaAjuda'))$('gaAjuda').textContent=alertas.filter(a=>a.pct<60).length;
   if($('gaCritica'))$('gaCritica').textContent=alertas.filter(a=>a.diaria>5&&a.pct<100).length;
   if($('gaBater'))$('gaBater').textContent=alertas.filter(a=>a.pct>=90||a.diaria<=1).length;
   $('ranking').innerHTML=Object.entries(rank).sort((a,b)=>b[1]-a[1]).map(([n,t],i)=>{const st=metaStats(maxMes[n]||t,getMeta(n),mesSup);return`<div class="rank-item"><div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div><div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div><b>${maxMes[n]||t}</b></div>`}).join('')||'<p class="hint">Sem dados.</p>';
-  const baseTotalMesPorPromotor=Object.fromEntries(Object.entries(consolidadoSup).map(([n,p])=>[n,p.totalMes]));
-  const baseModelosMesPorPromotor=Object.fromEntries(Object.entries(consolidadoSup).map(([n,p])=>[n,p.vendas]));
-  window.__totaisSupervisorMes=baseTotalMesPorPromotor;
-  $('tbodySupervisor').innerHTML=rowsPorDia.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=totalDiaRelatorio(r);const totalMes=safe(baseTotalMesPorPromotor[r.nome]);const vendasDia=r.vendas||Object.fromEntries(MODELOS.map(m=>[m,0]));const _somaModTxt=listaVendasModeloFechamento(vendasDia);const vendasMesProm=baseModelosMesPorPromotor[r.nome]||Object.fromEntries(MODELOS.map(m=>[m,0]));const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(Array.isArray(r.obs)?r.obs.join(' | '):String(r.obs||'')).replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(vendasMesProm?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(vendasMesProm?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(vendasMesProm?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(vendasMesProm?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Real / Reno / A6 Pro / Total</span><div class="base-model-list">Real: ${safe(totalMes)} • Reno: ${safe(vendasMesProm?.['Reno13F']) + safe(vendasMesProm?.['Reno14F'])} • A6 Pro: ${safe(vendasMesProm?.['A6 Pro'])} • Total: ${safe(totalMes)}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
-  window.__rowsSupervisorBase=rowsPorDia;
+  const baseTotalMesPorPromotor={};const baseModelosMesPorPromotor={};
+  rows.forEach(rr=>{const n=rr.nome||'';if(!baseTotalMesPorPromotor[n])baseTotalMesPorPromotor[n]=0;baseTotalMesPorPromotor[n]+=safe(rr.total);if(!baseModelosMesPorPromotor[n])baseModelosMesPorPromotor[n]=Object.fromEntries(MODELOS.map(m=>[m,0]));MODELOS.forEach(m=>{baseModelosMesPorPromotor[n][m]+=safe(rr.vendas?.[m]);});});
+  $('tbodySupervisor').innerHTML=rows.map((r,i)=>{const perfil=getPerfilSupervisor(r.nome);const loja=r.loja||perfil.rede||'';const filial=r.filial||perfil.filial||'';const meta=safe(r.metaMes)||safe(perfil.meta);const totalDia=safe(r.total);const totalMes=safe(baseTotalMesPorPromotor[r.nome]||r.totalMesInformado);const _somaModTxt=MODELOS.map(m=>safe(r.vendas?.[m])>0?`<div class="base-model-pill"><span>${m}</span>${safe(r.vendas?.[m])}</div>`:'').filter(Boolean).join('')||'<span class="hint">Sem vendas registradas</span>';const st=metaStats(totalMes,meta,mesSup);const mst=statusMostruario(r.mostruario);const most=mostruarioTexto(r.mostruario)||'Não informado';const obs=(r.obs||'').replace(/"/g,'&quot;');return`<div class="base-card"><div class="base-card-top"><div class="base-person"><b>${r.nome||'-'}</b><small>${moneyDate(r.data)} • ${loja||'Sem rede'}${filial?' • Filial '+filial:''}</small></div><div class="base-num"><small>Total dia</small><input class="base-edit base-locked-input" type="number" id="base_total_${i}" value="${totalDia}" readonly></div><div class="base-num"><small>Total mês</small><input class="base-edit base-locked-input" type="number" id="base_total_mes_${i}" value="${totalMes}" readonly></div><div class="base-status"><small>Status meta</small><strong class="${st.cls}">${st.pct}%</strong><br><span class="status-badge ${st.diaria>5?'status-bad':st.diaria>2?'status-mid':'status-ok'}">${st.diaria}/dia</span></div><div class="base-actions locked"><span class="base-locked-badge">🔒 Salvo / bloqueado</span></div></div><div class="base-card-body"><div class="base-box"><span class="base-box-title">Meta e falta</span><div class="base-meta-line"><b>Meta: ${meta||0}</b><span class="status-badge ${st.falta>0?'status-mid':'status-ok'}">Falta ${st.falta}</span></div><div class="base-edit-line"><div><label>Total dia</label><input class="base-edit base-locked-input" type="number" value="${totalDia}" readonly></div><div><label>Total mês</label><input class="base-edit base-locked-input" type="number" value="${totalMes}" readonly></div></div></div><div class="base-box"><span class="base-box-title">Mix premium</span><div class="base-premium-grid"><div class="base-model-pill"><span>A5 Pro</span>${safe(r.vendas?.['A5 Pro'])}</div><div class="base-model-pill"><span>A6 Pro</span>${safe(r.vendas?.['A6 Pro'])}</div><div class="base-model-pill"><span>Reno13F</span>${safe(r.vendas?.['Reno13F'])}</div><div class="base-model-pill"><span>Reno14F</span>${safe(r.vendas?.['Reno14F'])}</div></div></div><div class="base-box"><span class="base-box-title">Soma por modelo</span><div class="base-premium-grid">${_somaModTxt}</div></div><div class="base-box"><span class="base-box-title">Mostruário e observação</span><p class="base-most-text"><span class="status-badge ${mst.cls}">${mst.txt}</span> ${most}</p><div style="margin-top:10px"><label>Observação</label><input class="base-edit base-locked-input" value="${obs}" placeholder="Sem observação" readonly></div></div></div></div>`;}).join('')||'<div class="base-empty">Sem relatórios na base completa deste mês.</div>';
+  window.__rowsSupervisorBase=rows;
   mostrarModeloMes(true);
 }
 
 function exportCsv(){
-  const headers=['Data','Promotor','Loja','Filial','Total dia','Total mês','Real','Reno','A6 Pro','Total','A5 Pro','Reno13F','Reno14F','Mostruario','Obs'];
+  const headers=['Data','Promotor','Loja','Filial','Total dia','Total mês','A5 Pro','A6 Pro','Reno13F','Reno14F','Mostruario','Obs'];
   const rows=window.__rowsSupervisorBase||[];
-  const linhas=rows.map((r,i)=>{const totalMes=$('base_total_mes_'+i)?.value||(window.__totaisSupervisorMes||{})[r.nome];const real=safe(totalMes);const reno=safe(r.vendas?.['Reno13F'])+safe(r.vendas?.['Reno14F']);const a6Pro=safe(r.vendas?.['A6 Pro']);return[moneyDate(r.data),r.nome||'',r.loja||r.rede||'',r.filial||'',totalDiaRelatorio(r),totalMes,real,reno,a6Pro,totalMes,safe(r.vendas?.['A5 Pro']),safe(r.vendas?.['Reno13F']),safe(r.vendas?.['Reno14F']),mostruarioTexto(r.mostruario),$('base_obs_'+i)?.value||r.obs||''].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';');});
+  const linhas=rows.map((r,i)=>[moneyDate(r.data),r.nome||'',r.loja||r.rede||'',r.filial||'',$('base_total_'+i)?.value||safe(r.total),$('base_total_mes_'+i)?.value||safe(r.totalMesInformado),safe(r.vendas?.['A5 Pro']),safe(r.vendas?.['A6 Pro']),safe(r.vendas?.['Reno13F']),safe(r.vendas?.['Reno14F']),mostruarioTexto(r.mostruario),$('base_obs_'+i)?.value||r.obs||''].map(v=>'"'+String(v).replaceAll('"','')+'"').join(';'));
   const csv=headers.join(';')+'\n'+linhas.join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='relatorio_fenix_'+(window.__mesAtivo||mesKeyFromDate(today()))+'.csv';a.click();
 }
@@ -1639,12 +981,6 @@ async function aplicarPerfil(){
   } else {
     openTab('relatorio');
   }
-  if(db){
-    try{
-      await carregarBaseGeral();
-      if(isSupervisor)await carregarHistorico();
-    }catch(e){console.warn('Pré-carregamento:',e.message);}
-  }
 }
 
 /* ── INIT PRINCIPAL ── */
@@ -1677,94 +1013,165 @@ iniciar();
 </script>
 
 <script>
-window.PLANILHA_VENDAS = [{"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-17 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6K", "data": "2026-05-16 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6PRO5G", "data": "2026-05-16 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6PRO5G", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "RENO14F5G", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6K", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6K", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6K", "data": "2026-05-16 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6K", "data": "2026-05-16 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6PRO5G", "data": "2026-05-16 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6PRO5G", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6", "data": "2026-05-16 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-16 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6", "data": "2026-05-16 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "RENO14F5G", "data": "2026-05-16 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-16 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6K", "data": "2026-05-15 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-15 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6K", "data": "2026-05-15 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-15 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-15 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6K", "data": "2026-05-15 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-15 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6PRO5G", "data": "2026-05-15 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-15 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-15 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "RENO14F5G", "data": "2026-05-15 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-15 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-15 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6K", "data": "2026-05-15 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-15 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6K", "data": "2026-05-15 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-14 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "RENO14F5G", "data": "2026-05-14 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "LUCAS HENRIQUE RIBEIRO MARQUES", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6PRO5G", "data": "2026-05-14 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-14 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-14 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "RENO14F5G", "data": "2026-05-14 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6", "data": "2026-05-13 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6K", "data": "2026-05-13 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "RENO14F5G", "data": "2026-05-13 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6X", "data": "2026-05-13 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6X", "data": "2026-05-13 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-13 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-13 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-13 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A5", "data": "2026-05-13 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6K", "data": "2026-05-13 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A5", "data": "2026-05-13 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6", "data": "2026-05-12 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A55G", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A55G", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6K", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A5", "data": "2026-05-12 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A55G", "data": "2026-05-12 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-12 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6PRO5G", "data": "2026-05-12 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-12 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A60", "data": "2026-05-12 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A60", "data": "2026-05-12 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A5PRO5G", "data": "2026-05-12 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "RENO14F5G", "data": "2026-05-12 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A55G", "data": "2026-05-12 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-12 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-11 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-11 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A55G", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-11 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "RENO14F5G", "data": "2026-05-11 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6", "data": "2026-05-11 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A5", "data": "2026-05-11 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A55G", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6K", "data": "2026-05-11 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "BEATRIZ DINIZ GONÇALVES", "modelo": "A5", "data": "2026-05-11 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "RENO14F5G", "data": "2026-05-11 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6X", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "RENO14F5G", "data": "2026-05-11 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6K", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "RENO14F5G", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A55G", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6PRO5G", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A55G", "data": "2026-05-09 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "RENO14F5G", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6PRO5G", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6K", "data": "2026-05-09 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6", "data": "2026-05-09 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "RENO14F5G", "data": "2026-05-09 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "RENO14F5G", "data": "2026-05-09 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "BEATRIZ DINIZ GONÇALVES", "modelo": "A55G", "data": "2026-05-09 00:00:00", "loja": "BETIM - MG/1159", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6PRO5G", "data": "2026-05-09 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-09 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6", "data": "2026-05-09 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6K", "data": "2026-05-09 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6K", "data": "2026-05-08 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6K", "data": "2026-05-08 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A60", "data": "2026-05-08 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "NOVA LIMA - MG/366", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-08 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A5", "data": "2026-05-08 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6PRO5G", "data": "2026-05-07 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "RENO14F5G", "data": "2026-05-07 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6PRO5G", "data": "2026-05-07 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "RENO14F5G", "data": "2026-05-07 00:00:00", "loja": "MATEUS LEME/1120", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-07 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "ALAX ALMEIDA FELICIDADE", "modelo": "A6X", "data": "2026-05-07 00:00:00", "loja": "JUATUBA/1034", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6", "data": "2026-05-07 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-07 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-07 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-07 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A60", "data": "2026-05-07 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-07 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-07 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6K", "data": "2026-05-07 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A5", "data": "2026-05-07 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-07 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-06 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A5", "data": "2026-05-06 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6X", "data": "2026-05-06 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A5", "data": "2026-05-06 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A5", "data": "2026-05-06 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A6PRO5G", "data": "2026-05-05 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-05 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "THAIS DE CÁSSIA REZENDE SILVA", "modelo": "A6X", "data": "2026-05-05 00:00:00", "loja": "CONSELHEIRO LAFAIETE 2 - MG/191", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6PRO5G", "data": "2026-05-04 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A5", "data": "2026-05-04 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "GABRIELA BORGES DE OLIVEIRA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "ALÍPIO/393", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6PRO5G", "data": "2026-05-04 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A60", "data": "2026-05-04 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "RENO14F5G", "data": "2026-05-04 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-04 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A55G", "data": "2026-05-04 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6PRO5G", "data": "2026-05-04 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6PRO5G", "data": "2026-05-04 00:00:00", "loja": "BETIM/237", "quantidade": 1}, {"promotor": "LAUANDA AUGUSTA REIS DE PAULA", "modelo": "A5", "data": "2026-05-04 00:00:00", "loja": "BETIM PRACA - MG/263", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-03 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6X", "data": "2026-05-03 00:00:00", "loja": "SHOP METROPOLITAN GARDEN - MG/1682", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "ERIKA PRISCILA RAZZANO DA SILVA", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "SHOP METROPOLITAN GARDEN - MG/1682", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-02 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "ALIPIO DE MELO - MG/1418", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-02 00:00:00", "loja": "SHOP CONTAGEM - MG/1731", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "METROPOLITAN GARDEN SHOPPING/976", "quantidade": 1}, {"promotor": "TAYNARA ROBERTA FERREIRA", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "CONSELHEIRO LAFAIETE - MG/1497", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "RENO14F5G", "data": "2026-05-02 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "RENO14F5G", "data": "2026-05-02 00:00:00", "loja": "CONSELHEIRO LAFAIETE/216", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "0366", "quantidade": 1}, {"promotor": "GABRIEL FERNANDES FERREIRA", "modelo": "A55G", "data": "2026-05-16 00:00:00", "loja": "0366", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "1731", "quantidade": 1}, {"promotor": "THAIS ALMEIDA OTONI", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "1731", "quantidade": 1}, {"promotor": "ELIAS ANDRADE D ALMEIDA ALVES", "modelo": "A5", "data": "2026-05-09 00:00:00", "loja": "216", "quantidade": 1}, {"promotor": "TAILON THALES CARDOSO MARTINS", "modelo": "A55G", "data": "2026-05-06 00:00:00", "loja": "1418", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "976", "quantidade": 1}, {"promotor": "DENNAS PEREIRA PRATES", "modelo": "A6X", "data": "2026-05-02 00:00:00", "loja": "976", "quantidade": 1}];
+window.PLANILHA_BASE = {"Thais Almeida Otoni": {"totalMes": 48, "vendas": {"A6x": 23, "A5 5G": 6, "A6 Pro": 1, "A6 k": 2, "A6": 1, "Reno14F": 1, "A5": 14}}, "Dennas Pereira Prates": {"totalMes": 25, "vendas": {"A6 k": 5, "A6 Pro": 4, "Reno14F": 3, "A6x": 9, "A5 5G": 1, "A5": 1, "A6": 2}}, "Erika Priscila Razzano Da Silva": {"totalMes": 25, "vendas": {"A6": 2, "Reno14F": 1, "A6 k": 3, "A6 Pro": 5, "A6x": 5, "A60": 5, "A5 Pro": 1, "A5": 2, "A5 5G": 1}}, "Alax Almeida Felicidade": {"totalMes": 13, "vendas": {"A6 Pro": 2, "A6x": 8, "A5": 2, "Reno14F": 1}}, "Gabriela Borges De Oliveira": {"totalMes": 23, "vendas": {"A5": 8, "A6x": 9, "A6": 1, "Reno14F": 3, "A6 k": 1, "A6 Pro": 1}}, "Lauanda Augusta Reis De Paula": {"totalMes": 14, "vendas": {"A6": 3, "A6x": 9, "A5": 2}}, "Gabriel Fernandes Ferreira": {"totalMes": 21, "vendas": {"A5 5G": 8, "A6 k": 2, "A6x": 8, "A5": 3}}, "Lucas Henrique Ribeiro Marques": {"totalMes": 9, "vendas": {"Reno14F": 2, "A6x": 6, "A6 Pro": 1}}, "Taynara Roberta Ferreira": {"totalMes": 19, "vendas": {"A6 k": 2, "A6x": 13, "Reno14F": 1, "A5 5G": 2, "A5": 1}}, "Thais De Cássia Rezende Silva": {"totalMes": 16, "vendas": {"A6x": 6, "A6 k": 3, "A5 5G": 1, "A5": 4, "Reno14F": 1, "A6 Pro": 1}}, "Elias Andrade D Almeida Alves": {"totalMes": 16, "vendas": {"A6 Pro": 2, "A6x": 5, "A5 5G": 2, "Reno14F": 4, "A6 k": 2, "A5": 1}}, "Tailon Thales Cardoso Martins": {"totalMes": 16, "vendas": {"A6x": 10, "A5": 2, "A5 5G": 2, "Reno14F": 2}}, "Beatriz Diniz Gonçalves": {"totalMes": 2, "vendas": {"A5": 1, "A5 5G": 1}}};
 
-function normalizarModelo(modelo=''){
- return modelo.toString().trim().toUpperCase().replace(/\s+/g,'');
+(function(){
+
+try{
+  localStorage.removeItem('relatorios');
+  localStorage.removeItem('dadosRelatorios');
+  localStorage.removeItem('cardsInflados');
+}catch(e){}
+
+function normalizarNome(nome){
+  return String(nome || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'');
 }
 
-function normalizarPromotor(nome=''){
- return nome.toString().trim().toUpperCase();
-}
+function aplicarPlanilhaReal(){
+  const cards = document.querySelectorAll('.card-promotor,.promotor-card,.card');
 
-function recalcularDashboardPelaPlanilha(){
- const vendas = window.PLANILHA_VENDAS || [];
+  cards.forEach(card=>{
+    const titulo = card.querySelector('h2,h3,.nome,.promotor-nome,.title');
 
- const dashboard = {
-   totalEquipe:0,
-   promotores:{},
-   modelos:{}
- };
+    if(!titulo) return;
 
- vendas.forEach(venda=>{
-   const promotor = normalizarPromotor(venda.promotor);
-   const modelo = normalizarModelo(venda.modelo);
+    const nomeTela = titulo.innerText.trim();
 
-   if(!promotor || !modelo) return;
+    let encontrado = null;
 
-   dashboard.totalEquipe += 1;
+    Object.keys(window.PLANILHA_BASE).forEach(nomeBase=>{
+      if(normalizarNome(nomeBase).includes(normalizarNome(nomeTela)) ||
+         normalizarNome(nomeTela).includes(normalizarNome(nomeBase))){
+        encontrado = nomeBase;
+      }
+    });
 
-   if(!dashboard.promotores[promotor]){
-      dashboard.promotores[promotor] = {
-        total:0,
-        modelos:{},
-        linhas:0
-      };
-   }
+    if(!encontrado) return;
 
-   dashboard.promotores[promotor].total += 1;
-   dashboard.promotores[promotor].linhas += 1;
+    const dados = window.PLANILHA_BASE[encontrado];
 
-   if(!dashboard.promotores[promotor].modelos[modelo]){
-      dashboard.promotores[promotor].modelos[modelo] = 0;
-   }
+    const totalMesEl = Array.from(card.querySelectorAll('*')).find(el =>
+      el.innerText && el.innerText.includes('TOTAL MÊS')
+    );
 
-   dashboard.promotores[promotor].modelos[modelo] += 1;
-
-   if(!dashboard.modelos[modelo]){
-      dashboard.modelos[modelo] = 0;
-   }
-
-   dashboard.modelos[modelo] += 1;
- });
-
- console.table(
-   Object.entries(dashboard.promotores).map(([nome,dados])=>({
-      promotor:nome,
-      totalReal:dados.total,
-      totalModelos:Object.keys(dados.modelos).length,
-      quantidadeLinhas:dados.linhas,
-      divergencia:0
-   }))
- );
-
- console.log('TOTAL EQUIPE REAL:', dashboard.totalEquipe);
-
- window.DASHBOARD_REAL = dashboard;
-
- return dashboard;
-}
-
-window.addEventListener('load',()=>{
-  try {
-    localStorage.removeItem('dashboardMensal');
-    localStorage.removeItem('totaisDashboard');
-    localStorage.removeItem('cardsConsolidados');
-
-    const dashboard = recalcularDashboardPelaPlanilha();
-
-    const totalEl =
-      document.querySelector('#totalMes') ||
-      document.querySelector('.totalMes') ||
-      document.querySelector('[data-total-equipe]');
-
-    if(totalEl){
-      totalEl.textContent = dashboard.totalEquipe;
+    if(totalMesEl){
+      const box = totalMesEl.parentElement;
+      const nums = box.querySelectorAll('div,strong,span');
+      nums.forEach(n=>{
+        if(/^\d+$/.test(n.innerText.trim())){
+          n.innerText = dados.totalMes;
+        }
+      });
     }
 
-  } catch(e){
-    console.error('ERRO REFATORAÇÃO:', e);
-  }
+    const somaModelo = Array.from(card.querySelectorAll('*')).find(el =>
+      el.innerText && el.innerText.includes('SOMA POR MODELO')
+    );
+
+    if(somaModelo){
+      const box = somaModelo.parentElement;
+
+      const linhas = Object.entries(dados.vendas)
+        .filter(([m,v])=>v>0)
+        .map(([m,v])=>`${m}: ${v}`)
+        .join('<br>');
+
+      const textos = box.querySelectorAll('p,div,span');
+
+      textos.forEach(t=>{
+        if(t !== somaModelo && t.innerText.length > 3){
+          t.innerHTML = linhas;
+        }
+      });
+    }
+  });
+}
+
+window.addEventListener('load', ()=>{
+  setTimeout(aplicarPlanilhaReal, 1200);
+});
+
+})();
+</script>
+
+
+<script>
+window.DADOS_CORRETOS_SUPERVISOR = {"Thais Otoni": {"totalMes": 44, "vendas": {"A6x": 24, "A5": 10, "A5 5G": 4, "A6": 1, "A6 Pro": 1, "Reno14F": 1, "A6 k": 3}}, "Gabriel Ferreira": {"totalMes": 19, "vendas": {"A5 5G": 6, "A6x": 7, "A6k": 2, "A5": 2, "A6": 1}}, "Gabriela Oliveira": {"totalMes": 22, "vendas": {"A5": 8, "A6x": 10, "A6": 1, "Reno14F": 3}}, "Tailon Martins": {"totalMes": 15, "vendas": {"A6x": 9, "A5": 2, "A5 5G": 1, "Reno14F": 2}}, "Taynara Ferreira": {"totalMes": 18, "vendas": {"A6x": 12, "A6k": 2, "Reno14F": 1, "A5 5G": 2, "A5": 1}}, "Lucas Henrique": {"totalMes": 8, "vendas": {"A6x": 5, "Reno14F": 2, "A6 Pro": 1}}, "Lauanda": {"totalMes": 13, "vendas": {"A6x": 8, "A6": 3, "A5": 2}}, "Elias Andrade": {"totalMes": 14, "vendas": {"A6x": 6, "A6 Pro": 2, "A5 5G": 2, "Reno14F": 4, "A6k": 2, "A5": 1}}, "Erika Priscila": {"totalMes": 25, "vendas": {"A6": 2, "Reno14F": 1, "A6k": 2, "A6 Pro": 4, "A6x": 3, "A60": 5, "A5 Pro": 1, "A5": 2, "A5 5G": 1}}};
+
+function normaliza(txt){
+ return (txt||'')
+ .toLowerCase()
+ .normalize('NFD')
+ .replace(/[\u0300-\u036f]/g,'')
+ .trim();
+}
+
+function montarLinhas(vendas){
+ return Object.entries(vendas)
+   .map(([m,v]) => `${m}: ${v}`)
+   .join('<br>');
+}
+
+function corrigirCards(){
+ const cards = document.querySelectorAll('.card, .promotor-card');
+
+ cards.forEach(card=>{
+   const nomeEl = card.querySelector('h2,h3,.title,.nome');
+   if(!nomeEl) return;
+
+   const nome = normaliza(nomeEl.innerText);
+
+   Object.entries(window.DADOS_CORRETOS_SUPERVISOR).forEach(([baseNome,dados])=>{
+
+      if(nome.includes(normaliza(baseNome))){
+
+        card.querySelectorAll('*').forEach(el=>{
+
+            if(el.innerText && el.innerText.includes('TOTAL MÊS')){
+                const pai = el.parentElement;
+                pai.querySelectorAll('div,strong,span').forEach(n=>{
+                    if(/^\d+$/.test(n.innerText.trim())){
+                        n.innerText = dados.totalMes;
+                    }
+                });
+            }
+
+            if(el.innerText && el.innerText.includes('SOMA POR MODELO')){
+                const pai = el.parentElement;
+                pai.querySelectorAll('div,p,span').forEach(t=>{
+                    if(t !== el && t.innerText.length > 3){
+                        t.innerHTML = montarLinhas(dados.vendas);
+                    }
+                });
+            }
+
+        });
+      }
+   });
+ });
+}
+
+function centralizarFechamento(){
+   const area = document.querySelector('.fechamento-diario, .cards-container, .dashboard-cards');
+
+   if(area){
+      area.style.display='flex';
+      area.style.justifyContent='center';
+      area.style.flexWrap='wrap';
+      area.style.gap='16px';
+      area.style.margin='0 auto';
+   }
+}
+
+window.addEventListener('load', ()=>{
+   setTimeout(()=>{
+      corrigirCards();
+      centralizarFechamento();
+   },1200);
 });
 </script>
 
