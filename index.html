@@ -417,7 +417,6 @@ async function carregarBaseGeral(){
     const snap = await getDocs(collection(db,'relatorios'));
 
     const mapa = {};
-    const rows = [];
 
     snap.forEach(d=>{
 
@@ -428,33 +427,20 @@ async function carregarBaseGeral(){
         (r.data||'') + '_' +
         (r.loja||r.rede||'');
 
-      if(!mapa[chave]){
-
+      // Usa apenas o último relatório salvo (com createdAt mais recente)
+      if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
         mapa[chave] = {
           ...r,
           vendas:{...(r.vendas||{})},
           estoque:{...(r.estoque||{})}
         };
-
-      }else{
-
-        MODELOS.forEach(m=>{
-
-          mapa[chave].vendas[m] =
-            Math.max(
-              safe(mapa[chave].vendas?.[m]),
-              safe(r.vendas?.[m])
-            );
-
-        });
-
       }
 
     });
 
-    Object.values(mapa).forEach(r=>{
+    const rows = Object.values(mapa).map(r=>{
       r.total = totalModelos(r.vendas||{});
-      rows.push(r);
+      return r;
     });
 
     rows.sort((a,b)=>
@@ -511,25 +497,12 @@ function normalizarLinhasUnicas(rows=[]){
       (r.data||'') + '_' +
       (r.loja||r.rede||'');
 
-    if(!mapa[chave]){
-
+    // Usa apenas o último relatório salvo
+    if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
       mapa[chave] = {
         ...r,
         vendas:{...(r.vendas||{})}
       };
-
-    }else{
-
-      MODELOS.forEach(m=>{
-
-        mapa[chave].vendas[m] =
-          Math.max(
-            safe(mapa[chave].vendas?.[m]),
-            safe(r.vendas?.[m])
-          );
-
-      });
-
     }
 
   });
@@ -956,29 +929,19 @@ function agregarRelatoriosPorPromotorDia(rows){
   const mapa={};
   (rows||[]).forEach(r=>{
     const key=chavePromotorData(r);
-    if(!mapa[key]){
+    // Usa apenas o último relatório salvo por promotor/data
+    if(!mapa[key] || (r.createdAt && (!mapa[key].createdAt || r.createdAt > mapa[key].createdAt))){
       mapa[key]={
-        nome:r.nome,data:r.data,mesKey:rowMesKey(r),uid:r.uid,
+        nome:r.nome,data:r.data,mesKey:rowMesKey(r),uid:r.uid,createdAt:r.createdAt,
         loja:r.loja||r.rede,rede:r.rede||r.loja,filial:r.filial,
-        vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        total:0,relatoriosNoDia:0,mostruario:r.mostruario,obs:[]
+        vendas:{...(r.vendas||{})},
+        estoque:{...(r.estoque||{})},
+        total:totalModelos(r.vendas||{}),
+        mostruario:r.mostruario,obs:r.obs?String(r.obs).trim():''
       };
     }
-    const a=mapa[key];
-    a.relatoriosNoDia+=1;
-    MODELOS.forEach(m=>{
-      a.vendas[m]+=safe(r.vendas?.[m]);
-      a.estoque[m]=Math.max(a.estoque[m],safe(r.estoque?.[m]));
-    });
-    if(r.obs){const o=String(r.obs).trim();if(o&&!a.obs.includes(o))a.obs.push(o);}
-    if(r.mostruario)a.mostruario=r.mostruario;
   });
-  return Object.values(mapa).map(a=>{
-    a.total = totalModelos(a.vendas);
-    a.relatorios=a.relatoriosNoDia;
-    return a;
-  });
+  return Object.values(mapa);
 }
 function relatoriosUnicosPorPromotorDia(rows){return agregarRelatoriosPorPromotorDia(rows);}
 function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromotorDia(rows);}
@@ -1002,13 +965,20 @@ function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
   });
 
   const hojeExiste = rows.some(r=>r.data===dataRef);
-
   const totalDia = totalModelos(vendasAtuais);
+
+  // Se hoje já existe na base, substitui pelo valor atual
+  if(hojeExiste){
+    const totalHojeNaBase = rows.filter(r=>r.data===dataRef).reduce((sum,r)=>sum+totalModelos(r.vendas||{}),0);
+    totalMes = totalMes - totalHojeNaBase + totalDia;
+  }else{
+    totalMes = totalMes + totalDia;
+  }
 
   return {
     totalDia,
-    totalMes: hojeExiste ? totalMes : totalMes + totalDia,
-    dias: rows.length
+    totalMes,
+    dias: rows.length + (hojeExiste ? 0 : 1)
   };
 }
 
@@ -1022,8 +992,10 @@ function somaModelosConsolidado(porProm){
 function totalEquipeConsolidado(porProm){return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);}
 
 function consolidarPromotoresMes(rows){
+  // Primeiro normaliza para usar apenas o último relatório por promotor/data/loja
+  const rowsUnicos = normalizarLinhasUnicas(rows||[]);
   const mapa={};
-  (rows||[]).forEach(r=>{
+  rowsUnicos.forEach(r=>{
     const nome=r.nome||'';
     if(!mapa[nome]){
       mapa[nome]={
@@ -1172,7 +1144,7 @@ async function carregarHistorico(){
     const linhasDia=rowsPromPorDia.map(r=>{
       const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
       if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
-      return{data:r.data,lojas:new Set(r.loja?[r.loja]:[]),filiais:new Set(r.filial?[r.filial]:[]),total:totalDiaRelatorio(r),relatorios:safe(r.relatoriosNoDia),vendas:{...r.vendas},estoque:{...r.estoque},mostruario:most,obs:[...(r.obs||[])]};
+      return{data:r.data,lojas:new Set(r.loja?[r.loja]:[]),filiais:new Set(r.filial?[r.filial]:[]),total:totalDiaRelatorio(r),relatorios:1,vendas:{...r.vendas},estoque:{...r.estoque},mostruario:most,obs:r.obs?[r.obs]:[]};
     }).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
     $('previsao').textContent=meta?`Fechamento: ${totalMes}/${meta} no mês (${pct}%). Faltam ${Math.max(0,meta-totalMes)} unidades para a meta.`:'Selecione seu nome na aba Relatório para calcular sua previsão.';
     const clsMes=pct>=100?'pct-ok':pct>=50?'pct-mid':'pct-low';
