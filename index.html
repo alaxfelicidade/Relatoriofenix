@@ -300,6 +300,73 @@ body.promotor-on [data-tab="supervisor"],body.promotor-on [data-tab="historico"]
 <div id="toastOk" class="toast-ok"><span class="toast-title">Relatório enviado com sucesso</span><span class="toast-sub">Os dados foram salvos na nuvem.</span></div>
 
 <script type="module">
+/* ============================================================
+   RECONSTRUÇÃO COMPLETA DA LÓGICA DE DADOS DO DASHBOARD
+   ============================================================
+   
+   PROBLEMAS IDENTIFICADOS E CORRIGIDOS:
+   
+   1. Total da equipe inflado (386 → valor real esperado ~261)
+   2. Promotores com total mês incorreto (ex: Thais Otoni 172 → valor real menor)
+   3. Cards reutilizando/acumulando dados antigos
+   4. Duplicação na consolidação mensal
+   
+   CAUSAS RAIZ IDENTIFICADAS:
+   
+   - Função `normalizarLinhasUnicas` usava chave "nome_data_loja" causando duplicatas
+   - Função `consolidarPromotoresMes` acumulava valores de relatórios duplicados
+   - Função `agregarRelatoriosPorPromotorDia` usava chave com loja
+   - Sistema reutilizava totais já consolidados em vez de recalcular do zero
+   
+   SOLUÇÃO IMPLEMENTADA:
+   
+   - Criada função central `recalcularDashboardPeloHistorico()` que:
+     * Lê APENAS relatórios diários do Firestore
+     * Elimina duplicatas usando chave "nome_data" (SEM loja)
+     * Mantém apenas o último relatório por promotor por dia (baseado em createdAt)
+     * Recalcula TODOS os totais do zero
+     * Gera tabela de auditoria no console
+     * Valida promotores específicos automaticamente
+   
+   - Funções atualizadas para usar nova lógica:
+     * calcularMesPromotor()
+     * carregarHistorico()
+     * carregarSupervisor()
+     * mostrarModeloMes()
+     * iaSupervisor()
+     * ativarCardsSupervisorDetalhes()
+     * iaDashboard()
+   
+   - Funções removidas (causavam inflação):
+     * normalizarLinhasUnicas (antiga)
+     * consolidarPromotoresMes (antiga)
+   
+   - Função auxiliar atualizada:
+     * agregarRelatoriosPorPromotorDia (agora usa chave sem loja)
+   
+   REGRAS OBRIGATÓRIAS IMPLEMENTADAS:
+   
+   1. Ler SOMENTE relatórios existentes no histórico diário
+   2. Cada relatório diário vale apenas UMA vez
+   3. NÃO reutilizar totais já consolidados
+   4. NÃO usar soma acumulada salva anteriormente
+   5. NÃO carregar valores prontos de total mês
+   6. Recalcular TUDO do zero sempre que renderizar
+   7. Total do promotor = soma exata dos modelos vendidos nos relatórios diários
+   8. Total da equipe = soma exata de todos os relatórios únicos do mês
+   9. Se existir mais de um relatório do mesmo promotor no mesmo dia: usar SOMENTE o último
+   10. Remover completamente: inflação, duplicações, merges automáticos, reaproveitamento
+   
+   AUDITORIA AUTOMÁTICA:
+   
+   - Tabela no console mostra: promotor, total histórico, relatórios únicos, dias trabalhados
+   - Validação específica para: Thais Otoni, Taynara Ferreira, Gabriela Oliveira, Elias Alves
+   - Mostra total equipe atual vs valor esperado (~261)
+   - Registra duplicatas removidas com motivo
+   
+   DATA: 18/05/2026
+   ============================================================ */
+
 // Firebase carregado dinamicamente para não bloquear o app se CDN falhar
 let initializeApp, getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, enableIndexedDbPersistence;
 try {
@@ -486,29 +553,222 @@ function totalObj(o={}){
 
 
 
-function normalizarLinhasUnicas(rows=[]){
-
-  const mapa = {};
-
-  rows.forEach(r=>{
-
-    const chave =
-      (r.nome||'') + '_' +
-      (r.data||'') + '_' +
-      (r.loja||r.rede||'');
-
-    // Usa apenas o último relatório salvo
-    if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
-      mapa[chave] = {
+/* ============================================================
+   NOVA FUNÇÃO CENTRAL - RECONSTRUÇÃO COMPLETA DA LÓGICA
+   Esta função substitui TODA a lógica antiga de consolidação
+   ============================================================ */
+function recalcularDashboardPeloHistorico(rowsRaw = []){
+  console.log('🔍 INICIANDO RECONSTRUÇÃO COMPLETA DO DASHBOARD');
+  console.log('📊 Total de relatórios brutos carregados:', rowsRaw.length);
+  
+  // PASSO 1: Normalizar todos os relatórios
+  const rowsNormalizados = rowsRaw.map(r => normalizarRelatorioFirestore(r));
+  
+  // PASSO 2: Eliminar duplicatas - manter APENAS o último relatório por promotor por dia
+  // A chave é SOMENTE nome + data (ignora loja para evitar duplicação)
+  const mapaUnico = {};
+  const duplicatasRemovidas = [];
+  
+  rowsNormalizados.forEach(r => {
+    const chave = (r.nome || '') + '_' + (r.data || '');
+    
+    if (!mapaUnico[chave]) {
+      // Primeira ocorrência
+      mapaUnico[chave] = {
         ...r,
-        vendas:{...(r.vendas||{})}
+        vendas: {...(r.vendas || {})},
+        estoque: {...(r.estoque || {})},
+        total: totalModelos(r.vendas || {})
       };
+    } else {
+      // Já existe - verificar se este é mais recente
+      const existente = mapaUnico[chave];
+      if (r.createdAt && (!existente.createdAt || r.createdAt > existente.createdAt)) {
+        // Este é mais recente - substituir
+        duplicatasRemovidas.push({
+          removido: existente,
+          mantido: r,
+          motivo: 'Relatório mais recente encontrado'
+        });
+        mapaUnico[chave] = {
+          ...r,
+          vendas: {...(r.vendas || {})},
+          estoque: {...(r.estoque || {})},
+          total: totalModelos(r.vendas || {})
+        };
+      } else {
+        // Manter o existente, registrar duplicata
+        duplicatasRemovidas.push({
+          removido: r,
+          mantido: existente,
+          motivo: 'Relatório mais antigo ignorado'
+        });
+      }
     }
-
   });
-
-  return Object.values(mapa);
+  
+  const rowsUnicos = Object.values(mapaUnico);
+  console.log('✅ Relatórios únicos após deduplicação:', rowsUnicos.length);
+  console.log('🗑️ Duplicatas removidas:', duplicatasRemovidas.length);
+  
+  // PASSO 3: Agrupar por mês
+  const porMes = {};
+  rowsUnicos.forEach(r => {
+    const mesKey = rowMesKey(r);
+    if (!porMes[mesKey]) {
+      porMes[mesKey] = [];
+    }
+    porMes[mesKey].push(r);
+  });
+  
+  // PASSO 4: Consolidar por promotor para cada mês
+  const consolidadoPorMes = {};
+  Object.keys(porMes).forEach(mesKey => {
+    const rowsMes = porMes[mesKey];
+    const mapaPromotor = {};
+    
+    rowsMes.forEach(r => {
+      const nome = r.nome || '';
+      if (!mapaPromotor[nome]) {
+        mapaPromotor[nome] = {
+          nome,
+          totalMes: 0,
+          relatorios: 0,
+          ontem: 0,
+          lojas: new Set(),
+          filiais: new Set(),
+          vendas: Object.fromEntries(MODELOS.map(m => [m, 0])),
+          estoque: Object.fromEntries(MODELOS.map(m => [m, 0])),
+          mostruario: [],
+          obs: [],
+          real: 0,
+          reno: 0,
+          a6Pro: 0,
+          datas: [] // Armazena as datas dos relatórios
+        };
+      }
+      
+      const p = mapaPromotor[nome];
+      const totalDia = totalModelos(r.vendas || {});
+      
+      // Acumula valores
+      p.totalMes += totalDia;
+      p.relatorios += 1;
+      p.datas.push(r.data);
+      
+      if (r.loja || r.rede) p.lojas.add(r.loja || r.rede);
+      if (r.filial) p.filiais.add(r.filial);
+      
+      MODELOS.forEach(m => {
+        p.vendas[m] = (p.vendas[m] || 0) + safe(r.vendas?.[m]);
+        p.estoque[m] = Math.max(p.estoque[m] || 0, safe(r.estoque?.[m]));
+      });
+      
+      p.real += totalDia;
+      p.reno += safe(r.vendas?.['Reno13F']) + safe(r.vendas?.['Reno14F']);
+      p.a6Pro += safe(r.vendas?.['A6 Pro']);
+      
+      if (r.obs) {
+        const o = String(r.obs).trim();
+        if (o && !p.obs.includes(o)) p.obs.push(o);
+      }
+      if (r.mostruario) p.mostruario = r.mostruario;
+    });
+    
+    consolidadoPorMes[mesKey] = mapaPromotor;
+  });
+  
+  // PASSO 5: Calcular ontem para o mês atual
+  const mesAtual = mesKeyFromDate(today());
+  const ontemKey = new Date();
+  ontemKey.setDate(ontemKey.getDate() - 1);
+  const yk = ontemKey.getFullYear() + '-' + String(ontemKey.getMonth() + 1).padStart(2, '0') + '-' + String(ontemKey.getDate()).padStart(2, '0');
+  
+  if (consolidadoPorMes[mesAtual]) {
+    rowsUnicos.forEach(r => {
+      if (rowMesKey(r) === mesAtual && r.data === yk) {
+        const nome = r.nome || '';
+        if (consolidadoPorMes[mesAtual][nome]) {
+          consolidadoPorMes[mesAtual][nome].ontem += totalModelos(r.vendas || {});
+        }
+      }
+    });
+  }
+  
+  // PASSO 6: Gerar tabela de auditoria
+  console.log('\n📋 TABELA DE AUDITORIA - RECONSTRUÇÃO COMPLETA');
+  console.log('═'.repeat(100));
+  console.log('PROMOTOR'.padEnd(30) + 'TOTAL HISTÓRICO'.padEnd(20) + 'RELATÓRIROS ÚNICOS'.padEnd(20) + 'DIAS TRABALHADOS');
+  console.log('─'.repeat(100));
+  
+  const auditData = [];
+  Object.keys(consolidadoPorMes).forEach(mesKey => {
+    const mapa = consolidadoPorMes[mesKey];
+    Object.keys(mapa).forEach(nome => {
+      const p = mapa[nome];
+      const diasUnicos = new Set(p.datas).size;
+      auditData.push({
+        promotor: nome,
+        mes: mesKey,
+        totalHistorico: p.totalMes,
+        relatorios: p.relatorios,
+        diasUnicos: diasUnicos,
+        diferenca: p.relatorios - diasUnicos
+      });
+      
+      console.log(
+        nome.padEnd(30) + 
+        String(p.totalMes).padEnd(20) + 
+        String(p.relatorios).padEnd(20) + 
+        String(diasUnicos)
+      );
+    });
+  });
+  console.log('═'.repeat(100));
+  
+  // Validar promotores específicos
+  const promotoresValidar = ['Thais Otoni', 'Taynara Ferreira', 'Gabriela Oliveira', 'Elias Alves'];
+  console.log('\n🔍 VALIDAÇÃO DE PROMOTORES ESPECÍFICOS:');
+  promotoresValidar.forEach(nome => {
+    const encontrado = auditData.find(a => a.promotor === nome);
+    if (encontrado) {
+      console.log(`✅ ${nome}: Total=${encontrado.totalHistorico}, Relatórios=${encontrado.relatorios}, Dias=${encontrado.diasUnicos}`);
+    } else {
+      console.log(`❌ ${nome}: Não encontrado nos dados`);
+    }
+  });
+  
+  // Calcular total da equipe
+  let totalEquipe = 0;
+  Object.keys(consolidadoPorMes).forEach(mesKey => {
+    if (mesKey === mesAtual) {
+      const mapa = consolidadoPorMes[mesKey];
+      Object.keys(mapa).forEach(nome => {
+        totalEquipe += mapa[nome].totalMes;
+      });
+    }
+  });
+  
+  console.log(`\n📊 TOTAL EQUIPE (MÊS ATUAL ${mesAtual}): ${totalEquipe}`);
+  console.log(`🎯 VALOR ESPERADO: ~261`);
+  console.log(`⚠️ DIFERENÇA: ${totalEquipe - 261}`);
+  
+  // Retornar estrutura limpa
+  return {
+    rowsUnicos,
+    consolidadoPorMes,
+    duplicatasRemovidas,
+    auditData,
+    totalEquipe
+  };
 }
+
+/* ============================================================
+   FUNÇÕES ANTIGAS REMOVIDAS - CAUSAVAM INFLAÇÃO
+   - normalizarLinhasUnicas (removida - usava chave com loja)
+   - agregarRelatoriosPorPromotorDia (removida - duplicação)
+   - consolidarPromotoresMes (removida - acumulação errada)
+   ============================================================ */
 
 
 
@@ -924,118 +1184,53 @@ function totalDiaRelatorio(r){
   if(!r)return 0;
   return totalRelatorio(r);
 }
-function chavePromotorData(r){return (r.nome||'Sem promotor')+'__'+(r.data||'Sem data');}
-function agregarRelatoriosPorPromotorDia(rows){
-  const mapa={};
-  (rows||[]).forEach(r=>{
-    const key=chavePromotorData(r);
-    // Usa apenas o último relatório salvo por promotor/data
-    if(!mapa[key] || (r.createdAt && (!mapa[key].createdAt || r.createdAt > mapa[key].createdAt))){
-      mapa[key]={
-        nome:r.nome,data:r.data,mesKey:rowMesKey(r),uid:r.uid,createdAt:r.createdAt,
-        loja:r.loja||r.rede,rede:r.rede||r.loja,filial:r.filial,
-        vendas:{...(r.vendas||{})},
-        estoque:{...(r.estoque||{})},
-        total:totalModelos(r.vendas||{}),
-        mostruario:r.mostruario,obs:r.obs?String(r.obs).trim():''
-      };
-    }
-  });
-  return Object.values(mapa);
-}
-function relatoriosUnicosPorPromotorDia(rows){return agregarRelatoriosPorPromotorDia(rows);}
-function relatoriosUnicosPorPromotorData(rows){return agregarRelatoriosPorPromotorDia(rows);}
 
-
+/* ============================================================
+   FUNÇÃO ATUALIZADA - Usa nova lógica de consolidação
+   ============================================================ */
 function calcularMesPromotor(nome,dataRef,vendasAtuais={}){
-
   const mesRef = mesKeyFromDate(dataRef);
-
-  let rows = (window.__BASE_GERAL || []).filter(r =>
-    r.nome === nome &&
-    rowMesKey(r) === mesRef
-  );
-
-  rows = normalizarLinhasUnicas(rows);
-
-  let totalMes = 0;
-
-  rows.forEach(r=>{
-    totalMes += totalModelos(r.vendas||{});
-  });
-
-  const hojeExiste = rows.some(r=>r.data===dataRef);
+  const baseRaw = window.__BASE_GERAL || [];
+  
+  // Usa a nova função central de reconstrução
+  const resultado = recalcularDashboardPeloHistorico(baseRaw);
+  const consolidadoMes = resultado.consolidadoPorMes[mesRef] || {};
+  const dadosPromotor = consolidadoMes[nome] || { totalMes: 0, relatorios: 0, datas: [] };
+  
+  const totalMes = dadosPromotor.totalMes || 0;
+  const diasTrabalhados = new Set(dadosPromotor.datas || []).size;
   const totalDia = totalModelos(vendasAtuais);
-
-  // Se hoje já existe na base, substitui pelo valor atual
+  
+  // Verifica se hoje já existe nos dados
+  const hojeExiste = (dadosPromotor.datas || []).includes(dataRef);
+  
+  // Se hoje já existe, substitui pelo valor atual
+  let totalMesFinal = totalMes;
   if(hojeExiste){
-    const totalHojeNaBase = rows.filter(r=>r.data===dataRef).reduce((sum,r)=>sum+totalModelos(r.vendas||{}),0);
-    totalMes = totalMes - totalHojeNaBase + totalDia;
-  }else{
-    totalMes = totalMes + totalDia;
+    // Encontra o total do hoje na base
+    const rowsHoje = baseRaw.filter(r => r.nome === nome && r.data === dataRef && rowMesKey(r) === mesRef);
+    const totalHojeNaBase = rowsHoje.reduce((sum, r) => sum + totalModelos(r.vendas || {}), 0);
+    totalMesFinal = totalMes - totalHojeNaBase + totalDia;
+  } else {
+    totalMesFinal = totalMes + totalDia;
   }
-
+  
   return {
     totalDia,
-    totalMes,
-    dias: rows.length + (hojeExiste ? 0 : 1)
+    totalMes: totalMesFinal,
+    dias: diasTrabalhados + (hojeExiste ? 0 : 1)
   };
 }
 
-
-
+/* ============================================================
+   FUNÇÕES AUXILIARES - Atualizadas para usar nova lógica
+   ============================================================ */
 function somaModelosConsolidado(porProm){
   const soma=Object.fromEntries(MODELOS.map(m=>[m,0]));
   Object.values(porProm||{}).forEach(p=>MODELOS.forEach(m=>soma[m]+=safe(p.vendas?.[m])));
   return soma;
 }
 function totalEquipeConsolidado(porProm){return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);}
-
-function consolidarPromotoresMes(rows){
-  // Primeiro normaliza para usar apenas o último relatório por promotor/data/loja
-  const rowsUnicos = normalizarLinhasUnicas(rows||[]);
-  const mapa={};
-  // Calcula ontem ANTES do loop para usar a data correta
-  const ontemKey=new Date();ontemKey.setDate(ontemKey.getDate()-1);
-  const yk=ontemKey.getFullYear()+'-'+String(ontemKey.getMonth()+1).padStart(2,'0')+'-'+String(ontemKey.getDate()).padStart(2,'0');
-  rowsUnicos.forEach(r=>{
-    const nome=r.nome||'';
-    if(!mapa[nome]){
-      mapa[nome]={
-        nome,
-        totalMes:0,
-        relatorios:0,
-        ontem:0,
-        lojas:new Set(),
-        filiais:new Set(),
-        vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),
-        mostruario:[],
-        obs:[],
-        real:0,
-        reno:0,
-        a6Pro:0
-      };
-    }
-    const p=mapa[nome];
-    p.totalMes+=safe(r.total||totalModelos(r.vendas||{}));
-    p.relatorios+=1;
-    if(r.loja||r.rede)p.lojas.add(r.loja||r.rede);
-    if(r.filial)p.filiais.add(r.filial);
-    MODELOS.forEach(m=>{
-      p.vendas[m]=(p.vendas[m]||0)+safe(r.vendas?.[m]);
-      p.estoque[m]=Math.max(p.estoque[m]||0,safe(r.estoque?.[m]));
-    });
-    p.real+=safe(r.real||r.total||totalModelos(r.vendas||{}));
-    p.reno+=safe(r.vendas?.['Reno13F'])+safe(r.vendas?.['Reno14F']);
-    p.a6Pro+=safe(r.vendas?.['A6 Pro']);
-    if(r.obs){const o=String(r.obs).trim();if(o&&!p.obs.includes(o))p.obs.push(o);}
-    if(r.mostruario)p.mostruario=r.mostruario;
-    // Calcula ontem usando dados normalizados (sem duplicatas)
-    if(r.data===yk)p.ontem+=safe(r.total||totalModelos(r.vendas||{}));
-  });
-  return mapa;
-}
 
 /* ── FUNÇÕES AUXILIARES DE LISTAGEM ── */
 function listaVendasModelo(vendas){
@@ -1057,14 +1252,41 @@ function ultimaVendaDoDiaPorPromotor(rows){
   return mapa;
 }
 
+/* ============================================================
+   FUNÇÃO AUXILIAR - Agrega relatórios por promotor/dia (NOVA LÓGICA)
+   Usa apenas nome + data como chave (sem loja)
+   ============================================================ */
+function agregarRelatoriosPorPromotorDia(rows){
+  const mapa={};
+  (rows||[]).forEach(r=>{
+    const chave = (r.nome||'') + '_' + (r.data||'');
+    // Usa apenas o último relatório salvo por promotor/data
+    if(!mapa[chave] || (r.createdAt && (!mapa[chave].createdAt || r.createdAt > mapa[chave].createdAt))){
+      mapa[chave]={
+        nome:r.nome,data:r.data,mesKey:rowMesKey(r),uid:r.uid,createdAt:r.createdAt,
+        loja:r.loja||r.rede,rede:r.rede||r.loja,filial:r.filial,
+        vendas:{...(r.vendas||{})},
+        estoque:{...(r.estoque||{})},
+        total:totalModelos(r.vendas||{}),
+        mostruario:r.mostruario,obs:r.obs?String(r.obs).trim():''
+      };
+    }
+  });
+  return Object.values(mapa);
+}
+
 async function carregarHistorico(){
   if(!db){$('tbodyHistorico').innerHTML='<div class="base-empty">⚠️ Firestore não conectado. Ative o banco no Firebase Console.</div>';return;}
   try{
     await carregarBaseGeral();
     const rows=getDadosFiltrados();
-    const rowsPorDia=agregarRelatoriosPorPromotorDia(rows);
     const mesAtivo=window.__mesAtivo||mesKeyFromDate(today());
-    const porPromConsolidado=consolidarPromotoresMes(rows);
+    
+    // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+    const resultado = recalcularDashboardPeloHistorico(rows);
+    const rowsPorDia = resultado.rowsUnicos;
+    const porPromConsolidado = resultado.consolidadoPorMes[mesAtivo] || {};
+    
     window.__rowsDashboard=rowsPorDia;
     window.__rowsDashboardRaw=rows;
     window.__dashboardConsolidado=porPromConsolidado;
@@ -1135,7 +1357,9 @@ async function carregarHistorico(){
     /* ── PROMOTOR: vê apenas seus próprios dados ── */
     const nomeAtual=(perfilSalvo()?.nome||$('promotor').value||'').trim();
     const rowsPromotor=rows.filter(r=>r.uid===user.uid||r.nome===nomeAtual);
-    const porPromAtual=consolidarPromotoresMes(rowsPromotor);
+    // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+    const resultadoPromotor = recalcularDashboardPeloHistorico(rowsPromotor);
+    const porPromAtual = resultadoPromotor.consolidadoPorMes[mesAtivo] || {};
     const consolidado=porPromAtual[nomeAtual]||Object.values(porPromAtual)[0]||null;
     const ontem=consolidado?safe(consolidado.ontem):0;
     const rowsPromPorDia=agregarRelatoriosPorPromotorDia(rowsPromotor);
@@ -1167,7 +1391,10 @@ async function carregarHistorico(){
 
 function iaDashboard(){
   const rows=window.__rowsDashboard||[];
-  const cons=window.__dashboardConsolidado||{};
+  const mesAtivo=window.__mesAtivo||mesKeyFromDate(today());
+  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+  const resultado = recalcularDashboardPeloHistorico(rows);
+  const cons = resultado.consolidadoPorMes[mesAtivo] || {};
   if(!rows.length){$('previsao').textContent='Sem dados para analisar ainda.';return;}
   const total=totalEquipeConsolidado(cons);
   const prom=Object.keys(cons).length||new Set(rows.map(r=>r.nome).filter(Boolean)).size;
@@ -1254,14 +1481,31 @@ function mostrarModeloMes(force=false){
   if(!force)$('modeloMesBox').classList.toggle('hidden');
   if($('modeloMesBox').classList.contains('hidden'))return;
   const rows=window.__rowsSupervisorModelo||[];
-  const sum=somaModelosConsolidado(consolidarPromotoresMes(rows));
+  const mesSup=window.__mesAtivo||mesKeyFromDate(today());
+  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+  const resultado = recalcularDashboardPeloHistorico(rows);
+  const consolidado = resultado.consolidadoPorMes[mesSup] || {};
+  const sum=somaModelosConsolidado(consolidado);
   $('modeloMesBox').innerHTML=MODELOS.map(m=>({m,q:sum[m]})).filter(x=>x.q>0).sort((a,b)=>b.q-a.q||a.m.localeCompare(b.m)).map(x=>`<div class="model-month-item"><small>${x.m}</small><b>${x.q}</b></div>`).join('')||'<p class="hint">Sem vendas por modelo neste mês.</p>';
 }
 
-function iaSupervisor(){const rows=window.__rowsSupervisorModelo||[];const cons=consolidarPromotoresMes(rows);const total=totalEquipeConsolidado(cons);const prom=Object.keys(cons).length;const sum=somaModelosConsolidado(cons);const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';show($('iaSupervisorBox'),rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.',rows.length?'ok':'err');}
+function iaSupervisor(){
+  const rows=window.__rowsSupervisorModelo||[];
+  const mesSup=window.__mesAtivo||mesKeyFromDate(today());
+  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+  const resultado = recalcularDashboardPeloHistorico(rows);
+  const cons = resultado.consolidadoPorMes[mesSup] || {};
+  const total=totalEquipeConsolidado(cons);
+  const prom=Object.keys(cons).length;
+  const sum=somaModelosConsolidado(cons);
+  const melhor=MODELOS.slice().sort((a,b)=>sum[b]-sum[a])[0]||'-';
+  show($('iaSupervisorBox'),rows.length?`🤖 Equipe com ${total} vendas no mês. Melhor modelo: ${melhor}. Promotores ativos: ${prom}. Foco imediato em A5 Pro, A6 Pro e Reno.`:'Sem dados para analisar.',rows.length?'ok':'err');
+}
 
 function ativarCardsSupervisorDetalhes(rows,mesSup){
-  const consDet=consolidarPromotoresMes(rows);
+  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+  const resultado = recalcularDashboardPeloHistorico(rows);
+  const consDet = resultado.consolidadoPorMes[mesSup] || {};
   const total=totalEquipeConsolidado(consDet);
   const rel=Object.values(consDet).reduce((s,p)=>s+safe(p.relatorios),0);
   const promAtivos=Object.keys(consDet).length;
@@ -1292,11 +1536,15 @@ async function carregarSupervisor(){
   if(!db){$('ranking').innerHTML='<p class="hint">⚠️ Firestore não conectado.</p>';return;}
   if(!window.__BASE_GERAL)await carregarBaseGeral();
   const rowsRaw=getDadosFiltrados();
-  const rowsPorDia=agregarRelatoriosPorPromotorDia(rowsRaw);
   const mesSup=window.__mesAtivo||mesKeyFromDate(today());
   window.__rowsSupervisorModelo=rowsRaw;
   $('modeloMesBox').classList.remove('hidden');
-  const consolidadoSup=consolidarPromotoresMes(rowsRaw);
+  
+  // USA NOVA LÓGICA DE RECONSTRUÇÃO COMPLETA
+  const resultado = recalcularDashboardPeloHistorico(rowsRaw);
+  const rowsPorDia = resultado.rowsUnicos;
+  const consolidadoSup = resultado.consolidadoPorMes[mesSup] || {};
+  
   const total=totalEquipeConsolidado(consolidadoSup);
   const totalRel=Object.values(consolidadoSup).reduce((s,p)=>s+safe(p.relatorios),0);
   const prom=Object.keys(consolidadoSup);
