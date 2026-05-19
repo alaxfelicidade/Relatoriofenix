@@ -995,6 +995,9 @@ function consolidarPromotoresMes(rows){
   // Primeiro normaliza para usar apenas o último relatório por promotor/data/loja
   const rowsUnicos = normalizarLinhasUnicas(rows||[]);
   const mapa={};
+  // Calcula ontem ANTES do loop para usar a data correta
+  const ontemKey=new Date();ontemKey.setDate(ontemKey.getDate()-1);
+  const yk=ontemKey.getFullYear()+'-'+String(ontemKey.getMonth()+1).padStart(2,'0')+'-'+String(ontemKey.getDate()).padStart(2,'0');
   rowsUnicos.forEach(r=>{
     const nome=r.nome||'';
     if(!mapa[nome]){
@@ -1028,9 +1031,7 @@ function consolidarPromotoresMes(rows){
     p.a6Pro+=safe(r.vendas?.['A6 Pro']);
     if(r.obs){const o=String(r.obs).trim();if(o&&!p.obs.includes(o))p.obs.push(o);}
     if(r.mostruario)p.mostruario=r.mostruario;
-    // Calcula ontem
-    const ontemKey=new Date();ontemKey.setDate(ontemKey.getDate()-1);
-    const yk=ontemKey.getFullYear()+'-'+String(ontemKey.getMonth()+1).padStart(2,'0')+'-'+String(ontemKey.getDate()).padStart(2,'0');
+    // Calcula ontem usando dados normalizados (sem duplicatas)
     if(r.data===yk)p.ontem+=safe(r.total||totalModelos(r.vendas||{}));
   });
   return mapa;
