@@ -298,7 +298,7 @@ body{
         <div class="kpis"><div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div><div class="kpi"><small>Relatórios</small><b id="sRel">0</b></div><div class="kpi"><small>Promotores</small><b id="sProm">0</b></div><div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div></div><div id="superKpiPreview" class="super-kpi-preview hidden"><b>Prévia</b><p>Clique em um card acima para ver os detalhes.</p></div>
         <div class="gestor-alertas"><div class="alert-card alert-red"><small>Precisam de ajuda</small><b id="gaAjuda">0</b></div><div class="alert-card alert-orange"><small>Diária crítica</small><b id="gaCritica">0</b></div><div class="alert-card alert-green"><small>Vão bater meta</small><b id="gaBater">0</b></div></div>
         <div class="card"><div class="card-head"><span>📱</span><b>Adicionar modelo em vendas do dia</b></div><div class="card-body"><div class="add-model-sales"><label>Novo modelo OPPO</label><div class="line"><input type="text" id="novoModeloVenda" placeholder="Ex: A79, A80, Reno11F..."><button type="button" id="btnAddModeloVenda">Adicionar modelo</button></div><p class="hint" style="margin-top:8px">Ao adicionar, o modelo ficará disponível para todos os promotores em Vendas do dia, Estoque e Mostruário.</p></div></div></div>
-        <div class="card"><div class="card-head"><span>✏️</span><b>Metas e promotores</b></div><div class="card-body"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, rede, filial e meta de cada promotor.</p><div class="add-promotor-box"><div><label>Nome</label><input id="novoPromotorNome" placeholder="Nome do promotor"></div><div><label>Rede</label><select id="novoPromotorRede"><option value="">Selecione</option><option>Magalu</option><option>Casas Bahia</option><option>Ponto</option><option>FastShop</option></select></div><div><label>Filial</label><input id="novoPromotorFilial" placeholder="Ex: 191"></div><div><label>Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div><button id="btnAddPromotor">Adicionar</button></div><div class="edit-list" id="configPromotores"></div></div></div>
+<details class="card" style="cursor: pointer; outline: none;"><summary class="card-head" style="display: flex; justify-content: space-between; list-style: none;"><div style="display: flex; gap: 10px; align-items: center;"><span>✏️</span><b>Metas e promotores</b></div><span style="font-size: 12px; color: #0E7A68; font-weight: 800;">▼ Expandir</span></summary><div class="card-body" style="cursor: default;"><p class="hint" style="margin-bottom:12px">Use o lápis para editar nome, rede, filial e meta de cada promotor.</p>
         <div class="card"><div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div><div class="card-body"><div class="model-month-title">Total vendido no mês por modelo</div><button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão por modelo</button><div class="model-month-grid" id="modeloMesBox"></div></div></div>
         <div class="card"><div class="card-head"><span>🏆</span><b>Ranking Gestão</b></div><div class="card-body"><button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button><div class="status" id="iaSupervisorBox"></div><div class="rank" id="ranking"></div></div></div>
         <div class="card"><div class="card-head"><span>📊</span><b>Central de Gestão</b></div><div class="card-body"><div class="base-toolbar"><p class="hint">Painel unificado de gestão: total do dia, total do mês, % da meta, diária, mix premium, mostruário e observação.</p><button class="btn secondary" id="btnExport" style="max-width:180px">Exportar CSV</button></div><div class="base-completa-wrap" id="tbodySupervisor"></div></div></div>
@@ -357,16 +357,6 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-// ===== CONTROLE DE ACESSO RELATÓRIO =====
-function ocultarRelatorioSupervisor(){
-  const tabs = document.querySelectorAll('.tab');
-  tabs.forEach(tab=>{
-    const txt = tab.innerText.toLowerCase();
-    if(txt.includes('relatório') || txt.includes('relatorio')){
-      tab.style.display = 'none';
-    }
-  });
-}
 
 window.addEventListener('error',(e)=>{
   console.warn('Erro interceptado:',e.message);
@@ -700,7 +690,7 @@ function openTab(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   $('appShell').classList.toggle('super-app',id==='supervisor');
   if(id==='historico'||id==='historicoDias')carregarHistorico();
-  if(id==='supervisor'){requestAnimationFrame(()=>{carregarHistorico();carregarSupervisor();});ocultarRelatorioSupervisor();}
+  if(id==='supervisor'){requestAnimationFrame(()=>{carregarHistorico();carregarSupervisor();});}
   // Persiste aba ativa para restaurar no F5
   try{localStorage.setItem('fenixUltimaAba',id);}catch(_){}
   window.scrollTo(0,0);
@@ -772,16 +762,25 @@ function totalModelos(vendas){return MODELOS.reduce((s,m)=>s+safe(vendas?.[m]),0
 function ultimaVendaDoDiaPorPromotor(rows){const ult={};(rows||[]).forEach(r=>{const n=r.nome||'Sem promotor';if(!ult[n]||String(r.data||'')>String(ult[n].data||''))ult[n]=r;});return ult;}
 
 function relatoriosUnicosPorPromotorData(rows){
-  const mapa={};
-  (rows||[]).forEach(r=>{
-    const key=(r.nome||'Sem promotor')+'___'+(r.data||'Sem data');
-    const atual=mapa[key];
-    const rMes=valorTotalMesRelatorio(r),aMes=valorTotalMesRelatorio(atual||{});
-    if(!atual||rMes>aMes||(rMes===aMes&&safe(r.total)>=safe(atual?.total)))mapa[key]=r;
+  // 1. Ordena todos os relatórios do mais recente (enviado por último) para o mais antigo
+  const ordenados = [...(rows||[])].sort((a,b) => {
+     const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+     const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+     return timeB - timeA;
   });
-  return Object.values(mapa);
+  
+  const mapa = {};
+  ordenados.forEach(r => {
+    const key = (r.nome || 'Sem promotor') + '___' + (r.data || 'Sem data');
+    // 2. Como está ordenado, o primeiro que pegamos é a versão FINAL e CORRIGIDA daquele dia
+    if(!mapa[key]) {
+      mapa[key] = r;
+    }
+  });
+  
+  // 3. Retorna a lista limpa (exatamente 1 relatório por dia), reordenada por data decrescente
+  return Object.values(mapa).sort((a,b) => String(b.data||'').localeCompare(String(a.data||'')));
 }
-
 function valorTotalMesRelatorio(r){
   if(!r)return 0;
   const v=safe(r.totalMesInformado);if(v>0)return v;
@@ -1151,6 +1150,7 @@ async function entrarRapido(){
 async function aplicarPerfil(){
   const p=perfilSalvo();
   if(!p){$('login').classList.remove('hidden');$('main').classList.add('hidden');return}
+  
   // Valida membership SOMENTE se a equipe foi confirmada via Firestore
   // Sem essa proteção, o F5 expulsa o usuário quando o Firestore ainda não respondeu
   if(p.tipo==='promotor' && window.__equipeSincronizada && !PROMOTORES.includes(p.nome)){
@@ -1160,6 +1160,7 @@ async function aplicarPerfil(){
     show($('loginStatus'),'Seu acesso foi removido da equipe. Entre em contato com o supervisor.','err');
     return;
   }
+  
   user={uid:p.uid,email:p.uid,displayName:p.nome,photoURL:''};
   isSupervisor=p.tipo==='supervisor';
   $('login').classList.add('hidden');$('main').classList.remove('hidden');
@@ -1168,18 +1169,27 @@ async function aplicarPerfil(){
   $('userName').textContent=p.nome;
   $('userPhoto').src='https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
   $('roleText').textContent=isSupervisor?'Perfil Supervisor — visualiza equipe':'Perfil Promotor — visualiza seus dados';
-  // tab Gestão acessível a todos (promotor vê Dashboard Geral, supervisor vê painel completo)
+  
+  // Controle rigoroso de abas: Promotor vê SÓ Relatório. Supervisor vê SÓ Gestão e Histórico.
+  document.querySelectorAll('.tab').forEach(t => {
+    const tabId = t.dataset.tab;
+    if(isSupervisor) {
+      t.style.display = (tabId === 'relatorio') ? 'none' : 'flex';
+    } else {
+      t.style.display = (tabId === 'relatorio') ? 'flex' : 'none';
+    }
+  });
+
   try{
     if(!isSupervisor){
       $('promotor').value=p.nome;
       preencherFilialPromotor();
       carregarMostruarioPromotor();
       renderVendas();
+      openTab('relatorio'); // Força a aba Relatório para o Promotor
+    } else {
+      openTab('supervisor'); // Força a aba Gestão para o Supervisor
     }
-    // Restaura a última aba ativa (evita voltar sempre para Relatório no F5)
-    const _abaRestaurar=localStorage.getItem('fenixUltimaAba')||'relatorio';
-    const _abasValidas=['relatorio','supervisor','historicoDias'];
-    openTab(_abasValidas.includes(_abaRestaurar)?_abaRestaurar:'relatorio');
   }catch(e){
     // Erro em openTab não deve expulsar o usuário — apenas logar
     console.warn('Aviso ao abrir painel (não crítico):',e);
