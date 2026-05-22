@@ -656,21 +656,23 @@ function initUi(){
   $('loja').innerHTML='<option value="">Selecione a loja...</option>'+LOJAS.map(n=>`<option>${n}</option>`).join('');
   mostruarioExtraPorPromotor=carregarMostruarioExtra();
   renderModelosInputs();
-  if($('btnSalvarMostruarioExtra'))$('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
-  if($('btnAddModeloVenda'))$('btnAddModeloVenda').onclick=adicionarModeloVenda;
-  $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};
-  if($('acumuladoMes'))$('acumuladoMes').oninput=()=>{$('acumuladoMes').dataset.touched='1';renderVendas();};
-  $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
-  if($('btnIA'))$('btnIA').onclick=iaDashboard;
-  $('btnSalvar').onclick=salvarRelatorio;
-  $('btnExport').onclick=exportCsv;
-  $('btnModeloMes').onclick=()=>mostrarModeloMes(false);
-  $('btnIASupervisor').onclick=iaSupervisor;
-  if($('mesDashboard'))$('mesDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
-  if($('redeDashboard'))$('redeDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
+  
+  // Proteções adicionadas abaixo para evitar o erro "null"
+  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
+  if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick=adicionarModeloVenda;
+  if($('promotor')) $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};
+  if($('acumuladoMes')) $('acumuladoMes').oninput=()=>{$('acumuladoMes').dataset.touched='1';renderVendas();};
+  if($('btnContinuar')) $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  if($('btnIA')) $('btnIA').onclick=iaDashboard;
+  if($('btnSalvar')) $('btnSalvar').onclick=salvarRelatorio;
+  if($('btnExport')) $('btnExport').onclick=exportCsv;
+  if($('btnModeloMes')) $('btnModeloMes').onclick=()=>mostrarModeloMes(false);
+  if($('btnIASupervisor')) $('btnIASupervisor').onclick=iaSupervisor;
+  if($('mesDashboard')) $('mesDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
+  if($('redeDashboard')) $('redeDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
+  
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
-
 function preencherFilialPromotor(){
   const p=equipeConfig.find(x=>x.nome===$('promotor').value);
   const metaBox=$('metaPromotorBox');
