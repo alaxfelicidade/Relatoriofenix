@@ -286,14 +286,6 @@ body{
       <div class="card"><div class="card-head"><span>🏪</span><b>Ranking por rede</b></div><div class="card-body"><div class="rank" id="rankingRedeDashboard"></div></div></div>
       <div class="card"><div class="card-head"><span>📊</span><b>Fechamento Diário</b></div><div class="card-body" style="padding:14px!important;overflow:visible!important"><div class="dashboard-card-list" id="tbodyHistorico"></div></div></div>
       <div id="supLocked" class="card"><div class="card-head"><span>🔒</span><b>Acesso supervisor</b></div><div class="card-body"><p class="hint">Seu perfil atual é promotor. Apenas quem entra com a senha de supervisor consegue ver dados da equipe.</p></div></div>
-   <section id="supervisor" class="screen dashboard-geral">
-      <div class="kpis">
-        <div class="kpi"><small>Total mês</small><b id="hMes">0</b></div>
-        <div class="kpi"><small>Atingimento</small><b id="hMeta">0%</b></div>
-        <div class="kpi"><small>Ontem</small><b id="hOntem">0</b></div>
-        <div class="kpi"><small>Relatórios</small><b id="hQtd">0</b></div>
-      </div>
-
       <div id="supPanel" class="hidden">
         <div class="kpis">
           <div class="kpi"><small>Equipe mês</small><b id="sMes">0</b></div>
@@ -301,84 +293,27 @@ body{
           <div class="kpi"><small>Promotores</small><b id="sProm">0</b></div>
           <div class="kpi"><small>Média diária</small><b id="sMedia">0</b></div>
         </div>
-
-        <div class="card">
-          <div class="card-head"><span>👥</span><b>Equipe - Detalhe Mensal</b></div>
-          <div class="card-body">
-            <div id="listaEquipe" class="dashboard-card-list"></div>
-          </div>
+        <div id="superKpiPreview" class="super-kpi-preview hidden"><b>Prévia</b><p>Clique em um card acima para ver os detalhes.</p></div>
+        
+        <div class="gestor-alertas">
+          <div class="alert-card alert-red"><small>Precisam de ajuda</small><b id="gaAjuda">0</b></div>
+          <div class="alert-card alert-orange"><small>Diária crítica</small><b id="gaCritica">0</b></div>
+          <div class="alert-card alert-green"><small>Vão bater meta</small><b id="gaBater">0</b></div>
         </div>
-
+        
         <div class="card">
-          <div class="card-head"><span>✏️</span><b>Metas e promotores</b></div>
+          <div class="card-head"><span>📱</span><b>Adicionar modelo em vendas do dia</b></div>
           <div class="card-body">
-            <div class="add-promotor-box">
-              <input type="text" id="novoPromotorNome" placeholder="Nome">
-              <select id="novoPromotorRede"><option value="">Sel...</option></select>
-              <input type="text" id="novoPromotorFilial" placeholder="Filial">
-              <input type="number" id="novoPromotorMeta" placeholder="Meta">
-              <input type="number" id="novoPromotorAcumulado" placeholder="Acumulado">
-              <button id="btnAddPromotor">+</button>
+            <div class="add-model-sales">
+              <label>Novo modelo OPPO</label>
+              <div class="line">
+                <input type="text" id="novoModeloVenda" placeholder="Ex: A79, A80, Reno11F...">
+                <button type="button" id="btnAddModeloVenda">Adicionar modelo</button>
+              </div>
+              <p class="hint" style="margin-top:8px">Ao adicionar, o modelo ficará disponível para todos os promotores em Vendas do dia, Estoque e Mostruário.</p>
             </div>
-            <div class="edit-list" id="configPromotores"></div>
           </div>
         </div>
-
-        <div class="card">
-          <div class="card-head"><span>📱</span><b>Vendas por modelo</b></div>
-          <div class="card-body">
-            <button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão</button>
-            <div class="model-month-grid" id="modeloMesBox"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><span>🏆</span><b>Ranking Gestão</b></div>
-          <div class="card-body">
-            <div class="rank" id="ranking"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <style>
-        .add-promotor-box { grid-template-columns: 1.2fr .8fr .8fr 70px 85px 100px; }
-        .edit-row { grid-template-columns: minmax(130px,1.2fr) minmax(100px,.7fr) minmax(90px,.6fr) 60px 75px 38px 75px 38px; }
-        @media(max-width:700px){.edit-row { grid-template-columns: 1fr 1fr 60px 75px 82px 38px; }}
-    </style>
-    
-    <div class="card">
-        <div class="card-head"><span>✏️</span><b>Metas e promotores</b></div>
-        <div class="card-body">
-            <div class="add-promotor-box">
-                <div><label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase">Novo Promotor</label><input type="text" id="novoPromotorNome" placeholder="Nome"></div>
-                <div><label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase">Rede</label><select id="novoPromotorRede"><option value="">Selecione</option><option>Magalu</option><option>Casas Bahia</option><option>Ponto</option><option>FastShop</option></select></div>
-                <div><label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase">Filial</label><input type="text" id="novoPromotorFilial" placeholder="Ex: 191"></div>
-                <div><label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase">Meta</label><input type="number" id="novoPromotorMeta" placeholder="0"></div>
-                <div><label style="font-size:10px;font-weight:800;color:#0F766E;text-transform:uppercase">Já Vendeu</label><input type="number" id="novoPromotorAcumulado" placeholder="0"></div>
-                <button id="btnAddPromotor">Adicionar</button>
-            </div>
-            <div class="edit-list" id="configPromotores"></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-head"><span>📱</span><b>Vendas OPPO por modelo (mês)</b></div>
-        <div class="card-body">
-            <button class="btn secondary" id="btnModeloMes" style="margin-bottom:12px">Atualizar visão por modelo</button>
-            <div class="model-month-grid" id="modeloMesBox"></div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-head"><span>🏆</span><b>Ranking Gestão</b></div>
-        <div class="card-body">
-            <button class="btn blue" id="btnIASupervisor" style="margin-bottom:12px">✨ Análise IA da equipe</button>
-            <div class="status" id="iaSupervisorBox"></div>
-            <div class="rank" id="ranking"></div>
-        </div>
-    </div>
-</div>
 
         <style>
           /* Ajuste para acomodar a nova coluna de acumulado */
@@ -715,29 +650,28 @@ function atualizarSelectPromotores(){
   }
 }
 
-function initUi() {
-  $('data').value = today();
+function initUi(){
+  $('data').value=today();
   atualizarSelectPromotores();
-  if($('loja')) $('loja').innerHTML = '<option value="">Selecione a loja...</option>' + LOJAS.map(n => `<option>${n}</option>`).join('');
-  mostruarioExtraPorPromotor = carregarMostruarioExtra();
+  $('loja').innerHTML='<option value="">Selecione a loja...</option>'+LOJAS.map(n=>`<option>${n}</option>`).join('');
+  mostruarioExtraPorPromotor=carregarMostruarioExtra();
   renderModelosInputs();
-
-  // TODAS AS LINHAS ABAIXO FORAM PROTEGIDAS COM "if"
-  // O sistema só vai rodar o clique se o botão existir na tela
-  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick = () => { salvarMostruarioPromotor(); popupSucesso('Modelo salvo no mostruário', 'A escolha foi gravada.'); };
-  if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick = adicionarModeloVenda;
-  if($('promotor')) $('promotor').onchange = () => { preencherFilialPromotor(); carregarMostruarioPromotor(); renderVendas(); };
-  if($('acumuladoMes')) $('acumuladoMes').oninput = () => { $('acumuladoMes').dataset.touched = '1'; renderVendas(); };
-  if($('btnContinuar')) $('btnContinuar').onclick = () => { window.scrollTo({top: $('cardVendas').offsetTop-80, behavior: 'smooth'}); $('s2').classList.add('on'); };
-  if($('btnIA')) $('btnIA').onclick = iaDashboard;
-  if($('btnSalvar')) $('btnSalvar').onclick = salvarRelatorio;
-  if($('btnExport')) $('btnExport').onclick = exportCsv;
-  if($('btnModeloMes')) $('btnModeloMes').onclick = () => mostrarModeloMes(false);
-  if($('btnIASupervisor')) $('btnIASupervisor').onclick = iaSupervisor;
-  if($('mesDashboard')) $('mesDashboard').onchange = () => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); };
-  if($('redeDashboard')) $('redeDashboard').onchange = () => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); };
-
-  document.querySelectorAll('.tab').forEach(t => t.onclick = () => openTab(t.dataset.tab));
+  
+  // Proteções adicionadas abaixo para evitar o erro "null"
+  if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick=()=>{salvarMostruarioPromotor();popupSucesso('Modelo salvo no mostruário','A escolha foi gravada para este promotor.');};
+  if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick=adicionarModeloVenda;
+  if($('promotor')) $('promotor').onchange=()=>{preencherFilialPromotor();carregarMostruarioPromotor();renderVendas();};
+  if($('acumuladoMes')) $('acumuladoMes').oninput=()=>{$('acumuladoMes').dataset.touched='1';renderVendas();};
+  if($('btnContinuar')) $('btnContinuar').onclick=()=>{window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});$('s2').classList.add('on')};
+  if($('btnIA')) $('btnIA').onclick=iaDashboard;
+  if($('btnSalvar')) $('btnSalvar').onclick=salvarRelatorio;
+  if($('btnExport')) $('btnExport').onclick=exportCsv;
+  if($('btnModeloMes')) $('btnModeloMes').onclick=()=>mostrarModeloMes(false);
+  if($('btnIASupervisor')) $('btnIASupervisor').onclick=iaSupervisor;
+  if($('mesDashboard')) $('mesDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
+  if($('redeDashboard')) $('redeDashboard').onchange=()=>{carregarHistorico();if(isSupervisor)carregarSupervisor();};
+  
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>openTab(t.dataset.tab));
 }
 function preencherFilialPromotor(){
   const p=equipeConfig.find(x=>x.nome===$('promotor').value);
@@ -930,48 +864,40 @@ function melhorRelatorioMes(a,b){
   return String(b.data||'')>String(a.data||'')?b:a;
 }
 
-function consolidarPromotoresMes(rows) {
-  const porProm = {};
-  
-  // 1. Inicializa todos da equipe com zero para aparecerem na lista
-  PROMOTORES.forEach(nome => {
-    // Busca a base (acumulado) UMA VEZ aqui
-    const config = equipeConfig.find(e => e.nome === nome);
-    const base = config ? safe(config.acumulado) : 0;
-    
-    porProm[nome] = { 
-      nome, 
-      total: 0, 
-      base: base, // Base fixa guardada
-      totalMes: base, // Já inicia com a base
-      relatorios: 0, 
-      vendas: Object.fromEntries(MODELOS.map(m => [m, 0])),
-      estoque: Object.fromEntries(MODELOS.map(m => [m, 0])),
-      lojas: new Set(), filiais: new Set(), mostruario: [], obs: [] 
-    };
-  });
-
-  // 2. Soma apenas os dados dos relatórios
-  rows.forEach(r => {
-    if (!porProm[r.nome]) return;
-    const p = porProm[r.nome];
-    p.total += safe(r.total);
-    p.relatorios += 1;
-    p.lojas.add(r.loja || r.rede || '');
-    p.filiais.add(r.filial || '');
-    
-    MODELOS.forEach(m => {
-      p.vendas[m] += safe(r.vendas?.[m]);
-      p.estoque[m] = Math.max(p.estoque[m], safe(r.estoque?.[m]));
+function consolidarPromotoresMes(rows){
+  const porProm={};
+  const y=new Date();y.setDate(y.getDate()-1);
+  const ontemKey=`${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
+  (rows||[]).forEach(r=>{
+    const n=r.nome||'Sem promotor';
+    if(!porProm[n])porProm[n]={nome:n,total:0,totalMes:0,somaVendasMes:0,relatorios:0,ontem:0,vendas:Object.fromEntries(MODELOS.map(m=>[m,0])),estoque:Object.fromEntries(MODELOS.map(m=>[m,0])),lojas:new Set(),filiais:new Set(),mostruario:[],obs:[],_melhor:null};
+    const p=porProm[n];
+    p.total+=safe(r.total);
+    // totalMes = MAX entre: acumulado declarado pelo promotor e soma dos dias registrados
+    // Garante que o maior valor correto seja exibido sem inflar
+    const _tMesR=safe(r.totalMesInformado)||safe(r.total);
+    if(_tMesR>p.totalMes)p.totalMes=_tMesR;
+    p.relatorios+=1;
+    p.lojas.add(r.loja||r.rede||'');
+    p.filiais.add(r.filial||'');
+    if(r.data===ontemKey)p.ontem+=safe(r.total);
+    p._melhor=melhorRelatorioMes(p._melhor,r);
+    // CORREÇÃO: SOMA real das vendas por modelo no mês (antes pegava só 1 relatório)
+    MODELOS.forEach(m=>{
+      p.vendas[m]+=safe(r.vendas?.[m]);
+      p.estoque[m]=Math.max(p.estoque[m],safe(r.estoque?.[m]));
     });
+    const most=Object.entries(r.mostruario?.modelos||{}).filter(([_,v])=>v).map(([m])=>m);
+    if(r.mostruario?.modeloExtra)most.push(r.mostruario.modeloExtra);
+    most.forEach(m=>{if(!p.mostruario.includes(m))p.mostruario.push(m)});
+    if(r.obs&&!p.obs.includes(r.obs))p.obs.push(r.obs);
   });
-
-  // 3. ATUALIZA O TOTAL FINAL (Base + Total somado) - AQUI ESTÁ A CORREÇÃO
-  // Isso é feito fora do loop de relatórios para evitar a multiplicação errada
-  Object.values(porProm).forEach(p => {
-    p.totalMes = p.base + p.total; 
+  // Calcular somaVendasMes apenas como referência visual (não sobrescreve totalMesInformado)
+  Object.values(porProm).forEach(p=>{
+    p.somaVendasMes=MODELOS.reduce((s,m)=>s+safe(p.vendas[m]),0);
+    // CORREÇÃO ANTI-INFLAÇÃO: totalMes vem exclusivamente do campo totalMesInformado (informado pelo promotor)
+    // NÃO sobreescrevemos com somaVendasMes pois isso inflava os números
   });
-
   return porProm;
 }
 
@@ -980,10 +906,7 @@ function somaModelosConsolidado(porProm){
   Object.values(porProm||{}).forEach(p=>MODELOS.forEach(m=>soma[m]+=safe(p.vendas?.[m])));
   return soma;
 }
-
-function totalEquipeConsolidado(porProm){
-  return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);
-}
+function totalEquipeConsolidado(porProm){return Object.values(porProm||{}).reduce((s,p)=>s+safe(p.totalMes),0);}
 
 async function carregarHistorico(){
   if(!db){$('tbodyHistorico').innerHTML='<div class="base-empty">⚠️ Firestore não conectado. Ative o banco no Firebase Console.</div>';return;}
@@ -1015,7 +938,6 @@ async function carregarHistorico(){
       const listaRede=Object.values(porRede).sort((a,b)=>b.total-a.total);
       $('rankingRedeDashboard').innerHTML=listaRede.map((r,i)=>`<div class="rank-item"><span class="pill">${i+1}º</span><div><strong>${r.rede}</strong><br><small>${r.prom.size} promotores • ${r.rel} relatórios</small></div><b>${r.total}</b></div>`).join('')||'<p class="hint">Sem dados por rede ainda.</p>';
     }
-    // ... restante da função carregarHistorico (o resto você pode manter como estava)
 
     if(isSupervisor){
       const lista=Object.values(porPromConsolidado).sort((a,b)=>safe(b.totalMes)-safe(a.totalMes));
@@ -1226,53 +1148,56 @@ async function carregarSupervisor(){
   if(!window.__BASE_GERAL)await carregarBaseGeral();
   
   let rows = relatoriosUnicosPorPromotorData(getDadosFiltrados());
+  
+  // FILTRO: Remove relatórios de promotores que não estão mais na equipe atual
   rows = rows.filter(r => PROMOTORES.includes(r.nome));
 
   const mesSup = window.__mesAtivo||mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
   $('modeloMesBox').classList.remove('hidden');
   
-  const porPromConsolidado = consolidarPromotoresMes(rows);
+  const _maxMesMap = {};
+  rows.forEach(r => {
+    const n = r.nome || '';
+    _maxMesMap[n] = Math.max(_maxMesMap[n] || 0, safe(r.totalMesInformado) || safe(r.total));
+  });
   
-  // 1. Atualiza KPIs do topo
-  const total = Object.values(porPromConsolidado).reduce((s, p) => s + p.totalMes, 0);
+  const total = Object.values(_maxMesMap).reduce((s,v)=>s+v,0);
+  const prom = new Set(rows.map(r=>r.nome));
+  
   $('sMes').textContent = total;
   $('sRel').textContent = rows.length;
-  $('sProm').textContent = PROMOTORES.length;
-  $('sMedia').textContent = PROMOTORES.length ? Math.ceil(total/PROMOTORES.length) : 0;
-  
-  // 2. Renderiza o Ranking (Top 5)
-  const rankList = Object.entries(porPromConsolidado).sort((a,b) => b[1].totalMes - a[1].totalMes);
-  $('ranking').innerHTML = rankList.slice(0, 5).map(([nome, p], i) => {
-    const st = metaStats(p.totalMes, getMeta(nome), mesSup);
-    return `<div class="rank-item">
-              <div class="pill">${i+1}º</div>
-              <div><strong>${nome}</strong><br><small>${st.pct}% da meta • falta ${st.falta}</small></div>
-              <b>${p.totalMes}</b>
-            </div>`;
-  }).join('') || '<p class="hint">Sem dados.</p>';
-
-  // 3. RENDERIZA OS CARDS DE TODA A EQUIPE (O que estava faltando)
-  $('listaEquipe').innerHTML = rankList.map(([nome, p]) => {
-    const meta = getMeta(nome);
-    const st = metaStats(p.totalMes, meta, mesSup);
-    const vendasDia = p.relatorios > 0 ? Object.entries(p.vendas).filter(([_,v])=>v>0).map(([m,v])=>`${m}: ${v}`).join(', ') : 'Sem vendas hoje';
-    return `<div class="dashboard-info-card">
-              <div class="dashboard-info-top">
-                <div><b>${nome}</b><small>Meta: ${meta}</small></div>
-                <div class="dashboard-percent ${st.cls}">${st.pct}%</div>
-              </div>
-              <div class="dashboard-info-grid">
-                <div class="dashboard-mini"><small>Total Mês</small><b>${p.totalMes}</b></div>
-                <div class="dashboard-mini"><small>Relatórios</small><b>${p.relatorios}</b></div>
-                <div class="dashboard-mini"><small>Status</small><b>${st.falta > 0 ? 'Falta ' + st.falta : 'Meta OK'}</b></div>
-              </div>
-            </div>`;
-  }).join('');
+  $('sProm').textContent = prom.size;
+  $('sMedia').textContent = prom.size ? Math.ceil(total/prom.size) : 0;
   
   ativarCardsSupervisorDetalhes(rows, mesSup);
+  
+  const rank = {};
+  const maxMes = {};
+  rows.forEach(r => {
+    rank[r.nome] = (rank[r.nome] || 0) + safe(r.total);
+    maxMes[r.nome] = Math.max(maxMes[r.nome] || 0, safe(r.totalMesInformado) || safe(r.total));
+  });
+  
+  const alertas = Object.keys(maxMes).map(n=>({nome:n, ...metaStats(maxMes[n], getMeta(n), mesSup)}));
+  
+  if($('gaAjuda')) $('gaAjuda').textContent = alertas.filter(a=>a.pct<60).length;
+  if($('gaCritica')) $('gaCritica').textContent = alertas.filter(a=>a.diaria>5 && a.pct<100).length;
+  if($('gaBater')) $('gaBater').textContent = alertas.filter(a=>a.pct>=90 || a.diaria<=1).length;
+  
+  // CÁLCULO CORRIGIDO: Ordenando o Ranking pelo total acumulado do mês (maxMes)
+  $('ranking').innerHTML = Object.entries(maxMes).sort((a,b)=>b[1]-a[1]).map(([n,t], i)=>{
+    const st = metaStats(maxMes[n], getMeta(n), mesSup);
+    return `<div class="rank-item">
+              <div class="pill">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1+'º'}</div>
+              <div><strong>${n}</strong><br><small>${st.pct}% da meta • falta ${st.falta} • ${st.diaria}/dia</small></div>
+              <b>${maxMes[n]}</b>
+            </div>`;
+  }).join('') || '<p class="hint">Sem dados para a equipe ativa neste mês.</p>';
+  
   mostrarModeloMes(true);
 }
+
 function exportCsv(){
   const headers=['Data','Promotor','Loja','Filial','Total dia','Total mês','A5 Pro','A6 Pro','Reno13F','Reno14F','Mostruario','Obs'];
   const rows=window.__rowsSupervisorBase||[];
