@@ -291,7 +291,7 @@ textarea{min-height:88px;resize:vertical}
 }
 
 /* ===== PWA INSTALL BANNER ===== */
-#installBanner{display:none;position:fixed;bottom:calc(70px + var(--safe-bottom));left:50%;transform:translateX(-50%);z-index:100;background:var(--gold);color:#fff;border-radius:12px;padding:7px 12px;font-weight:700;font-size:11px;box-shadow:0 5px 18px rgba(200,155,60,.28);white-space:nowrap;display:flex;align-items:center;gap:6px;max-width:78vw}
+#installBanner{display:none;position:fixed;bottom:calc(65px + var(--safe-bottom));left:50%;transform:translateX(-50%);z-index:100;background:var(--gold);color:#fff;border-radius:10px;padding:5px 10px;font-weight:700;font-size:10px;box-shadow:0 3px 12px rgba(0,0,0,.18);display:flex;align-items:center;gap:4px;max-width:68vw;opacity:.96}
 #installBanner.show{display:flex}
 #installBanner button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:7px;padding:4px 9px;font-weight:800;cursor:pointer;font-size:11px;margin-left:4px}
 #installBanner .close-install{background:none;border:none;color:rgba(255,255,255,.7);font-size:15px;padding:0 0 0 4px;margin:0;min-height:auto}
@@ -1996,18 +1996,27 @@ let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
 
+  deferredInstallPrompt = e;
+
   const jaInstalado =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true;
 
-  const usuarioLogado = localStorage.getItem('fenixLogado') === '1';
+  const popupJaVisto = localStorage.getItem('fenixInstallPopupVisto') === '1';
 
-  if(jaInstalado || usuarioLogado) return;
-
-  deferredInstallPrompt = e;
+  if(jaInstalado || popupJaVisto) return;
 
   const banner = $('installBanner');
-  if(banner) banner.classList.add('show');
+
+  if(banner){
+    banner.classList.add('show');
+
+    setTimeout(()=>{
+      banner.classList.remove('show');
+    }, 7000);
+
+    localStorage.setItem('fenixInstallPopupVisto','1');
+  }
 });
 $('btnInstallConfirm')?.addEventListener('click', async () => {
   if(!deferredInstallPrompt) return;

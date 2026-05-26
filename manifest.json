@@ -2,7 +2,7 @@
   "name": "Relatório Fênix",
   "short_name": "Fênix",
   "description": "Relatório diário de vendas OPPO — Equipe Fênix MG",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#F4F7F6",
   "theme_color": "#C89B3C",
@@ -31,5 +31,6 @@
     "window-controls-overlay"
   ],
   "id": "/",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "scope": "./"
 }
