@@ -1,18 +1,17 @@
 /* ============================================================
    SERVICE WORKER — Relatório Fênix PWA
-   Versão: 2.0.0
-   Estratégia: Cache-First para shell, Network-First para dados.
+   Versão: 3.0.0
    ============================================================ */
 
-const CACHE_NAME = 'fenix-v2';
+const CACHE_NAME = 'fenix-v3';
 const SHELL = [
   './index.html',
   './manifest.json',
-  './icon-192.svg',
-  './icon-512.svg'
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png'
 ];
 
-/* Instala e pré-cacheia o app shell */
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME)
@@ -21,7 +20,6 @@ self.addEventListener('install', e => {
   );
 });
 
-/* Ativa e limpa caches antigos */
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
@@ -32,11 +30,9 @@ self.addEventListener('activate', e => {
   );
 });
 
-/* Fetch: Firebase/CDN pela rede; app shell do cache */
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  /* Requisições não-GET e APIs externas: rede direta */
   if (
     e.request.method !== 'GET' ||
     url.hostname.includes('firebase') ||
@@ -47,10 +43,9 @@ self.addEventListener('fetch', e => {
     url.hostname.includes('flaticon') ||
     url.hostname.includes('wikipedia')
   ) {
-    return; /* browser trata normalmente */
+    return;
   }
 
-  /* App shell: Cache First com fallback de rede */
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
