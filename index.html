@@ -291,10 +291,10 @@ textarea{min-height:88px;resize:vertical}
 }
 
 /* ===== PWA INSTALL BANNER ===== */
-#installBanner{display:none;position:fixed;bottom:calc(78px + var(--safe-bottom) + 10px);left:50%;transform:translateX(-50%);z-index:100;background:var(--gold);color:#fff;border-radius:14px;padding:12px 18px;font-weight:800;font-size:13px;box-shadow:0 8px 28px rgba(200,155,60,.38);white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:8px;max-width:90vw}
+#installBanner{display:none;position:fixed;bottom:calc(70px + var(--safe-bottom));left:50%;transform:translateX(-50%);z-index:100;background:var(--gold);color:#fff;border-radius:12px;padding:7px 12px;font-weight:700;font-size:11px;box-shadow:0 5px 18px rgba(200,155,60,.28);white-space:nowrap;display:flex;align-items:center;gap:6px;max-width:78vw}
 #installBanner.show{display:flex}
-#installBanner button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:9px;padding:5px 12px;font-weight:900;cursor:pointer;font-size:12px;margin-left:8px}
-#installBanner .close-install{background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;padding:0 0 0 8px;margin:0;min-height:auto}
+#installBanner button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:7px;padding:4px 9px;font-weight:800;cursor:pointer;font-size:11px;margin-left:4px}
+#installBanner .close-install{background:none;border:none;color:rgba(255,255,255,.7);font-size:15px;padding:0 0 0 4px;margin:0;min-height:auto}
 </style>
 </head>
 <body>
@@ -1243,7 +1243,8 @@ function openTab(id){
   if(id === 'supervisor' || id === 'historicoDias'){
     requestAnimationFrame(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
   }
-  try{ localStorage.setItem('fenixUltimaAba', id); }catch(_){}
+  try{ localStorage.setItem('fenixUltimaAba', id);
+  localStorage.setItem('fenixLogado','1'); }catch(_){}
   window.scrollTo(0,0);
 }
 
@@ -1994,7 +1995,17 @@ function initUi(){
 let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
+
+  const jaInstalado =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  const usuarioLogado = localStorage.getItem('fenixLogado') === '1';
+
+  if(jaInstalado || usuarioLogado) return;
+
   deferredInstallPrompt = e;
+
   const banner = $('installBanner');
   if(banner) banner.classList.add('show');
 });

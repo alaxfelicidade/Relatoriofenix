@@ -21,6 +21,15 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["business", "productivity"],
-  "lang": "pt-BR"
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "lang": "pt-BR",
+  "display_override": [
+    "standalone",
+    "window-controls-overlay"
+  ],
+  "id": "/",
+  "prefer_related_applications": false
 }
