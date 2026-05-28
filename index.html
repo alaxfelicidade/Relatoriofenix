@@ -759,6 +759,20 @@ function aplicarEquipeConfig(lista){
   METAS = Object.fromEntries(equipeConfig.map(p => [p.nome, Number(p.meta)||0]));
   localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
   atualizarSelectPromotores();
+  /* Se promotor está logado, atualiza acumulado/meta sem sobrescrever o que ele já digitou */
+  const perfil = perfilSalvo?.();
+  if(perfil && perfil.tipo === 'promotor'){
+    const acEl = $('acumuladoMes');
+    const pData = equipeConfig.find(x => x.nome === perfil.nome);
+    if(pData && acEl){
+      // Reseta touched para forçar re-preenchimento com novo valor do Firebase
+      acEl.dataset.touched = '';
+      acEl.value = safe(pData.acumulado);
+      acEl.dataset.touched = '1';
+    }
+    preencherFilialPromotor?.();
+    renderVendas?.();
+  }
 }
 function getMeta(nome){ const p = equipeConfig.find(x => x.nome === nome); return Number(p?.meta||0); }
 function getPerfilEquipe(nome){ return equipeConfig.find(x => x.nome === nome) || {nome, rede:'', filial:'', meta:0, acumulado:0}; }
@@ -927,7 +941,7 @@ function preencherFilialPromotor(){
     if($('filial')) { $('filial').value = p.filial||''; $('filial').readOnly = !!p.filial; }
     if(metaBox){ metaBox.classList.remove('hidden'); metaBox.textContent = `Meta do mês: ${safe(p.meta)} aparelhos`; }
     const acEl = $('acumuladoMes');
-    if(acEl){ acEl.dataset.touched = ''; acEl.value = safe(p.acumulado); }
+    if(acEl){ acEl.dataset.touched = '1'; acEl.value = safe(p.acumulado); }
   }else{
     if(metaBox) metaBox.classList.add('hidden');
     if($('loja')) { $('loja').value=''; $('loja').disabled=false; }
