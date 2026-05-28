@@ -1898,8 +1898,11 @@ async function entrarRapido(){
     if($('loginPin').value !== SUPERVISOR_PIN){ show($('loginStatus'),'Senha incorreta.','err'); return; }
     salvarPerfil({tipo:'supervisor', nome:'Supervisor Fênix', uid:'supervisor'});
   }else{
-    if(!$('loginNome').value){ show($('loginStatus'),'Selecione seu nome.','err'); return; }
-    salvarPerfil({tipo:'promotor', nome:$('loginNome').value, uid:'promotor_'+slugNome($('loginNome').value)});
+    const nomeEscolhido = $('loginNome').value;
+    if(!nomeEscolhido){ show($('loginStatus'),'Selecione seu nome.','err'); return; }
+    // Ao entrar via dropdown, o nome escolhido veio do próprio PROMOTORES/equipeConfig,
+    // portanto é válido — marcamos a entrada como "login direto" para não bloquear na verificação abaixo.
+    salvarPerfil({tipo:'promotor', nome:nomeEscolhido, uid:'promotor_'+slugNome(nomeEscolhido), loginDireto:true});
   }
   await aplicarPerfil();
 }
@@ -1908,12 +1911,25 @@ async function aplicarPerfil(){
   const p = perfilSalvo();
   if(!p){ $('login').classList.remove('hidden'); $('main').classList.add('hidden'); return; }
 
-  if(p.tipo === 'promotor' && window.__equipeSincronizada && !PROMOTORES.includes(p.nome)){
+  // Só bloqueia como "acesso removido" se:
+  // 1. A equipe já foi sincronizada com Firebase (dados confiáveis)
+  // 2. O nome NÃO está em PROMOTORES nem em equipeConfig
+  // 3. NÃO é um login direto pelo dropdown (que já valida contra a lista atual)
+  const nomeRemovidoDaEquipe = p.tipo === 'promotor'
+    && window.__equipeSincronizada
+    && !p.loginDireto
+    && !PROMOTORES.includes(p.nome)
+    && !equipeConfig.find(x => x.nome === p.nome);
+
+  if(nomeRemovidoDaEquipe){
     limparPerfil();
     $('login').classList.remove('hidden'); $('main').classList.add('hidden');
     show($('loginStatus'),'Seu acesso foi removido da equipe. Contate o supervisor.','err');
     return;
   }
+
+  // Limpa flag loginDireto após entrar com sucesso
+  if(p.loginDireto){ delete p.loginDireto; salvarPerfil(p); }
 
   user = { uid:p.uid, email:p.uid, displayName:p.nome };
   isSupervisor = p.tipo === 'supervisor';
