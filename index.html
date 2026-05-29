@@ -391,9 +391,9 @@ textarea{min-height:88px;resize:vertical}
           <div class="model-list" id="modelList"></div>
           <div class="total"><span>Total vendido hoje</span><b id="totalDia">0</b></div>
           <div class="field" style="margin-top:12px">
-            <label for="acumuladoMes">Acumulado do mês <span style="color:var(--red)">*</span></label>
-            <input type="number" id="acumuladoMes" min="0" step="1" placeholder="Total vendido no mês (inclui hoje)" required>
-            <p class="hint" id="acumuladoMesHelp" style="margin-top:5px">Calculado automaticamente. Corrija se necessário.</p>
+            <label for="acumuladoMes">Acumulado do mês (automático)</label>
+            <input type="number" id="acumuladoMes" min="0" step="1" placeholder="Calculado automaticamente">
+            <p class="hint" id="acumuladoMesHelp" style="margin-top:5px">Calculado automaticamente. Corrija somente se necessário.</p>
           </div>
           <div class="meta">
             <div style="display:flex;justify-content:space-between;gap:10px">
@@ -643,6 +643,23 @@ function uniqueBy(arr, key){
   arr.forEach(i => { if(i && i[key] !== undefined && !m.has(i[key])) m.set(i[key], i); });
   return [...m.values()];
 }
+/* Aplica MODELO_ALIASES a um objeto {modelo: qtd}, mesclando nomes antigos nos novos */
+function normalizarVendas(v){
+  if(!v) return {};
+  const r = {};
+  Object.entries(v).forEach(([m, n]) => {
+    const alias = Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m;
+    if(alias !== null) r[alias] = (r[alias] || 0) + safe(n);
+  });
+  return r;
+}
+/* Deduplica lista de modelos aplicando aliases (evita "A5 4G" + "A5" na mesma lista) */
+function aplicarAliasesModelos(lista){
+  const seen = new Set();
+  return (lista||[]).map(m => {
+    return Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m;
+  }).filter(m => m !== null && !seen.has(m) && seen.add(m));
+}
 
 /* ═══════════════════════════════════════════════════════
    CONSTANTES E ESTADO
@@ -651,23 +668,47 @@ const SUPERVISOR_PIN  = "85741290";
 const LS_EQUIPE       = 'fenixEquipeConfig_v2';
 const LS_MODELOS      = 'fenix_modelos_venda_v2';
 const LS_MOSTRUARIO   = 'fenixMostruarioPromotor_v2';
-const MODELOS_PADRAO  = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
+const MODELOS_PADRAO  = ["A5","A5 5G","A5 Pro 5G","A6","A6 Pro 5G","A60","A6k","A6x","Reno13 F 5G","Reno14 F 5G"];
+/* Mapeia nomes antigos de promotores → nome completo atual (corrige docs legados no Firebase) */
+const NOME_PROMOTOR_ALIASES = {
+  "Thais Almeida":     "Thais Almeida Otoni",
+  "Thais Rezende":     "Thais Cassia Rezende Silva",
+  "Taynara Ferreira":  "Taynara Roberta Ferreira",
+  "Tailon Martins":    "Tailon Thales Cardoso Martins",
+  "Lucas Monteiro":    "Lucas Henrique Ribeiro Marques",
+  "Lauanda Augusta":   "Lauanda Augusta Reis De Paula",
+  "Gabriela Borges":   "Gabriela Borges De Oliveira",
+  "Erika Maneia":      "Erika Priscila Razzano Da Silva",
+  "Erika Silva":       "Erika Priscila Razzano Da Silva",
+  "Elias Andrade":     "Elias Andrade De Almeida Alves",
+  "Dennas Pereira":    "Dennas Pereira Prates"
+};
+
+/* Mapeia nomes antigos → novos para normalizar docs legados do Firebase */
+const MODELO_ALIASES  = {
+  "A5 4G":   "A5",
+  "A5 Pro":  "A5 Pro 5G",
+  "A6 Pro":  "A6 Pro 5G",
+  "Reno13F": "Reno13 F 5G",
+  "Reno14F": "Reno14 F 5G",
+  "A40":     null   // modelo descontinuado — ignorar
+};
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
 const EQUIPE_DEFAULT = [
-  {nome:"Beatriz Diniz",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Erika Maneia",filial:"",rede:"",meta:74,acumulado:0},
-  {nome:"Taynara Ferreira",filial:"",rede:"",meta:50,acumulado:0},
-  {nome:"Elias Andrade",filial:"",rede:"",meta:46,acumulado:0},
-  {nome:"Dennas Pereira",filial:"",rede:"",meta:58,acumulado:0},
-  {nome:"Erika Silva",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Lauanda Augusta",filial:"",rede:"",meta:30,acumulado:0},
-  {nome:"Thais Rezende",filial:"",rede:"",meta:48,acumulado:0},
-  {nome:"Tailon Martins",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Diego Souza",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Thais Almeida",filial:"",rede:"",meta:50,acumulado:0},
-  {nome:"Gabriela Borges",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Lucas Monteiro",filial:"",rede:"",meta:45,acumulado:0}
+  {nome:"Thais Almeida Otoni",           filial:"",rede:"",meta:50,acumulado:76},
+  {nome:"Thais Cassia Rezende Silva",     filial:"",rede:"",meta:48,acumulado:28},
+  {nome:"Taynara Roberta Ferreira",       filial:"",rede:"",meta:50,acumulado:34},
+  {nome:"Tailon Thales Cardoso Martins",  filial:"",rede:"",meta:45,acumulado:30},
+  {nome:"Lucas Henrique Ribeiro Marques", filial:"",rede:"",meta:45,acumulado:37},
+  {nome:"Lauanda Augusta Reis De Paula",  filial:"",rede:"",meta:30,acumulado:26},
+  {nome:"Gabriela Borges De Oliveira",    filial:"",rede:"",meta:45,acumulado:36},
+  {nome:"Gabriel Fernandes Ferreira",     filial:"",rede:"",meta:45,acumulado:38},
+  {nome:"Erika Priscila Razzano Da Silva",filial:"",rede:"",meta:45,acumulado:34},
+  {nome:"Elias Andrade De Almeida Alves", filial:"",rede:"",meta:46,acumulado:24},
+  {nome:"Dennas Pereira Prates",          filial:"",rede:"",meta:58,acumulado:39},
+  {nome:"Darien Macedo",                  filial:"",rede:"",meta:45,acumulado:4},
+  {nome:"Alax Almeida Felicidade",        filial:"",rede:"",meta:45,acumulado:14}
 ];
 
 let app, db;
@@ -739,15 +780,29 @@ function filtrarMes(rows, key){ return (rows||[]).filter(r => rowMesKey(r) === k
 function carregarModelosVenda(){
   try{
     const local = JSON.parse(localStorage.getItem(LS_MODELOS)||'[]');
-    return [...new Set([...MODELOS_PADRAO, ...local])];
+    return aplicarAliasesModelos([...MODELOS_PADRAO, ...local]);
   }catch{ return [...MODELOS_PADRAO]; }
 }
 function salvarModelosVenda(){ localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS)); }
 
 function normalizarEquipeConfig(lista){
-  return (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
-    .map(p => ({nome:String(p.nome||'').trim(), rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado)}))
+  const raw = (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
+    .map(p => {
+      const nomeBase = String(p.nome||'').trim();
+      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, nomeBase)
+        ? NOME_PROMOTOR_ALIASES[nomeBase] : nomeBase;
+      return {nome:nomeNorm, rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado), ultimoMes:p.ultimoMes||''};
+    })
     .filter(p => p.nome);
+  /* Dedup por nome: se Firebase tiver "Erika Silva" + "Erika Priscila Razzano Da Silva",
+     ambos normalizam pro mesmo nome — mantém o de maior acumulado */
+  const mapaDedup = new Map();
+  raw.forEach(p => {
+    if(!mapaDedup.has(p.nome) || safe(p.acumulado) > safe(mapaDedup.get(p.nome).acumulado)){
+      mapaDedup.set(p.nome, p);
+    }
+  });
+  return [...mapaDedup.values()];
 }
 function carregarEquipeConfig(){
   try{ return normalizarEquipeConfig(JSON.parse(localStorage.getItem(LS_EQUIPE)||'null')); }
@@ -795,7 +850,13 @@ async function sincronizarModelosGlobais(){
     if(snap.exists()){
       const d = snap.data();
       if(Array.isArray(d.lista)){
-        MODELOS = [...new Set([...MODELOS_PADRAO, ...d.lista])];
+        const listaLimpa = aplicarAliasesModelos([...MODELOS_PADRAO, ...d.lista]);
+        /* Se a lista remota contém nomes antigos, sobrescreve no Firebase com a lista limpa */
+        const temAntigos = d.lista.some(m => Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m));
+        if(temAntigos){
+          setDoc(doc(db,'config','modelos_venda'), {lista:listaLimpa, updatedAt:serverTimestamp()}, {merge:true}).catch(()=>{});
+        }
+        MODELOS = listaLimpa;
         localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS));
       }
     }
@@ -900,10 +961,11 @@ function renderVendas(){
 
   const p = equipeConfig.find(x => x.nome === $('promotor')?.value);
   const meta = p ? safe(p.meta) : 0;
-  const acumuladoBase = p ? safe(p.acumulado) : 0;
+  /* Reset mensal automático: se o último envio foi em mês diferente, base = 0 */
+  const mesSalvandoForm = mesKeyFromDate($('data')?.value || today());
+  const acumuladoBase = (p && p.ultimoMes === mesSalvandoForm) ? safe(p.acumulado) : 0;
   const acEl = $('acumuladoMes');
 
-  /* CORREÇÃO: só auto-preenche se não foi tocado pelo usuário */
   if(acEl && !acEl.dataset.touched){
     acEl.value = acumuladoBase + totalDia;
   }
@@ -941,7 +1003,12 @@ function preencherFilialPromotor(){
     if($('filial')) { $('filial').value = p.filial||''; $('filial').readOnly = !!p.filial; }
     if(metaBox){ metaBox.classList.remove('hidden'); metaBox.textContent = `Meta do mês: ${safe(p.meta)} aparelhos`; }
     const acEl = $('acumuladoMes');
-    if(acEl){ acEl.dataset.touched = '1'; acEl.value = safe(p.acumulado); }
+    if(acEl){
+      const mesFil = mesKeyFromDate($('data')?.value || today());
+      const baseAcum = (p.ultimoMes === mesFil) ? safe(p.acumulado) : 0;
+      acEl.dataset.touched = '1';
+      acEl.value = baseAcum;
+    }
   }else{
     if(metaBox) metaBox.classList.add('hidden');
     if($('loja')) { $('loja').value=''; $('loja').disabled=false; }
@@ -956,9 +1023,15 @@ function normalizarRelatorio(d){
   const data = d?.data ? d.data() : (d||{});
   const r = { id: d?.id || data.id || '', ...data };
   if(!r.nome && r.promotor) r.nome = r.promotor;
+  /* Normaliza nome antigo → nome completo atual (elimina split entre docs antigos e novos) */
+  if(r.nome && Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, r.nome)){
+    r.nome = NOME_PROMOTOR_ALIASES[r.nome];
+  }
   if(!r.rede && r.loja) r.rede = r.loja;
   if(!r.loja && r.rede) r.loja = r.rede;
   if(!r.vendas) r.vendas = {};
+  /* Normaliza nomes antigos (ex: "A5 4G" → "A5") para consistência */
+  r.vendas = normalizarVendas(r.vendas);
 
   /* total do DIA = soma real dos modelos vendidos naquele dia */
   r.total = totalModelos(r.vendas);
@@ -1055,83 +1128,29 @@ function relatoriosUnicosPorPromotorData(rows){
 }
 
 /* ═══════════════════════════════════════════════════════
-   CONSOLIDAÇÃO POR PROMOTOR — LÓGICA CORRIGIDA DEFINITIVAMENTE
+   CONSOLIDAÇÃO POR PROMOTOR
 
-   REGRA PARA totalMes:
-   O acumulado do mês é o valor que o promotor digitou no
-   campo "Acumulado do mês" do relatório com a DATA MAIS RECENTE.
-   NAO usamos MAX nem SOMA — ambos inflavam (ex: Thais 72→128).
-
-   Exemplo correto:
-     Dia 20: acumulado=50
-     Dia 21: acumulado=56
-     Dia 22: acumulado=72  ← usa este (último enviado)
-
-   "Soma por modelo" = soma de cada modelo em todos os dias
-   (só para ver distribuição, nunca como acumulado).
+   REGRA: totalMes = SOMA dos totais diários únicos do mês.
+   - rowsUnicos já foi deduplicado por (promotor + data),
+     então somar r.total é sempre correto e nunca duplica.
+   - Reset mensal é automático: filtrarMes garante que só
+     chegam docs do mês selecionado.
+   - Conflito no mesmo dia: relatoriosUnicosPorPromotorData
+     mantém o doc mais recente (createdAt), os outros são
+     ignorados antes desta função.
 ═══════════════════════════════════════════════════════ */
 function consolidarPromotoresMes(rowsUnicos){
-  /* ═══════════════════════════════════════════════════════
-     CONSOLIDAÇÃO 100% SEGURA — INDEPENDENTE DE ORDEM
-     
-     PASSO 1: varre todos os docs e para cada promotor guarda
-     o totalMesInformado do doc com a DATA MAIS RECENTE.
-     Usa comparação de string YYYY-MM-DD (lexicográfica = correta).
-     
-     PASSO 2: segunda varredura para somar modelos, estoque,
-     mostruário etc. — separada do acumulado para não misturar.
-     
-     Assim não importa em que ordem o Firebase entregou os docs,
-     nem em que ordem o onSnapshot processou — o resultado é sempre
-     o acumulado do dia mais recente declarado pelo promotor.
-  ═══════════════════════════════════════════════════════ */
-
   const ontem = (() => {
     const y = new Date(); y.setDate(y.getDate()-1);
     return `${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
   })();
 
-  // PASSO 1: determina acumulado correto de cada promotor
-  // Regra:
-  //   a) Se o doc tem totalMesInformado > 0, usa esse valor.
-  //   b) Entre todos os docs do promotor com valor válido, pega o de DATA MAIS RECENTE.
-  //   c) Se nenhum doc tem totalMesInformado válido (docs antigos sem o campo),
-  //      usa a soma dos modelos do dia mais recente como estimativa — nunca soma todos os dias.
-  const acumMap = {}; // nome → { data, tmi, temValorReal }
-
-  // 1a: encontra o doc com maior data que tenha totalMesInformado > 0
-  (rowsUnicos||[]).forEach(r => {
-    const n = (r.nome||'').trim();
-    if(!n) return;
-    const dataR = r.data || '';
-    const tmi = safe(r.totalMesInformado);
-    if(tmi > 0){
-      if(!acumMap[n] || !acumMap[n].temValorReal || dataR > acumMap[n].data){
-        acumMap[n] = { data: dataR, tmi, temValorReal: true };
-      }
-    }
-  });
-
-  // 1b: para promotores que não têm nenhum doc com totalMesInformado > 0,
-  // usa r.total do doc com data mais recente (melhor estimativa disponível)
-  (rowsUnicos||[]).forEach(r => {
-    const n = (r.nome||'').trim();
-    if(!n) return;
-    if(acumMap[n]?.temValorReal) return; // já tem valor real, ignora
-    const dataR = r.data || '';
-    const tmi = safe(r.total); // vendas do dia como fallback
-    if(!acumMap[n] || dataR > acumMap[n].data){
-      acumMap[n] = { data: dataR, tmi, temValorReal: false };
-    }
-  });
-
-  // PASSO 2: monta objeto consolidado completo
   const porProm = {};
   (rowsUnicos||[]).forEach(r => {
     const n = (r.nome||'').trim() || 'Sem promotor';
     if(!porProm[n]) porProm[n] = {
       nome: n,
-      totalMes: acumMap[n]?.tmi || 0,  // ← valor correto, definido no passo 1
+      totalMes: 0,        // soma dos r.total únicos — ver abaixo
       somaVendasMes: 0,
       relatorios: 0,
       ontem: 0,
@@ -1145,6 +1164,7 @@ function consolidarPromotoresMes(rowsUnicos){
     };
     const p = porProm[n];
     p.relatorios++;
+    p.totalMes += safe(r.total); // acumula total diário (já deduplicado)
 
     MODELOS.forEach(m => {
       p.vendasPorModelo[m] += safe(r.vendas?.[m]);
@@ -1276,11 +1296,6 @@ async function salvarRelatorio(){
   if(!getMeta(nomeP)){
     show($('status'),'Promotor sem meta. Defina no painel Supervisor.','err'); return;
   }
-  const acumuladoVal = safe($('acumuladoMes')?.value);
-  if(acumuladoVal <= 0){
-    show($('status'),'Informe o acumulado do mês (obrigatório, maior que zero).','err');
-    $('acumuladoMes')?.focus(); return;
-  }
   const mostSelecionado = Object.values(mostruario||{}).some(Boolean) || (($('mostruarioExtra')?.value||'').trim().length > 0);
   if(!mostSelecionado){
     show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo.','err');
@@ -1301,6 +1316,17 @@ async function salvarRelatorio(){
 
     const totalDiaCalc = MODELOS.reduce((s,m) => s+safe(vendas[m]), 0);
 
+    /* Calcula totalMesInformado automaticamente:
+       soma dos totais de dias anteriores neste mês + total de hoje.
+       Usa ID determinístico para que re-envio no mesmo dia SUBSTITUA
+       o doc existente em vez de criar um duplicado. */
+    const docsAnteriores = relatoriosUnicosPorPromotorData(
+      (window.__BASE_GERAL || []).filter(r =>
+        r.nome === nomeP && rowMesKey(r) === infMes.key && r.data !== dataP
+      )
+    );
+    const totalMesCalc = docsAnteriores.reduce((s, r) => s + safe(r.total), 0) + totalDiaCalc;
+
     const payload = {
       uid: user.uid, email: user.email, nome: nomeP,
       filial: perfilAtual.filial || filialP,
@@ -1314,7 +1340,7 @@ async function salvarRelatorio(){
       metaMes: getMeta(nomeP),
       vendas: {...vendas},
       total: totalDiaCalc,
-      totalMesInformado: acumuladoVal,
+      totalMesInformado: totalMesCalc,
       estoque, mostruario: mostruarioPayload,
       interessados: safe($('interessados').value),
       perdidas: safe($('perdidas').value),
@@ -1323,13 +1349,16 @@ async function salvarRelatorio(){
       createdAt: serverTimestamp()
     };
 
+    /* ID determinístico: um doc por (promotor + data) — re-envio no mesmo dia substitui */
+    const docId = `${slugNome(nomeP)}_${dataP}`;
     show($('status'),'Salvando...','ok');
-    await addDoc(collection(db,'relatorios'), payload);
+    await setDoc(doc(db, 'relatorios', docId), payload);
 
-    /* Atualiza acumulado na ficha do promotor */
+    /* Atualiza acumulado e mês de referência na ficha do promotor */
     const pIdx = equipeConfig.findIndex(x => x.nome === nomeP);
     if(pIdx > -1){
-      equipeConfig[pIdx].acumulado = acumuladoVal;
+      equipeConfig[pIdx].acumulado = totalMesCalc;
+      equipeConfig[pIdx].ultimoMes  = infMes.key;
       setDoc(doc(db,'config','equipe'), {equipe:equipeConfig, promotores:equipeConfig, updatedAt:serverTimestamp()}, {merge:true});
       localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
     }
@@ -1390,7 +1419,9 @@ async function carregarHistorico(){
     /* ── SOMA POR MODELO (painel geral) ── */
     const somaModelos = somaModelosConsolidado(porPromConsolidado);
     if($('dashboardModeloMes')){
-      $('dashboardModeloMes').innerHTML = MODELOS.map(m => `
+      const modelosComVendas = MODELOS.filter(m => (somaModelos[m]||0) > 0);
+      const listaExibir = modelosComVendas.length ? modelosComVendas : MODELOS;
+      $('dashboardModeloMes').innerHTML = listaExibir.map(m => `
         <div class="model-month-item">
           <small>${escapeHTML(m)}</small>
           <b>${somaModelos[m]||0}</b>
@@ -1661,38 +1692,12 @@ async function carregarSupervisor(){
   const mesSup = window.__mesAtivo || mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
 
-  /* ── KPIs do supervisor — mesma lógica de 2 passagens de consolidarPromotoresMes ──
-     Varre todos os docs e para cada promotor determina o acumulado
-     pelo totalMesInformado do documento com a DATA MAIS RECENTE.
-     Independente da ordem de entrega do Firebase / onSnapshot. */
-  // Mesma lógica de 2 fases do consolidarPromotoresMes
-  const _acumSup = {};
-  // Fase 1: docs com totalMesInformado real
+  /* Soma dos totais diários únicos por promotor (igual à lógica de consolidarPromotoresMes) */
+  const maxMesMap = {};
   rows.forEach(r => {
     const n = (r.nome||'').trim();
-    if(!n) return;
-    const dataR = r.data || '';
-    const tmi = safe(r.totalMesInformado);
-    if(tmi > 0){
-      if(!_acumSup[n] || !_acumSup[n].temValorReal || dataR > _acumSup[n].data){
-        _acumSup[n] = { data: dataR, tmi, temValorReal: true };
-      }
-    }
+    if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
   });
-  // Fase 2: fallback para promotores sem totalMesInformado
-  rows.forEach(r => {
-    const n = (r.nome||'').trim();
-    if(!n) return;
-    if(_acumSup[n]?.temValorReal) return;
-    const dataR = r.data || '';
-    const tmi = safe(r.total);
-    if(!_acumSup[n] || dataR > _acumSup[n].data){
-      _acumSup[n] = { data: dataR, tmi, temValorReal: false };
-    }
-  });
-  const maxMesMap = Object.fromEntries(
-    Object.entries(_acumSup).map(([n, v]) => [n, v.tmi])
-  );
   const totalSup = Object.values(maxMesMap).reduce((s,v) => s+v, 0);
   const promSet = new Set(rows.map(r=>r.nome));
 
@@ -1774,7 +1779,9 @@ function mostrarModeloMes(force=false){
   Object.values(cons).forEach(p => {
     MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m]));
   });
-  if(box) box.innerHTML = MODELOS.map(m => `
+  const modelosComVendasGestao = MODELOS.filter(m => (sum[m]||0) > 0);
+  const listaGestao = modelosComVendasGestao.length ? modelosComVendasGestao : MODELOS;
+  if(box) box.innerHTML = listaGestao.map(m => `
     <div class="model-month-item"><small>${escapeHTML(m)}</small><b>${sum[m]||0}</b></div>`).join('');
 }
 
@@ -1924,6 +1931,13 @@ async function entrarRapido(){
 async function aplicarPerfil(){
   const p = perfilSalvo();
   if(!p){ $('login').classList.remove('hidden'); $('main').classList.add('hidden'); return; }
+
+  /* Normaliza nome do perfil salvo se o nome foi atualizado (evita logout incorreto) */
+  if(p.tipo === 'promotor' && p.nome &&
+     Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, p.nome)){
+    const novoNome = NOME_PROMOTOR_ALIASES[p.nome];
+    if(novoNome){ p.nome = novoNome; p.uid = 'promotor_' + p.nome.toLowerCase().replace(/\s+/g,'_'); salvarPerfil(p); }
+  }
 
   // Só bloqueia como "acesso removido" se:
   // 1. A equipe já foi sincronizada com Firebase (dados confiáveis)
