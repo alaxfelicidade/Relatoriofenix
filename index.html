@@ -711,6 +711,33 @@ const EQUIPE_DEFAULT = [
   {nome:"Alax Almeida Felicidade",        filial:"",rede:"",meta:45,acumulado:14}
 ];
 
+/* Dados verificados manualmente — fonte de verdade para cards e ranking por mês */
+const DADOS_VERIFICADOS_MES = {
+  '2026-05': {
+    totalGeral: 422,
+    modelos: {
+      'A5': 54, 'A5 5G': 47, 'A5 Pro 5G': 2, 'A6': 28,
+      'A6 Pro 5G': 31, 'A60': 6, 'A6k': 37, 'A6x': 188,
+      'Reno13 F 5G': 1, 'Reno14 F 5G': 28
+    },
+    promotores: {
+      'Thais Almeida Otoni':            76,
+      'Thais Cassia Rezende Silva':      28,
+      'Taynara Roberta Ferreira':        34,
+      'Tailon Thales Cardoso Martins':   30,
+      'Lucas Henrique Ribeiro Marques':  37,
+      'Lauanda Augusta Reis De Paula':   26,
+      'Gabriela Borges De Oliveira':     36,
+      'Gabriel Fernandes Ferreira':      38,
+      'Erika Priscila Razzano Da Silva': 34,
+      'Elias Andrade De Almeida Alves':  24,
+      'Dennas Pereira Prates':           39,
+      'Darien Macedo':                    4,
+      'Alax Almeida Felicidade':         14
+    }
+  }
+};
+
 let app, db;
 let unsubscribeRelatorios = null; // listener em tempo real
 let user = null;
@@ -1417,7 +1444,10 @@ async function carregarHistorico(){
     window.__dashboardConsolidado = porPromConsolidado;
 
     /* ── SOMA POR MODELO (painel geral) ── */
-    const somaModelos = somaModelosConsolidado(porPromConsolidado);
+    const _dadosVerif = DADOS_VERIFICADOS_MES[mesAtivo];
+    const somaModelos = _dadosVerif
+      ? Object.fromEntries(MODELOS.map(m => [m, _dadosVerif.modelos[m] || 0]))
+      : somaModelosConsolidado(porPromConsolidado);
     if($('dashboardModeloMes')){
       const modelosComVendas = MODELOS.filter(m => (somaModelos[m]||0) > 0);
       const listaExibir = modelosComVendas.length ? modelosComVendas : MODELOS;
@@ -1447,7 +1477,7 @@ async function carregarHistorico(){
     /* ── PAINEL SUPERVISOR: cards por promotor ── */
     if(isSupervisor){
       const lista = Object.values(porPromConsolidado).sort((a,b) => safe(b.totalMes) - safe(a.totalMes));
-      const totalEquipe = totalEquipeConsolidado(porPromConsolidado);
+      const totalEquipe = (_dadosVerif?.totalGeral) || totalEquipeConsolidado(porPromConsolidado);
       const totalRel = lista.reduce((s,r) => s + r.relatorios, 0);
       const ontem = lista.reduce((s,r) => s + r.ontem, 0);
       const metaEquipe = lista.reduce((s,r) => s + getMeta(r.nome), 0);
@@ -1692,12 +1722,17 @@ async function carregarSupervisor(){
   const mesSup = window.__mesAtivo || mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
 
-  /* Soma dos totais diários únicos por promotor (igual à lógica de consolidarPromotoresMes) */
+  /* Usa dados verificados se disponíveis; senão soma totais diários únicos do Firebase */
+  const _dadosVerifSup = DADOS_VERIFICADOS_MES[mesSup];
   const maxMesMap = {};
-  rows.forEach(r => {
-    const n = (r.nome||'').trim();
-    if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
-  });
+  if(_dadosVerifSup?.promotores){
+    Object.entries(_dadosVerifSup.promotores).forEach(([n, t]) => { maxMesMap[n] = t; });
+  } else {
+    rows.forEach(r => {
+      const n = (r.nome||'').trim();
+      if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
+    });
+  }
   const totalSup = Object.values(maxMesMap).reduce((s,v) => s+v, 0);
   const promSet = new Set(rows.map(r=>r.nome));
 
@@ -1773,12 +1808,16 @@ function mostrarModeloMes(force=false){
   const box = $('modeloMesBox');
   if(!force) box?.classList.toggle('hidden');
   if(box?.classList.contains('hidden')) return;
-  /* Usa vendasPorModelo do consolidado — já deduplicado e somado corretamente */
-  const cons = window.__dashboardConsolidado || {};
-  const sum = Object.fromEntries(MODELOS.map(m=>[m,0]));
-  Object.values(cons).forEach(p => {
-    MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m]));
-  });
+  const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
+  const _dadosVerif = DADOS_VERIFICADOS_MES[mesAtivo];
+  let sum;
+  if(_dadosVerif){
+    sum = Object.fromEntries(MODELOS.map(m => [m, _dadosVerif.modelos[m] || 0]));
+  } else {
+    sum = Object.fromEntries(MODELOS.map(m=>[m,0]));
+    const cons = window.__dashboardConsolidado || {};
+    Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
+  }
   const modelosComVendasGestao = MODELOS.filter(m => (sum[m]||0) > 0);
   const listaGestao = modelosComVendasGestao.length ? modelosComVendasGestao : MODELOS;
   if(box) box.innerHTML = listaGestao.map(m => `
