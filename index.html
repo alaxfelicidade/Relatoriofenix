@@ -696,43 +696,43 @@ const MODELO_ALIASES  = {
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
 const EQUIPE_DEFAULT = [
-  {nome:"Thais Almeida Otoni",           filial:"",rede:"",meta:50,acumulado:76},
-  {nome:"Thais Cassia Rezende Silva",     filial:"",rede:"",meta:48,acumulado:28},
+  {nome:"Thais Almeida Otoni",           filial:"",rede:"",meta:50,acumulado:88},
+  {nome:"Thais Cassia Rezende Silva",     filial:"",rede:"",meta:48,acumulado:29},
   {nome:"Taynara Roberta Ferreira",       filial:"",rede:"",meta:50,acumulado:34},
   {nome:"Tailon Thales Cardoso Martins",  filial:"",rede:"",meta:45,acumulado:30},
-  {nome:"Lucas Henrique Ribeiro Marques", filial:"",rede:"",meta:45,acumulado:37},
-  {nome:"Lauanda Augusta Reis De Paula",  filial:"",rede:"",meta:30,acumulado:26},
-  {nome:"Gabriela Borges De Oliveira",    filial:"",rede:"",meta:45,acumulado:36},
-  {nome:"Gabriel Fernandes Ferreira",     filial:"",rede:"",meta:45,acumulado:38},
+  {nome:"Lucas Henrique Ribeiro Marques", filial:"",rede:"",meta:45,acumulado:39},
+  {nome:"Lauanda Augusta Reis De Paula",  filial:"",rede:"",meta:30,acumulado:30},
+  {nome:"Gabriela Borges De Oliveira",    filial:"",rede:"",meta:45,acumulado:37},
+  {nome:"Gabriel Fernandes Ferreira",     filial:"",rede:"",meta:45,acumulado:44},
   {nome:"Erika Priscila Razzano Da Silva",filial:"",rede:"",meta:45,acumulado:34},
-  {nome:"Elias Andrade De Almeida Alves", filial:"",rede:"",meta:46,acumulado:24},
-  {nome:"Dennas Pereira Prates",          filial:"",rede:"",meta:58,acumulado:39},
-  {nome:"Darien Macedo",                  filial:"",rede:"",meta:45,acumulado:4},
+  {nome:"Elias Andrade De Almeida Alves", filial:"",rede:"",meta:46,acumulado:28},
+  {nome:"Dennas Pereira Prates",          filial:"",rede:"",meta:58,acumulado:40},
+  {nome:"Darien Macedo",                  filial:"",rede:"",meta:45,acumulado:8},
   {nome:"Alax Almeida Felicidade",        filial:"",rede:"",meta:45,acumulado:14}
 ];
 
-/* Dados verificados manualmente — fonte de verdade para cards e ranking por mês */
+/* Base fixa por mês — substitui Firebase (não soma). Supervisor pode sobrescrever via painel. */
 const DADOS_VERIFICADOS_MES = {
   '2026-05': {
-    totalGeral: 422,
+    totalGeral: 455,
     modelos: {
       'A5': 54, 'A5 5G': 47, 'A5 Pro 5G': 2, 'A6': 28,
       'A6 Pro 5G': 31, 'A60': 6, 'A6k': 37, 'A6x': 188,
       'Reno13 F 5G': 1, 'Reno14 F 5G': 28
     },
     promotores: {
-      'Thais Almeida Otoni':            76,
-      'Thais Cassia Rezende Silva':      28,
+      'Thais Almeida Otoni':            88,
+      'Thais Cassia Rezende Silva':      29,
       'Taynara Roberta Ferreira':        34,
       'Tailon Thales Cardoso Martins':   30,
-      'Lucas Henrique Ribeiro Marques':  37,
-      'Lauanda Augusta Reis De Paula':   26,
-      'Gabriela Borges De Oliveira':     36,
-      'Gabriel Fernandes Ferreira':      38,
+      'Lucas Henrique Ribeiro Marques':  39,
+      'Lauanda Augusta Reis De Paula':   30,
+      'Gabriela Borges De Oliveira':     37,
+      'Gabriel Fernandes Ferreira':      44,
       'Erika Priscila Razzano Da Silva': 34,
-      'Elias Andrade De Almeida Alves':  24,
-      'Dennas Pereira Prates':           39,
-      'Darien Macedo':                    4,
+      'Elias Andrade De Almeida Alves':  28,
+      'Dennas Pereira Prates':           40,
+      'Darien Macedo':                    8,
       'Alax Almeida Felicidade':         14
     }
   }
@@ -1349,8 +1349,7 @@ async function salvarRelatorio(){
         r.nome === nomeP && rowMesKey(r) === infMes.key && r.data !== dataP
       )
     );
-    const basePromotor = safe(DADOS_VERIFICADOS_MES[infMes.key]?.promotores?.[nomeP]);
-    const totalMesCalc = basePromotor + docsAnteriores.reduce((s, r) => s + safe(r.total), 0) + totalDiaCalc;
+    const totalMesCalc = docsAnteriores.reduce((s, r) => s + safe(r.total), 0) + totalDiaCalc;
 
     const payload = {
       uid: user.uid, email: user.email, nome: nomeP,
@@ -1442,12 +1441,15 @@ async function carregarHistorico(){
     window.__rowsDashboard = rowsUnicos;
     window.__dashboardConsolidado = porPromConsolidado;
 
-    /* ── BASE FIXA: injeta totais históricos no consolidado do mês ── */
+    /* ── PRIORIDADE EXCLUSIVA: base fixa SUBSTITUI Firebase; supervisor SUBSTITUI base ──
+       Nenhuma fonte é somada com outra — cada nível superior substitui o inferior. */
     const _baseFixa = DADOS_VERIFICADOS_MES[mesAtivo];
+
+    // Prioridade 2: base fixa do mês substitui totalMes vindo do Firebase
     if(_baseFixa?.promotores){
       Object.entries(_baseFixa.promotores).forEach(([nome, baseTotal]) => {
         if(porPromConsolidado[nome]){
-          porPromConsolidado[nome].totalMes += safe(baseTotal);
+          porPromConsolidado[nome].totalMes = safe(baseTotal); // SUBSTITUI, não soma
         } else {
           porPromConsolidado[nome] = {
             nome, totalMes: safe(baseTotal), somaVendasMes: 0, relatorios: 0, ontem: 0,
@@ -1459,7 +1461,7 @@ async function carregarHistorico(){
       });
     }
 
-    /* ── OVERRIDE MANUAL DO SUPERVISOR: substitui totalMes do promotor ── */
+    // Prioridade 1: supervisor editou manualmente — substitui tudo
     equipeConfig.forEach(pConf => {
       if(pConf.editadoSupervisor && pConf.ultimoMes === mesAtivo && safe(pConf.acumulado) > 0){
         if(porPromConsolidado[pConf.nome]){
@@ -1475,11 +1477,10 @@ async function carregarHistorico(){
       }
     });
 
-    /* ── SOMA POR MODELO (base + Firebase) ── */
-    const somaModelosFirebase = somaModelosConsolidado(porPromConsolidado);
+    /* ── CARDS DE MODELO: base fixa exclusiva para meses com base definida ── */
     const somaModelos = _baseFixa?.modelos
-      ? Object.fromEntries(MODELOS.map(m => [m, (_baseFixa.modelos[m]||0) + (somaModelosFirebase[m]||0)]))
-      : somaModelosFirebase;
+      ? Object.fromEntries(MODELOS.map(m => [m, _baseFixa.modelos[m]||0]))
+      : somaModelosConsolidado(porPromConsolidado);
     if($('dashboardModeloMes')){
       const modelosComVendas = MODELOS.filter(m => (somaModelos[m]||0) > 0);
       const listaExibir = modelosComVendas.length ? modelosComVendas : MODELOS;
@@ -1754,17 +1755,19 @@ async function carregarSupervisor(){
   const mesSup = window.__mesAtivo || mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
 
-  /* maxMesMap = base fixa (se existir) + Firebase deduplificado */
+  /* maxMesMap: prioridade exclusiva — cada nível substitui o anterior, nunca soma */
   const _baseFixaSup = DADOS_VERIFICADOS_MES[mesSup];
   const maxMesMap = {};
-  if(_baseFixaSup?.promotores){
-    Object.entries(_baseFixaSup.promotores).forEach(([n, t]) => { maxMesMap[n] = safe(t); });
-  }
+  // Prioridade 3 (base): Firebase deduplificado
   rows.forEach(r => {
     const n = (r.nome||'').trim();
     if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
   });
-  /* Override manual do supervisor no ranking e alertas */
+  // Prioridade 2: base fixa do mês SUBSTITUI Firebase
+  if(_baseFixaSup?.promotores){
+    Object.entries(_baseFixaSup.promotores).forEach(([n, t]) => { maxMesMap[n] = safe(t); });
+  }
+  // Prioridade 1: supervisor editou manualmente — SUBSTITUI tudo
   equipeConfig.forEach(pConf => {
     if(pConf.editadoSupervisor && pConf.ultimoMes === mesSup && safe(pConf.acumulado) > 0){
       maxMesMap[pConf.nome] = safe(pConf.acumulado);
@@ -1847,11 +1850,16 @@ function mostrarModeloMes(force=false){
   if(box?.classList.contains('hidden')) return;
   const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
   const _baseFixaGestao = DADOS_VERIFICADOS_MES[mesAtivo];
-  const sum = _baseFixaGestao?.modelos
-    ? Object.fromEntries(MODELOS.map(m => [m, _baseFixaGestao.modelos[m]||0]))
-    : Object.fromEntries(MODELOS.map(m=>[m,0]));
-  const cons = window.__dashboardConsolidado || {};
-  Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
+  let sum;
+  if(_baseFixaGestao?.modelos){
+    // Mês com base fixa: usa somente a base (não soma Firebase)
+    sum = Object.fromEntries(MODELOS.map(m => [m, _baseFixaGestao.modelos[m]||0]));
+  } else {
+    // Mês sem base: usa Firebase
+    sum = Object.fromEntries(MODELOS.map(m=>[m,0]));
+    const cons = window.__dashboardConsolidado || {};
+    Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
+  }
   const modelosComVendasGestao = MODELOS.filter(m => (sum[m]||0) > 0);
   const listaGestao = modelosComVendasGestao.length ? modelosComVendasGestao : MODELOS;
   if(box) box.innerHTML = listaGestao.map(m => `
