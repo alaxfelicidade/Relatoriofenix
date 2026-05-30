@@ -818,7 +818,7 @@ function normalizarEquipeConfig(lista){
       const nomeBase = String(p.nome||'').trim();
       const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, nomeBase)
         ? NOME_PROMOTOR_ALIASES[nomeBase] : nomeBase;
-      return {nome:nomeNorm, rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado), ultimoMes:p.ultimoMes||''};
+      return {nome:nomeNorm, rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado), ultimoMes:p.ultimoMes||'', editadoSupervisor:!!p.editadoSupervisor};
     })
     .filter(p => p.nome);
   /* Dedup por nome: se Firebase tiver "Erika Silva" + "Erika Priscila Razzano Da Silva",
@@ -1384,6 +1384,7 @@ async function salvarRelatorio(){
     if(pIdx > -1){
       equipeConfig[pIdx].acumulado = totalMesCalc;
       equipeConfig[pIdx].ultimoMes  = infMes.key;
+      equipeConfig[pIdx].editadoSupervisor = false; // relatorio do promotor remove override manual
       setDoc(doc(db,'config','equipe'), {equipe:equipeConfig, promotores:equipeConfig, updatedAt:serverTimestamp()}, {merge:true});
       localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
     }
@@ -1457,6 +1458,22 @@ async function carregarHistorico(){
         }
       });
     }
+
+    /* ── OVERRIDE MANUAL DO SUPERVISOR: substitui totalMes do promotor ── */
+    equipeConfig.forEach(pConf => {
+      if(pConf.editadoSupervisor && pConf.ultimoMes === mesAtivo && safe(pConf.acumulado) > 0){
+        if(porPromConsolidado[pConf.nome]){
+          porPromConsolidado[pConf.nome].totalMes = safe(pConf.acumulado);
+        } else {
+          porPromConsolidado[pConf.nome] = {
+            nome: pConf.nome, totalMes: safe(pConf.acumulado), somaVendasMes: 0, relatorios: 0, ontem: 0,
+            vendasPorModelo: Object.fromEntries(MODELOS.map(m=>[m,0])),
+            estoqueAtual: Object.fromEntries(MODELOS.map(m=>[m,0])),
+            lojas: new Set(), filiais: new Set(), mostruario: [], obs: [], ultimaData: ''
+          };
+        }
+      }
+    });
 
     /* ── SOMA POR MODELO (base + Firebase) ── */
     const somaModelosFirebase = somaModelosConsolidado(porPromConsolidado);
@@ -1747,6 +1764,12 @@ async function carregarSupervisor(){
     const n = (r.nome||'').trim();
     if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
   });
+  /* Override manual do supervisor no ranking e alertas */
+  equipeConfig.forEach(pConf => {
+    if(pConf.editadoSupervisor && pConf.ultimoMes === mesSup && safe(pConf.acumulado) > 0){
+      maxMesMap[pConf.nome] = safe(pConf.acumulado);
+    }
+  });
   const totalSup = Object.values(maxMesMap).reduce((s,v) => s+v, 0);
   const promSet = new Set(rows.map(r=>r.nome));
 
@@ -1888,9 +1911,12 @@ function renderConfigPromotores(){
       rede: $('cfg_rede_'+i).value,
       filial: $('cfg_filial_'+i).value.trim(),
       meta: safe($('cfg_meta_'+i).value),
-      acumulado: safe($('cfg_acumulado_'+i).value)
+      acumulado: safe($('cfg_acumulado_'+i).value),
+      ultimoMes: mesKeyFromDate(today()),
+      editadoSupervisor: true
     };
     salvarEquipeConfig(); renderConfigPromotores(); renderVendas();
+    _refreshDashboard();
     popupSucesso('Dados salvos!', 'Linha atualizada com sucesso.');
   });
   document.querySelectorAll('[data-remove]').forEach(btn => btn.onclick = () => {
@@ -1933,8 +1959,24 @@ async function initFirebase(){
     console.log('✅ Firestore conectado!');
     $('firebaseBanner').classList.remove('show');
 
-    /* Inicia listener em tempo real */
+    /* Inicia listener em tempo real — relatórios */
     iniciarRealtimeListener();
+
+    /* Listener em tempo real — edições manuais do supervisor em config/equipe */
+    onSnapshot(doc(db,'config','equipe'),
+      (snap) => {
+        if(!snap.exists()) return;
+        const d = snap.data();
+        const lista = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : null);
+        if(lista && lista.length){
+          aplicarEquipeConfig(lista);
+          window.__equipeSincronizada = true;
+          _refreshDashboard();
+        }
+      },
+      (err) => console.warn('onSnapshot config/equipe:', err.message)
+    );
+
     return true;
   }catch(e){
     console.error('❌ Firestore:', e.message);
