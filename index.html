@@ -1117,11 +1117,8 @@ function iniciarRealtimeListener(){
       const ind = $('realtimeIndicator');
       if(ind){ ind.innerHTML = '<span class="realtime-dot"></span>Online'; ind.classList.remove('realtime-offline'); }
 
-      /* Atualiza painel se estiver aberto */
-      const screenAtiva = document.querySelector('.screen.active');
-      if(screenAtiva?.id === 'supervisor'){
-        _refreshDashboard();
-      }
+      /* Atualiza dashboard em tempo real sempre que há mudança no Firebase */
+      _refreshDashboard();
     },
     (error) => {
       console.error('onSnapshot error:', error.message);
@@ -1352,7 +1349,8 @@ async function salvarRelatorio(){
         r.nome === nomeP && rowMesKey(r) === infMes.key && r.data !== dataP
       )
     );
-    const totalMesCalc = docsAnteriores.reduce((s, r) => s + safe(r.total), 0) + totalDiaCalc;
+    const basePromotor = safe(DADOS_VERIFICADOS_MES[infMes.key]?.promotores?.[nomeP]);
+    const totalMesCalc = basePromotor + docsAnteriores.reduce((s, r) => s + safe(r.total), 0) + totalDiaCalc;
 
     const payload = {
       uid: user.uid, email: user.email, nome: nomeP,
@@ -1443,11 +1441,28 @@ async function carregarHistorico(){
     window.__rowsDashboard = rowsUnicos;
     window.__dashboardConsolidado = porPromConsolidado;
 
-    /* ── SOMA POR MODELO (painel geral) ── */
-    const _dadosVerif = DADOS_VERIFICADOS_MES[mesAtivo];
-    const somaModelos = _dadosVerif
-      ? Object.fromEntries(MODELOS.map(m => [m, _dadosVerif.modelos[m] || 0]))
-      : somaModelosConsolidado(porPromConsolidado);
+    /* ── BASE FIXA: injeta totais históricos no consolidado do mês ── */
+    const _baseFixa = DADOS_VERIFICADOS_MES[mesAtivo];
+    if(_baseFixa?.promotores){
+      Object.entries(_baseFixa.promotores).forEach(([nome, baseTotal]) => {
+        if(porPromConsolidado[nome]){
+          porPromConsolidado[nome].totalMes += safe(baseTotal);
+        } else {
+          porPromConsolidado[nome] = {
+            nome, totalMes: safe(baseTotal), somaVendasMes: 0, relatorios: 0, ontem: 0,
+            vendasPorModelo: Object.fromEntries(MODELOS.map(m=>[m,0])),
+            estoqueAtual: Object.fromEntries(MODELOS.map(m=>[m,0])),
+            lojas: new Set(), filiais: new Set(), mostruario: [], obs: [], ultimaData: ''
+          };
+        }
+      });
+    }
+
+    /* ── SOMA POR MODELO (base + Firebase) ── */
+    const somaModelosFirebase = somaModelosConsolidado(porPromConsolidado);
+    const somaModelos = _baseFixa?.modelos
+      ? Object.fromEntries(MODELOS.map(m => [m, (_baseFixa.modelos[m]||0) + (somaModelosFirebase[m]||0)]))
+      : somaModelosFirebase;
     if($('dashboardModeloMes')){
       const modelosComVendas = MODELOS.filter(m => (somaModelos[m]||0) > 0);
       const listaExibir = modelosComVendas.length ? modelosComVendas : MODELOS;
@@ -1477,7 +1492,7 @@ async function carregarHistorico(){
     /* ── PAINEL SUPERVISOR: cards por promotor ── */
     if(isSupervisor){
       const lista = Object.values(porPromConsolidado).sort((a,b) => safe(b.totalMes) - safe(a.totalMes));
-      const totalEquipe = (_dadosVerif?.totalGeral) || totalEquipeConsolidado(porPromConsolidado);
+      const totalEquipe = totalEquipeConsolidado(porPromConsolidado);
       const totalRel = lista.reduce((s,r) => s + r.relatorios, 0);
       const ontem = lista.reduce((s,r) => s + r.ontem, 0);
       const metaEquipe = lista.reduce((s,r) => s + getMeta(r.nome), 0);
@@ -1722,17 +1737,16 @@ async function carregarSupervisor(){
   const mesSup = window.__mesAtivo || mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
 
-  /* Usa dados verificados se disponíveis; senão soma totais diários únicos do Firebase */
-  const _dadosVerifSup = DADOS_VERIFICADOS_MES[mesSup];
+  /* maxMesMap = base fixa (se existir) + Firebase deduplificado */
+  const _baseFixaSup = DADOS_VERIFICADOS_MES[mesSup];
   const maxMesMap = {};
-  if(_dadosVerifSup?.promotores){
-    Object.entries(_dadosVerifSup.promotores).forEach(([n, t]) => { maxMesMap[n] = t; });
-  } else {
-    rows.forEach(r => {
-      const n = (r.nome||'').trim();
-      if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
-    });
+  if(_baseFixaSup?.promotores){
+    Object.entries(_baseFixaSup.promotores).forEach(([n, t]) => { maxMesMap[n] = safe(t); });
   }
+  rows.forEach(r => {
+    const n = (r.nome||'').trim();
+    if(n) maxMesMap[n] = (maxMesMap[n] || 0) + safe(r.total);
+  });
   const totalSup = Object.values(maxMesMap).reduce((s,v) => s+v, 0);
   const promSet = new Set(rows.map(r=>r.nome));
 
@@ -1809,15 +1823,12 @@ function mostrarModeloMes(force=false){
   if(!force) box?.classList.toggle('hidden');
   if(box?.classList.contains('hidden')) return;
   const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
-  const _dadosVerif = DADOS_VERIFICADOS_MES[mesAtivo];
-  let sum;
-  if(_dadosVerif){
-    sum = Object.fromEntries(MODELOS.map(m => [m, _dadosVerif.modelos[m] || 0]));
-  } else {
-    sum = Object.fromEntries(MODELOS.map(m=>[m,0]));
-    const cons = window.__dashboardConsolidado || {};
-    Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
-  }
+  const _baseFixaGestao = DADOS_VERIFICADOS_MES[mesAtivo];
+  const sum = _baseFixaGestao?.modelos
+    ? Object.fromEntries(MODELOS.map(m => [m, _baseFixaGestao.modelos[m]||0]))
+    : Object.fromEntries(MODELOS.map(m=>[m,0]));
+  const cons = window.__dashboardConsolidado || {};
+  Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
   const modelosComVendasGestao = MODELOS.filter(m => (sum[m]||0) > 0);
   const listaGestao = modelosComVendasGestao.length ? modelosComVendasGestao : MODELOS;
   if(box) box.innerHTML = listaGestao.map(m => `
