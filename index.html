@@ -493,7 +493,7 @@ textarea{min-height:88px;resize:vertical}
       <div class="card">
         <div class="card-head"><span>🤖</span><b>Análise IA — Equipe</b></div>
         <div class="card-body">
-          <button class="btn blue" id="btnIA" style="margin-bottom:10px">✨ Analisar com IA</button>
+          <button class="btn blue" id="btnIA" style="max-width:220px;margin:0 auto;display:block;margin-bottom:10px">🤖 Análise IA</button>
           <p class="hint" id="previsao">Carregando dados...</p>
         </div>
       </div>
@@ -567,15 +567,6 @@ textarea{min-height:88px;resize:vertical}
               <button id="btnAddPromotor">Adicionar</button>
             </div>
             <div class="edit-list" id="configPromotores"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><span>📱</span><b>Vendas por modelo (mês) — Gestão</b></div>
-          <div class="card-body">
-            <div class="model-month-title">Total vendido no mês por modelo</div>
-            <button class="btn secondary" id="btnModeloMes" style="margin-bottom:10px">Atualizar visão por modelo</button>
-            <div class="model-month-grid" id="modeloMesBox"></div>
           </div>
         </div>
 
@@ -758,6 +749,11 @@ function today(){
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
+function ontemKey(){
+  const d = parseDataLocal(today());
+  d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 function moneyDate(d){ return (d||'').split('-').reverse().join('/'); }
 function parseDataLocal(d){
   if(!d) return new Date();
@@ -910,12 +906,39 @@ function carregarMostruarioPromotor(){
     if(b){ b.classList.toggle('on', !!mostruario[m]); b.textContent = mostruario[m] ? 'SIM' : 'NÃO'; }
   });
   if($('mostruarioExtra')) $('mostruarioExtra').value = dados.modeloExtra || '';
+  /* Fallback Firebase: se localStorage não tem dados, pré-preenche com último relatório */
+  if(!Object.values(mostruario).some(Boolean)){
+    const ultimoFirebase = (window.__BASE_GERAL || [])
+      .filter(r => r.nome === nome)
+      .sort((a,b) => String(b.data||'').localeCompare(String(a.data||'')));
+    if(ultimoFirebase[0]?.mostruario?.modelos){
+      mostruario = { ...mostruario, ...ultimoFirebase[0].mostruario.modelos };
+      MODELOS.forEach(m => {
+        const b = document.querySelector(`[data-most="${m}"]`);
+        if(b){ b.classList.toggle('on', !!mostruario[m]); b.textContent = mostruario[m] ? 'SIM' : 'NÃO'; }
+      });
+      if(!dados.modeloExtra && ultimoFirebase[0].mostruario.modeloExtra){
+        if($('mostruarioExtra')) $('mostruarioExtra').value = ultimoFirebase[0].mostruario.modeloExtra;
+      }
+    }
+  }
 }
 function salvarMostruarioPromotor(){
   const nome = ($('promotor')?.value || perfilSalvo()?.nome || '').trim();
   if(!nome) return;
   mostruarioExtraPorPromotor[nome] = { modelos:{...mostruario}, modeloExtra:($('mostruarioExtra')?.value||'').trim() };
   salvarMostruarioExtra();
+}
+function carregarEstoquePromotor(){
+  const nome = ($('promotor')?.value || perfilSalvo()?.nome || '').trim();
+  const ultimo = (window.__BASE_GERAL || [])
+    .filter(r => r.nome === nome)
+    .sort((a,b) => String(b.data||'').localeCompare(String(a.data||'')))[0];
+  if(!ultimo?.estoque) return;
+  MODELOS.forEach(m => {
+    const el = $('est_' + idModelo(m));
+    if(el && !el.dataset.touched) el.value = safe(ultimo.estoque[m]) || 0;
+  });
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -945,7 +968,7 @@ function montarEstoque(){
   $('estoqueList').innerHTML = MODELOS.map(m => `
     <div class="model-row">
       <b>${escapeHTML(m)}</b>
-      <input type="number" id="est_${idModelo(m)}" min="0" value="0" style="text-align:center;padding:8px">
+      <input type="number" id="est_${idModelo(m)}" min="0" value="0" oninput="this.dataset.touched='1'" style="text-align:center;padding:8px">
     </div>`).join('');
 }
 function montarMostruario(){
@@ -1119,6 +1142,11 @@ function iniciarRealtimeListener(){
 
       /* Atualiza dashboard em tempo real sempre que há mudança no Firebase */
       _refreshDashboard();
+      /* Atualiza estoque/mostruário do promotor logado quando outros dados chegam */
+      if(!isSupervisor){
+        const perfil = perfilSalvo();
+        if(perfil){ preencherFilialPromotor(); carregarEstoquePromotor(); renderVendas(); }
+      }
     },
     (error) => {
       console.error('onSnapshot error:', error.message);
@@ -1164,10 +1192,7 @@ function relatoriosUnicosPorPromotorData(rows){
      ignorados antes desta função.
 ═══════════════════════════════════════════════════════ */
 function consolidarPromotoresMes(rowsUnicos){
-  const ontem = (() => {
-    const y = new Date(); y.setDate(y.getDate()-1);
-    return `${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
-  })();
+  const ontem = ontemKey();
 
   const porProm = {};
   (rowsUnicos||[]).forEach(r => {
@@ -1245,8 +1270,8 @@ function calcularControleMensal(mesKey, totalMes, metaGeral){
   const ritmo = info.diasRestantes > 0 ? Math.ceil(falta / info.diasRestantes) : 0;
   if($('cmDias')) $('cmDias').textContent = info.diasNoMes;
   if($('cmRestantes')) $('cmRestantes').textContent = info.diasRestantes;
-  if($('cmRitmo')) $('cmRitmo').textContent = ritmo;
-  if($('cmPrevisto')) $('cmPrevisto').textContent = previsto;
+  if($('cmRitmo')) $('cmRitmo').textContent = meta > 0 ? ritmo : '—';
+  if($('cmPrevisto')) $('cmPrevisto').textContent = meta > 0 ? previsto : '—';
   if($('cmResumo')) $('cmResumo').textContent =
     `${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, o painel zera automaticamente.`;
 }
@@ -1319,6 +1344,12 @@ async function salvarRelatorio(){
   }
   if(!getMeta(nomeP)){
     show($('status'),'Promotor sem meta. Defina no painel Supervisor.','err'); return;
+  }
+  if(Object.keys(vendas).length === 0){
+    show($('status'), 'Use os botões + e − para confirmar as vendas do dia (pode ser 0).', 'err');
+    const cv = $('cardVendas');
+    if(cv){ cv.classList.add('req-alert'); setTimeout(() => cv.classList.remove('req-alert'), 3000); }
+    return;
   }
   const mostSelecionado = Object.values(mostruario||{}).some(Boolean) || (($('mostruarioExtra')?.value||'').trim().length > 0);
   if(!mostSelecionado){
@@ -1514,23 +1545,23 @@ async function carregarHistorico(){
       const totalRel = lista.reduce((s,r) => s + r.relatorios, 0);
       const ontem = lista.reduce((s,r) => s + r.ontem, 0);
       const metaEquipe = lista.reduce((s,r) => s + getMeta(r.nome), 0);
-      const pctEquipe = metaEquipe ? Math.round(totalEquipe / metaEquipe * 100) : 0;
+      const pctEquipe = metaEquipe ? Math.round(totalEquipe / metaEquipe * 100) : null;
 
       calcularControleMensal(mesAtivo, totalEquipe, metaEquipe);
       // Barra unificada de KPIs
       if($('hMes')) $('hMes').textContent = totalEquipe;
-      if($('hMeta')) $('hMeta').textContent = pctEquipe + '%';
+      if($('hMeta')) $('hMeta').textContent = pctEquipe !== null ? pctEquipe + '%' : '—';
       if($('hOntem')) $('hOntem').textContent = ontem;
       if($('hQtd')) $('hQtd').textContent = totalRel;
       // Mostra KPIs extras de supervisor
       const nProm = lista.length;
-      const mediaP = nProm ? Math.ceil(totalEquipe / nProm) : 0;
+      const mediaP = nProm ? (totalEquipe / nProm).toFixed(1) : 0;
       if($('hProm')) $('hProm').textContent = nProm;
       if($('hMedia')) $('hMedia').textContent = mediaP;
       if($('kpiPromotores')) $('kpiPromotores').classList.remove('hidden');
       if($('kpiMedia')) $('kpiMedia').classList.remove('hidden');
       if($('previsao')) $('previsao').textContent = lista.length
-        ? `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe}% da meta, ${totalRel} relatórios.`
+        ? `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe !== null ? pctEquipe + '%' : '—'} da meta, ${totalRel} relatórios.`
         : 'Sem lançamentos da equipe ainda.';
 
       /* ─── CARD DE PROMOTOR — CORREÇÃO DOS DADOS ───
@@ -1797,8 +1828,6 @@ async function carregarSupervisor(){
     </div>`;
   }).join('') || '<p class="hint">Sem dados para a equipe ativa neste mês.</p>';
 
-  /* Modelo por mês */
-  mostrarModeloMes(true);
 }
 
 function ativarCardsSupervisorDetalhes(rows, mesSup, maxMesMapParam){
@@ -1844,47 +1873,33 @@ function ativarCardsSupervisorDetalhes(rows, mesSup, maxMesMapParam){
   alertCards.forEach((card,i) => { card.title='Clique para ver detalhes'; card.onclick=()=>abrirPrevia(alertTextos[i][0],alertTextos[i][1]); });
 }
 
-function mostrarModeloMes(force=false){
-  const box = $('modeloMesBox');
-  if(!force) box?.classList.toggle('hidden');
-  if(box?.classList.contains('hidden')) return;
-  const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
-  const _baseFixaGestao = DADOS_VERIFICADOS_MES[mesAtivo];
-  let sum;
-  if(_baseFixaGestao?.modelos){
-    // Mês com base fixa: usa somente a base (não soma Firebase)
-    sum = Object.fromEntries(MODELOS.map(m => [m, _baseFixaGestao.modelos[m]||0]));
-  } else {
-    // Mês sem base: usa Firebase
-    sum = Object.fromEntries(MODELOS.map(m=>[m,0]));
-    const cons = window.__dashboardConsolidado || {};
-    Object.values(cons).forEach(p => MODELOS.forEach(m => sum[m] += safe(p.vendasPorModelo?.[m])));
-  }
-  const modelosComVendasGestao = MODELOS.filter(m => (sum[m]||0) > 0);
-  const listaGestao = modelosComVendasGestao.length ? modelosComVendasGestao : MODELOS;
-  if(box) box.innerHTML = listaGestao.map(m => `
-    <div class="model-month-item"><small>${escapeHTML(m)}</small><b>${sum[m]||0}</b></div>`).join('');
-}
 
 function iaSupervisor(){
-  // Usa os dados já consolidados (corretos) — não recalcula com rows brutos
   const cons = window.__dashboardConsolidado || {};
   const lista = Object.values(cons);
   if(!lista.length){
-    if($('previsao')) $('previsao').textContent = 'Sem dados para analisar ainda.';
+    if($('previsao')) $('previsao').textContent = 'Sem dados para analisar.';
     return;
   }
   const totalEquipe = lista.reduce((s,p) => s + safe(p.totalMes), 0);
-  const prom = lista.length;
-  // Soma por modelo vem de vendasPorModelo (soma cumulativa dos dias, não acumulado inflado)
+  const metaTotal = lista.reduce((s,p) => s + getMeta(p.nome), 0);
+  const pctGeral = metaTotal ? Math.round(totalEquipe / metaTotal * 100) : 0;
+  const nProm = lista.length;
   const somaM = Object.fromEntries(MODELOS.map(m=>[m,0]));
   lista.forEach(p => MODELOS.forEach(m => somaM[m] += safe(p.vendasPorModelo?.[m])));
-  const melhor = MODELOS.slice().sort((a,b)=>somaM[b]-somaM[a]).filter(m=>somaM[m]>0)[0]||'—';
-  const metaTotal = lista.reduce((s,p) => s + getMeta(p.nome), 0);
-  const pctGeral = metaTotal ? Math.round(totalEquipe/metaTotal*100) : 0;
-  // Resultado da IA exibido no campo previsao
-  if($('previsao')) $('previsao').textContent =
-    `🤖 ${prom} promotores ativos. ${totalEquipe} vendas acumuladas (${pctGeral}% da meta geral). Modelo destaque: ${melhor}.`;
+  const melhor = MODELOS.filter(m=>somaM[m]>0).sort((a,b)=>somaM[b]-somaM[a])[0]||'—';
+  const semMeta = lista.filter(p => !getMeta(p.nome)).map(p=>p.nome).join(', ');
+  const criticos = lista.filter(p => {
+    const st = metaStats(p.totalMes, getMeta(p.nome), window.__mesAtivo);
+    return st.pct < 50;
+  }).map(p=>p.nome).join(', ');
+  const analise = [
+    `📊 ${nProm} promotores | ${totalEquipe} vendas | ${pctGeral}% da meta`,
+    melhor !== '—' ? `🏆 Modelo destaque: ${melhor} (${somaM[melhor]} un.)` : null,
+    criticos ? `⚠️ Abaixo de 50%: ${criticos}` : `✅ Todos acima de 50% da meta`,
+    semMeta ? `❌ Sem meta definida: ${semMeta}` : null,
+  ].filter(Boolean).join('\n');
+  if($('previsao')) $('previsao').textContent = analise;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2080,6 +2095,7 @@ async function aplicarPerfil(){
       if($('promotor')) $('promotor').value = p.nome;
       preencherFilialPromotor();
       carregarMostruarioPromotor();
+      carregarEstoquePromotor();
       renderVendas();
       openTab('relatorio');
     }else{
@@ -2119,16 +2135,15 @@ function initUi(){
 
   if($('btnSalvarMostruarioExtra')) $('btnSalvarMostruarioExtra').onclick = () => { salvarMostruarioPromotor(); popupSucesso('Mostruário salvo','Dados registrados para este promotor.'); };
   if($('btnAddModeloVenda')) $('btnAddModeloVenda').onclick = adicionarModeloVenda;
-  if($('promotor')) $('promotor').onchange = () => { preencherFilialPromotor(); carregarMostruarioPromotor(); renderVendas(); };
+  if($('promotor')) $('promotor').onchange = () => { preencherFilialPromotor(); carregarMostruarioPromotor(); carregarEstoquePromotor(); renderVendas(); };
   if($('acumuladoMes')) $('acumuladoMes').oninput = () => { $('acumuladoMes').dataset.touched = '1'; renderVendas(); };
   if($('btnContinuar')) $('btnContinuar').onclick = () => {
     window.scrollTo({top:$('cardVendas').offsetTop-80,behavior:'smooth'});
     $('s2')?.classList.add('on');
   };
-  if($('btnIA')) $('btnIA').onclick = iaDashboard;
+  if($('btnIA')) $('btnIA').onclick = iaSupervisor;
   if($('btnSalvar')) $('btnSalvar').onclick = salvarRelatorio;
   if($('btnExport')) $('btnExport').onclick = exportCsv;
-  if($('btnModeloMes')) $('btnModeloMes').onclick = () => mostrarModeloMes(false);
   if($('mesDashboard')) $('mesDashboard').onchange = debounce(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
   if($('redeDashboard')) $('redeDashboard').onchange = debounce(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
 
