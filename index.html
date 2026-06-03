@@ -1342,8 +1342,6 @@ async function salvarRelatorio(){
   if(!nomeP || !lojaP || !filialP || !dataP){
     show($('status'),'Preencha promotor, loja, filial e data.','err'); return;
   }
-  // Meta zerada não bloqueia o envio — supervisor define depois
-  // if(!getMeta(nomeP)){ show($('status'),'Promotor sem meta.','err'); return; }
   if(Object.keys(vendas).length === 0){
     show($('status'), 'Use os botões + e − para confirmar as vendas do dia (pode ser 0).', 'err');
     const cv = $('cardVendas');
