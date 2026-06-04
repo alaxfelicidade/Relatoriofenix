@@ -655,19 +655,21 @@ const MODELOS_PADRAO  = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Re
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
 const EQUIPE_DEFAULT = [
-  {nome:"Beatriz Diniz",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Erika Maneia",filial:"",rede:"",meta:74,acumulado:0},
-  {nome:"Taynara Ferreira",filial:"",rede:"",meta:50,acumulado:0},
-  {nome:"Elias Andrade",filial:"",rede:"",meta:46,acumulado:0},
-  {nome:"Dennas Pereira",filial:"",rede:"",meta:58,acumulado:0},
-  {nome:"Erika Silva",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Lauanda Augusta",filial:"",rede:"",meta:30,acumulado:0},
-  {nome:"Thais Rezende",filial:"",rede:"",meta:48,acumulado:0},
-  {nome:"Tailon Martins",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Diego Souza",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Thais Almeida",filial:"",rede:"",meta:50,acumulado:0},
-  {nome:"Gabriela Borges",filial:"",rede:"",meta:45,acumulado:0},
-  {nome:"Lucas Monteiro",filial:"",rede:"",meta:45,acumulado:0}
+  {nome:"Beatriz Diniz",    filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Erika Maneia",     filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Taynara Ferreira", filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Elias Andrade",    filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Dennas Pereira",   filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Erika Silva",      filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Lauanda Augusta",  filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Thais Rezende",    filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Tailon Martins",   filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Diego Souza",      filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Thais Almeida",    filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Gabriela Borges",  filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Lucas Monteiro",   filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Darien Alves",     filial:"",rede:"",meta:0,acumulado:0},
+  {nome:"Gabriel Ferreira", filial:"",rede:"",meta:0,acumulado:0}
 ];
 
 let app, db;
@@ -786,7 +788,46 @@ async function sincronizarEquipeGlobal(){
       const lista = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : null);
       if(lista && lista.length){ aplicarEquipeConfig(lista); window.__equipeSincronizada = true; }
     }
+    /* Adiciona apenas promotores novos que ainda não existem no Firebase — nunca sobrescreve */
+    let precisaSalvar = false;
+    EQUIPE_DEFAULT.forEach(def => {
+      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, def.nome)
+        ? NOME_PROMOTOR_ALIASES[def.nome] : def.nome;
+      const existe = equipeConfig.find(x => x.nome === nomeNorm || x.nome === def.nome);
+      if(!existe){
+        equipeConfig.push({nome:nomeNorm, rede:def.rede, filial:def.filial, meta:0, acumulado:0});
+        precisaSalvar = true;
+      }
+    });
+    if(precisaSalvar){
+      salvarEquipeConfigOnline();
+      localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
+      atualizarSelectPromotores();
+    }
   }catch(e){ console.warn('Equipe sync:', e.message); }
+}
+
+async function zerarNovoMes(){
+  const mesAtual = mesKeyFromDate(today());
+  const ultimoMesZerado = localStorage.getItem('fenixUltimoMesZerado');
+  if(ultimoMesZerado === mesAtual) return;
+
+  let alterado = false;
+  equipeConfig.forEach(p => {
+    if(safe(p.acumulado) > 0 || safe(p.meta) > 0){
+      p.acumulado = 0;
+      p.meta = 0;
+      alterado = true;
+    }
+  });
+
+  localStorage.setItem('fenixUltimoMesZerado', mesAtual);
+
+  if(alterado){
+    localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
+    await salvarEquipeConfigOnline();
+    console.log('Fênix: meta e acumulado zerados para o mês', mesAtual);
+  }
 }
 async function sincronizarModelosGlobais(){
   if(!db) return;
@@ -905,7 +946,7 @@ function renderVendas(){
 
   /* CORREÇÃO: só auto-preenche se não foi tocado pelo usuário */
   if(acEl && !acEl.dataset.touched){
-    acEl.value = acumuladoBase + totalDia;
+    acEl.value = acumuladoBase;
   }
 
   const totalMes = acEl ? safe(acEl.value) : totalDia;
@@ -1428,7 +1469,7 @@ async function carregarHistorico(){
       if($('hQtd')) $('hQtd').textContent = totalRel;
       // Mostra KPIs extras de supervisor
       const nProm = lista.length;
-      const mediaP = nProm ? Math.ceil(totalEquipe / nProm) : 0;
+      const mediaP = nProm ? Math.round(totalEquipe / nProm) : 0;
       if($('hProm')) $('hProm').textContent = nProm;
       if($('hMedia')) $('hMedia').textContent = mediaP;
       if($('kpiPromotores')) $('kpiPromotores').classList.remove('hidden');
@@ -2112,6 +2153,7 @@ async function iniciar(){
   await initFirebase();
   if(db){
     await sincronizarEquipeGlobal();
+    await zerarNovoMes();
     await sincronizarModelosGlobais();
     atualizarSelectPromotores();
     renderModelosInputs();
