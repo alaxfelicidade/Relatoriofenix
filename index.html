@@ -624,8 +624,7 @@ import {
 import {
   getFirestore,
   collection, addDoc, getDocs, query, orderBy,
-  serverTimestamp, doc, setDoc, getDoc, onSnapshot,
-  enableIndexedDbPersistence
+  serverTimestamp, doc, setDoc, getDoc, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* ═══════════════════════════════════════════════════════
@@ -1135,7 +1134,22 @@ async function carregarBaseGeral(){
 ═══════════════════════════════════════════════════════ */
 function iniciarRealtimeListener(){
   if(!db) return;
-  if(unsubscribeRelatorios) unsubscribeRelatorios(); // cancela listener antigo
+  if(unsubscribeRelatorios) unsubscribeRelatorios();
+
+  // Listener para mudanças na equipe (supervisor edita → todos atualizam)
+  const equipeRef = doc(db, 'config', 'equipe');
+  onSnapshot(equipeRef, (snap) => {
+    if(!snap.exists()) return;
+    const d = snap.data();
+    const lista = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : null);
+    if(lista && lista.length){
+      aplicarEquipeConfig(lista);
+      window.__equipeSincronizada = true;
+      // Atualiza cards se supervisor estiver no painel
+      const screenAtiva = document.querySelector('.screen.active');
+      if(screenAtiva?.id === 'supervisor') _refreshDashboard();
+    }
+  }, e => console.warn('equipe snapshot:', e.message));
 
   const colRef = collection(db, 'relatorios');
   unsubscribeRelatorios = onSnapshot(colRef,
@@ -1153,6 +1167,9 @@ function iniciarRealtimeListener(){
       const screenAtiva = document.querySelector('.screen.active');
       if(screenAtiva?.id === 'supervisor'){
         _refreshDashboard();
+      } else if(!isSupervisor){
+        const perfil = perfilSalvo?.();
+        if(perfil){ preencherFilialPromotor?.(); renderVendas?.(); }
       }
     },
     (error) => {
@@ -1976,11 +1993,25 @@ function abrirPopupSup(idx){
     return `<div>
       <label style="font-size:10px;font-weight:700;color:#475569;display:block;margin-bottom:3px">${escapeHTML(m)}</label>
       <input type="number" id="psm_${m.replace(/\s+/g,'_')}" min="0" value="${val}"
+        oninput="recalcularTotalPopup()"
         style="width:100%;padding:7px;border:1.5px solid #CBD5E1;border-radius:7px;font-size:14px;font-weight:700">
     </div>`;
   }).join('');
 
+  // Atualiza total ao abrir popup
+  recalcularTotalPopup();
+
   $('popupSupPromotor').style.display = 'flex';
+}
+
+
+function recalcularTotalPopup(){
+  const soma = MODELOS.reduce((s,m) => {
+    const el = $('psm_' + m.replace(/\s+/g,'_'));
+    return s + safe(el?.value);
+  }, 0);
+  const totalEl = $('popupSupTotal');
+  if(totalEl) totalEl.value = soma;
 }
 
 function fecharPopupSup(){
@@ -2016,16 +2047,19 @@ async function salvarPopupSup(){
     supEditadoEm: new Date().toISOString()
   };
 
-  salvarEquipeConfig();
+  // Salva no Firebase e espera confirmar
+  aplicarEquipeConfig(equipeConfig);
+  await salvarEquipeConfigOnline();
   fecharPopupSup();
 
-  // Força refresh do dashboard
-  if(window.__BASE_GERAL) {
+  // Força re-render completo dos cards — aguarda Firebase confirmar
+  setTimeout(async () => {
+    await sincronizarEquipeGlobal();
     await carregarHistorico();
-    if(isSupervisor) carregarSupervisor();
-  }
+    if(isSupervisor){ await carregarSupervisor(); renderConfigPromotores(); }
+  }, 300);
 
-  popupSucesso('Dados salvos!', p.nome + ' atualizado com sucesso.');
+  popupSucesso('Dados salvos!', p.nome + ' — cards atualizados.');
 }
 
 // Fecha popup ao clicar fora
@@ -2065,8 +2099,10 @@ function renderConfigPromotores(){
   });
   document.querySelectorAll('[data-save]').forEach(btn => btn.onclick = () => {
     const i = Number(btn.dataset.save);
+    const atual = equipeConfig[i] || {};
     equipeConfig[i] = {
-      nome: $('cfg_nome_'+i).value.trim() || equipeConfig[i].nome,
+      ...atual, // preserva vendasSupMes, supEditadoEm e outros campos
+      nome: $('cfg_nome_'+i).value.trim() || atual.nome,
       rede: $('cfg_rede_'+i).value,
       filial: $('cfg_filial_'+i).value.trim(),
       meta: safe($('cfg_meta_'+i).value),
@@ -2108,10 +2144,7 @@ async function initFirebase(){
     db = getFirestore(app);
     window.db = db;
 
-    /* Offline persistence (melhor para PWA) */
-    try{ await enableIndexedDbPersistence(db); }catch(pe){ console.warn('Persistence:', pe.code); }
-
-    await getDocs(collection(db,'config')); // teste de conectividade
+    await getDocs(collection(db,'config')); // teste de conectividade (sem cache offline — garante dados frescos)
     console.log('✅ Firestore conectado!');
     $('firebaseBanner').classList.remove('show');
 
