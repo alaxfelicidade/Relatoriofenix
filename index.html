@@ -651,10 +651,46 @@ const SUPERVISOR_PIN  = "85741290";
 const LS_EQUIPE       = 'fenixEquipeConfig_v2';
 const LS_MODELOS      = 'fenix_modelos_venda_v2';
 const LS_MOSTRUARIO   = 'fenixMostruarioPromotor_v2';
-const MODELOS_PADRAO  = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Reno13F","Reno14F"];
+const MODELOS_PADRAO  = ["A5","A5 5G","A5 Pro 5G","A6","A6 Pro 5G","A60","A6k","A6x","Reno13 F 5G","Reno14 F 5G"];
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
-const NOME_PROMOTOR_ALIASES = {}; // reservado para aliases futuros
+const NOME_PROMOTOR_ALIASES = {
+  "Thais Almeida":    "Thais Almeida Otoni",
+  "Thais Rezende":    "Thais Cassia Rezende Silva",
+  "Taynara Ferreira": "Taynara Roberta Ferreira",
+  "Tailon Martins":   "Tailon Thales Cardoso Martins",
+  "Lucas Monteiro":   "Lucas Henrique Ribeiro Marques",
+  "Lauanda Augusta":  "Lauanda Augusta Reis De Paula",
+  "Gabriela Borges":  "Gabriela Borges De Oliveira",
+  "Erika Maneia":     "Erika Priscila Razzano Da Silva",
+  "Erika Silva":      "Erika Priscila Razzano Da Silva",
+  "Elias Andrade":    "Elias Andrade De Almeida Alves",
+  "Dennas Pereira":   "Dennas Pereira Prates"
+};
+
+const MODELO_ALIASES = {
+  "A5 4G":   "A5",
+  "A5 Pro":  "A5 Pro 5G",
+  "A6 Pro":  "A6 Pro 5G",
+  "Reno13F": "Reno13 F 5G",
+  "Reno14F": "Reno14 F 5G",
+  "A40":     null
+};
+
+function normalizarVendas(v){
+  if(!v) return {};
+  const r = {};
+  Object.entries(v).forEach(([m,n]) => {
+    const alias = Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m;
+    if(alias !== null) r[alias] = (r[alias]||0) + safe(n);
+  });
+  return r;
+}
+function aplicarAliasesModelos(lista){
+  const seen = new Set();
+  return (lista||[]).map(m => Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m)
+    .filter(m => m !== null && !seen.has(m) && seen.add(m));
+}
 
 const EQUIPE_DEFAULT = [
   {nome:"Beatriz Diniz",    filial:"",rede:"",meta:0,acumulado:0},
@@ -749,15 +785,27 @@ function filtrarMes(rows, key){ return (rows||[]).filter(r => rowMesKey(r) === k
 function carregarModelosVenda(){
   try{
     const local = JSON.parse(localStorage.getItem(LS_MODELOS)||'[]');
-    return [...new Set([...MODELOS_PADRAO, ...local])];
+    return aplicarAliasesModelos([...MODELOS_PADRAO, ...local]);
   }catch{ return [...MODELOS_PADRAO]; }
 }
 function salvarModelosVenda(){ localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS)); }
 
 function normalizarEquipeConfig(lista){
-  return (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
-    .map(p => ({nome:String(p.nome||'').trim(), rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado)}))
+  const raw = (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
+    .map(p => {
+      const nomeBase = String(p.nome||'').trim();
+      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, nomeBase)
+        ? NOME_PROMOTOR_ALIASES[nomeBase] : nomeBase;
+      return {nome:nomeNorm, rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado), ultimoMes:p.ultimoMes||'', editadoSupervisor:!!p.editadoSupervisor};
+    })
     .filter(p => p.nome);
+  const mapaDedup = new Map();
+  raw.forEach(p => {
+    if(!mapaDedup.has(p.nome) || safe(p.acumulado) > safe(mapaDedup.get(p.nome).acumulado)){
+      mapaDedup.set(p.nome, p);
+    }
+  });
+  return [...mapaDedup.values()];
 }
 function carregarEquipeConfig(){
   try{ return normalizarEquipeConfig(JSON.parse(localStorage.getItem(LS_EQUIPE)||'null')); }
@@ -1005,9 +1053,13 @@ function normalizarRelatorio(d){
   const data = d?.data ? d.data() : (d||{});
   const r = { id: d?.id || data.id || '', ...data };
   if(!r.nome && r.promotor) r.nome = r.promotor;
+  if(r.nome && Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, r.nome)){
+    r.nome = NOME_PROMOTOR_ALIASES[r.nome];
+  }
   if(!r.rede && r.loja) r.rede = r.loja;
   if(!r.loja && r.rede) r.loja = r.rede;
   if(!r.vendas) r.vendas = {};
+  r.vendas = normalizarVendas(r.vendas);
 
   /* total do DIA = soma real dos modelos vendidos naquele dia */
   r.total = totalModelos(r.vendas);
