@@ -570,14 +570,7 @@ textarea{min-height:88px;resize:vertical}
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-head"><span>📱</span><b>Vendas por modelo (mês) — Gestão</b></div>
-          <div class="card-body">
-            <div class="model-month-title">Total vendido no mês por modelo</div>
-            <button class="btn secondary" id="btnModeloMes" style="margin-bottom:10px">Atualizar visão por modelo</button>
-            <div class="model-month-grid" id="modeloMesBox"></div>
-          </div>
-        </div>
+
 
         <div class="card">
           <div class="card-head"><span>🏆</span><b>Ranking da equipe</b></div>
@@ -591,6 +584,30 @@ textarea{min-height:88px;resize:vertical}
 
   </main>
 </div><!-- /main -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     POPUP SUPERVISOR — EDITAR PROMOTOR POR MODELO
+═══════════════════════════════════════════════════════ -->
+<div id="popupSupPromotor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:9999;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;max-width:480px;margin:32px auto;padding:24px;position:relative">
+    <button onclick="fecharPopupSup()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:#64746C">✕</button>
+    <h3 id="popupSupNome" style="color:#0F766E;margin:0 0 16px;font-size:17px">Editar promotor</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase;display:block;margin-bottom:4px">Meta do mês</label>
+        <input type="number" id="popupSupMeta" min="0" style="width:100%;padding:8px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:15px;font-weight:700">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:800;color:#0F766E;text-transform:uppercase;display:block;margin-bottom:4px">Total mês (override)</label>
+        <input type="number" id="popupSupTotal" min="0" style="width:100%;padding:8px;border:1.5px solid #0F766E;border-radius:8px;font-size:15px;font-weight:700;color:#0F766E">
+      </div>
+    </div>
+    <p style="font-size:11px;color:#64746C;margin:0 0 12px">Vendas por modelo (substitui o lançado pelo promotor):</p>
+    <div id="popupSupModelos" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px"></div>
+    <button onclick="salvarPopupSup()" style="width:100%;background:#0F766E;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">💾 Salvar alterações</button>
+  </div>
+</div>
 
 <div id="toastOk" class="toast-ok">
   <span class="toast-title">Relatório enviado!</span>
@@ -651,46 +668,10 @@ const SUPERVISOR_PIN  = "85741290";
 const LS_EQUIPE       = 'fenixEquipeConfig_v2';
 const LS_MODELOS      = 'fenix_modelos_venda_v2';
 const LS_MOSTRUARIO   = 'fenixMostruarioPromotor_v2';
-const MODELOS_PADRAO  = ["A5","A5 5G","A5 Pro 5G","A6","A6 Pro 5G","A60","A6k","A6x","Reno13 F 5G","Reno14 F 5G"];
+const MODELOS_PADRAO  = ["A5 4G","A5 5G","A5 Pro","A6x","A6k","A6 Pro","Reno13F","Reno14F"];
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
-const NOME_PROMOTOR_ALIASES = {
-  "Thais Almeida":    "Thais Almeida Otoni",
-  "Thais Rezende":    "Thais Cassia Rezende Silva",
-  "Taynara Ferreira": "Taynara Roberta Ferreira",
-  "Tailon Martins":   "Tailon Thales Cardoso Martins",
-  "Lucas Monteiro":   "Lucas Henrique Ribeiro Marques",
-  "Lauanda Augusta":  "Lauanda Augusta Reis De Paula",
-  "Gabriela Borges":  "Gabriela Borges De Oliveira",
-  "Erika Maneia":     "Erika Priscila Razzano Da Silva",
-  "Erika Silva":      "Erika Priscila Razzano Da Silva",
-  "Elias Andrade":    "Elias Andrade De Almeida Alves",
-  "Dennas Pereira":   "Dennas Pereira Prates"
-};
-
-const MODELO_ALIASES = {
-  "A5 4G":   "A5",
-  "A5 Pro":  "A5 Pro 5G",
-  "A6 Pro":  "A6 Pro 5G",
-  "Reno13F": "Reno13 F 5G",
-  "Reno14F": "Reno14 F 5G",
-  "A40":     null
-};
-
-function normalizarVendas(v){
-  if(!v) return {};
-  const r = {};
-  Object.entries(v).forEach(([m,n]) => {
-    const alias = Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m;
-    if(alias !== null) r[alias] = (r[alias]||0) + safe(n);
-  });
-  return r;
-}
-function aplicarAliasesModelos(lista){
-  const seen = new Set();
-  return (lista||[]).map(m => Object.prototype.hasOwnProperty.call(MODELO_ALIASES, m) ? MODELO_ALIASES[m] : m)
-    .filter(m => m !== null && !seen.has(m) && seen.add(m));
-}
+const NOME_PROMOTOR_ALIASES = {}; // reservado para aliases futuros
 
 const EQUIPE_DEFAULT = [
   {nome:"Beatriz Diniz",    filial:"",rede:"",meta:0,acumulado:0},
@@ -785,27 +766,22 @@ function filtrarMes(rows, key){ return (rows||[]).filter(r => rowMesKey(r) === k
 function carregarModelosVenda(){
   try{
     const local = JSON.parse(localStorage.getItem(LS_MODELOS)||'[]');
-    return aplicarAliasesModelos([...MODELOS_PADRAO, ...local]);
+    return [...new Set([...MODELOS_PADRAO, ...local])];
   }catch{ return [...MODELOS_PADRAO]; }
 }
 function salvarModelosVenda(){ localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS)); }
 
 function normalizarEquipeConfig(lista){
-  const raw = (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
-    .map(p => {
-      const nomeBase = String(p.nome||'').trim();
-      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, nomeBase)
-        ? NOME_PROMOTOR_ALIASES[nomeBase] : nomeBase;
-      return {nome:nomeNorm, rede:p.rede||'', filial:p.filial||'', meta:safe(p.meta), acumulado:safe(p.acumulado), ultimoMes:p.ultimoMes||'', editadoSupervisor:!!p.editadoSupervisor};
-    })
+  return (Array.isArray(lista) && lista.length ? lista : EQUIPE_DEFAULT)
+    .map(p => ({
+      nome: String(p.nome||'').trim(),
+      rede: p.rede||'',
+      filial: p.filial||'',
+      meta: safe(p.meta),
+      acumulado: safe(p.acumulado),
+      vendasSupMes: p.vendasSupMes || {}  // vendas editadas pelo supervisor por modelo
+    }))
     .filter(p => p.nome);
-  const mapaDedup = new Map();
-  raw.forEach(p => {
-    if(!mapaDedup.has(p.nome) || safe(p.acumulado) > safe(mapaDedup.get(p.nome).acumulado)){
-      mapaDedup.set(p.nome, p);
-    }
-  });
-  return [...mapaDedup.values()];
 }
 function carregarEquipeConfig(){
   try{ return normalizarEquipeConfig(JSON.parse(localStorage.getItem(LS_EQUIPE)||'null')); }
@@ -870,9 +846,11 @@ async function zerarNovoMes(){
 
   let alterado = false;
   equipeConfig.forEach(p => {
-    if(safe(p.acumulado) > 0 || safe(p.meta) > 0){
+    if(safe(p.acumulado) > 0 || safe(p.meta) > 0 || p.vendasSupMes || p.supEditadoEm){
       p.acumulado = 0;
       p.meta = 0;
+      p.vendasSupMes = {};
+      delete p.supEditadoEm;
       alterado = true;
     }
   });
@@ -1053,13 +1031,9 @@ function normalizarRelatorio(d){
   const data = d?.data ? d.data() : (d||{});
   const r = { id: d?.id || data.id || '', ...data };
   if(!r.nome && r.promotor) r.nome = r.promotor;
-  if(r.nome && Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, r.nome)){
-    r.nome = NOME_PROMOTOR_ALIASES[r.nome];
-  }
   if(!r.rede && r.loja) r.rede = r.loja;
   if(!r.loja && r.rede) r.loja = r.rede;
   if(!r.vendas) r.vendas = {};
-  r.vendas = normalizarVendas(r.vendas);
 
   /* total do DIA = soma real dos modelos vendidos naquele dia */
   r.total = totalModelos(r.vendas);
@@ -1227,13 +1201,18 @@ function consolidarPromotoresMes(rowsUnicos){
   const porProm = {};
   (rowsUnicos||[]).forEach(r => {
     const n = (r.nome||'').trim() || 'Sem promotor';
+    // Verifica se supervisor tem edição para este promotor
+    const cfgProm = equipeConfig.find(x => x.nome === n);
+    const supEditou = cfgProm?.supEditadoEm;
     if(!porProm[n]) porProm[n] = {
       nome: n,
-      totalMes: acumMap[n]?.tmi || 0,  // ← valor correto, definido no passo 1
+      totalMes: acumMap[n]?.tmi || 0,
       somaVendasMes: 0,
       relatorios: 0,
       ontem: 0,
       vendasPorModelo: Object.fromEntries(MODELOS.map(m=>[m,0])),
+      vendasSupMes: cfgProm?.vendasSupMes || null, // edição do supervisor
+      supEditou: !!supEditou,
       estoqueAtual: Object.fromEntries(MODELOS.map(m=>[m,0])),
       lojas: new Set(),
       filiais: new Set(),
@@ -1261,7 +1240,18 @@ function consolidarPromotoresMes(rowsUnicos){
   });
 
   Object.values(porProm).forEach(p => {
-    p.somaVendasMes = MODELOS.reduce((s,m) => s + safe(p.vendasPorModelo[m]), 0);
+    if(p.supEditou && p.vendasSupMes){
+      // Supervisor editou: usa os valores dele como fonte de verdade
+      MODELOS.forEach(m => { p.vendasPorModelo[m] = safe(p.vendasSupMes[m]); });
+      p.somaVendasMes = MODELOS.reduce((s,m) => s + safe(p.vendasSupMes[m]), 0);
+      // totalMes do supervisor via acumulado
+      const cfgP = equipeConfig.find(x => x.nome === p.nome);
+      if(cfgP?.acumulado > 0) p.totalMes = safe(cfgP.acumulado);
+      if(p.somaVendasMes > p.totalMes) p.totalMes = p.somaVendasMes;
+    } else {
+      // Sem edição do supervisor: usa soma real dos relatórios
+      p.somaVendasMes = MODELOS.reduce((s,m) => s + safe(p.vendasPorModelo[m]), 0);
+    }
   });
 
   return porProm;
@@ -1542,9 +1532,10 @@ async function carregarHistorico(){
       ─────────────────────────────────────────────── */
       function _cardPromotor(p){
         const meta = getMeta(p.nome);
-        const totalMes = safe(p.somaVendasMes); // soma real do mês
+        const totalMes = safe(p.somaVendasMes);
         const pct = meta ? Math.round(totalMes / meta * 100) : 0;
         const cls = pct >= 100 ? 'pct-ok' : pct >= 50 ? 'pct-mid' : 'pct-low';
+        const badgeSup = p.supEditou ? '<span style="font-size:10px;background:#0F766E;color:#fff;padding:2px 7px;border-radius:10px;margin-left:6px">✏️ Sup</span>' : '';
         /* Último relatório do promotor para "Vendas do dia" */
         const ultimoRel = rowsUnicos.filter(r => r.nome === p.nome)[0];
         const vendasDia = listaVendasModelo(ultimoRel?.vendas);
@@ -1556,7 +1547,7 @@ async function carregarHistorico(){
         const filiais = [...p.filiais].filter(Boolean);
         return `<div class="dashboard-info-card">
           <div class="dashboard-info-top">
-            <div><b>${escapeHTML(p.nome)}</b><small>${p.relatorios} relatório(s) • ${escapeHTML(rede)}${filiais.length?' • Filial '+filiais.join(', '):''}</small></div>
+            <div><b>${escapeHTML(p.nome)}</b>${badgeSup}<small>${p.relatorios} relatório(s) • ${escapeHTML(rede)}${filiais.length?' • Filial '+filiais.join(', '):''}</small></div>
             <div class="dashboard-percent ${cls}">${pct}%</div>
           </div>
           <div class="dashboard-info-grid">
@@ -1898,27 +1889,120 @@ function iaSupervisor(){
 /* ═══════════════════════════════════════════════════════
    CONFIG PROMOTORES
 ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   POPUP SUPERVISOR — EDITAR PROMOTOR POR MODELO
+   Regra: se supervisor editou, valor dele é fonte da verdade.
+   Se não editou, soma dos relatórios diários do promotor.
+═══════════════════════════════════════════════════════ */
+let _popupSupIdx = -1;
+
+function abrirPopupSup(idx){
+  _popupSupIdx = idx;
+  const p = equipeConfig[idx];
+  if(!p) return;
+  $('popupSupNome').textContent = '✏️ ' + p.nome;
+  $('popupSupMeta').value = p.meta || 0;
+
+  // Total mês: se supervisor já editou usa esse, senão usa acumulado
+  const cons = window.__dashboardConsolidado || {};
+  const dadosProm = cons[p.nome];
+  const totalAtual = safe(p.acumulado) || safe(dadosProm?.somaVendasMes) || 0;
+  $('popupSupTotal').value = totalAtual;
+
+  // Campos por modelo
+  const vendasSup = p.vendasSupMes || {};
+  const vendasProm = dadosProm?.vendasPorModelo || {};
+  $('popupSupModelos').innerHTML = MODELOS.map(m => {
+    const val = vendasSup[m] !== undefined ? vendasSup[m] : safe(vendasProm[m]);
+    return `<div>
+      <label style="font-size:10px;font-weight:700;color:#475569;display:block;margin-bottom:3px">${escapeHTML(m)}</label>
+      <input type="number" id="psm_${m.replace(/\s+/g,'_')}" min="0" value="${val}"
+        style="width:100%;padding:7px;border:1.5px solid #CBD5E1;border-radius:7px;font-size:14px;font-weight:700">
+    </div>`;
+  }).join('');
+
+  $('popupSupPromotor').style.display = 'flex';
+}
+
+function fecharPopupSup(){
+  $('popupSupPromotor').style.display = 'none';
+  _popupSupIdx = -1;
+}
+
+async function salvarPopupSup(){
+  const idx = _popupSupIdx;
+  if(idx < 0 || !equipeConfig[idx]) return;
+
+  const p = equipeConfig[idx];
+  const novaMeta = safe($('popupSupMeta').value);
+  const novoTotal = safe($('popupSupTotal').value);
+
+  // Coleta vendas por modelo
+  const vendasSup = {};
+  MODELOS.forEach(m => {
+    const el = $('psm_' + m.replace(/\s+/g,'_'));
+    if(el) vendasSup[m] = safe(el.value);
+  });
+
+  // Recalcula total a partir dos modelos se total não foi editado diretamente
+  const somaModelos = Object.values(vendasSup).reduce((s,v)=>s+v, 0);
+  const totalFinal = novoTotal > 0 ? novoTotal : somaModelos;
+
+  equipeConfig[idx] = {
+    ...p,
+    meta: novaMeta,
+    acumulado: totalFinal,
+    vendasSupMes: vendasSup,
+    supEditadoEm: new Date().toISOString()
+  };
+
+  salvarEquipeConfig();
+  fecharPopupSup();
+
+  // Força refresh do dashboard
+  if(window.__BASE_GERAL) {
+    await carregarHistorico();
+    if(isSupervisor) carregarSupervisor();
+  }
+
+  popupSucesso('Dados salvos!', p.nome + ' atualizado com sucesso.');
+}
+
+// Fecha popup ao clicar fora
+$('popupSupPromotor')?.addEventListener('click', e => {
+  if(e.target === $('popupSupPromotor')) fecharPopupSup();
+});
+
 function renderConfigPromotores(){
   if(!$('configPromotores')) return;
-  $('configPromotores').innerHTML = equipeConfig.map((p,i) => `
-    <div class="edit-row" id="cfg_row_${i}">
+  $('configPromotores').innerHTML = equipeConfig.map((p,i) => {
+    const cons = window.__dashboardConsolidado || {};
+    const totalReal = safe(p.acumulado) || safe(cons[p.nome]?.somaVendasMes) || 0;
+    const temEdicaoSup = p.supEditadoEm ? '🟢' : '';
+    return `<div class="edit-row" id="cfg_row_${i}">
       <div><label>Nome</label><input id="cfg_nome_${i}" value="${escapeHTML(p.nome)}"></div>
       <div><label>Rede</label><select id="cfg_rede_${i}">
         <option value="">—</option>${LOJAS.map(l=>`<option ${p.rede===l?'selected':''}>${l}</option>`).join('')}
       </select></div>
       <div><label>Filial</label><input id="cfg_filial_${i}" value="${escapeHTML(p.filial||'')}"></div>
       <div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div>
-      <div><label style="color:#0F766E">Total mês</label><input type="number" id="cfg_acumulado_${i}" value="${p.acumulado||0}" style="font-weight:900;color:#0F766E"></div>
-      <button class="edit-pencil" data-focus="${i}" title="Editar">✏️</button>
+      <div><label style="color:#0F766E">Total mês ${temEdicaoSup}</label><input type="number" id="cfg_acumulado_${i}" value="${totalReal}" style="font-weight:900;color:#0F766E"></div>
+      <button class="edit-pencil" data-focus="${i}" title="Editar campos básicos">✏️</button>
+      <button class="edit-modelos" data-modelos="${i}" title="Editar por modelo" style="background:#0F766E;color:#fff;border:none;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700">📊 Modelos</button>
       <button class="edit-save" data-save="${i}">Salvar</button>
       <button class="edit-remove" data-remove="${i}">×</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   document.querySelectorAll('[data-focus]').forEach(btn => btn.onclick = () => {
     const i = Number(btn.dataset.focus);
     document.querySelectorAll('.edit-row').forEach(r => r.classList.remove('editing'));
     $('cfg_row_'+i)?.classList.add('editing');
     $('cfg_nome_'+i)?.focus();
+  });
+  document.querySelectorAll('[data-modelos]').forEach(btn => btn.onclick = () => {
+    abrirPopupSup(Number(btn.dataset.modelos));
   });
   document.querySelectorAll('[data-save]').forEach(btn => btn.onclick = () => {
     const i = Number(btn.dataset.save);
@@ -2110,7 +2194,7 @@ function initUi(){
   if($('btnIA')) $('btnIA').onclick = iaDashboard;
   if($('btnSalvar')) $('btnSalvar').onclick = salvarRelatorio;
   if($('btnExport')) $('btnExport').onclick = exportCsv;
-  if($('btnModeloMes')) $('btnModeloMes').onclick = () => mostrarModeloMes(false);
+  // btnModeloMes removido
   if($('mesDashboard')) $('mesDashboard').onchange = debounce(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
   if($('redeDashboard')) $('redeDashboard').onchange = debounce(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
 
