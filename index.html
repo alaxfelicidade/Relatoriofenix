@@ -655,21 +655,19 @@ const MODELOS_PADRAO  = ["A40","A6x","A60","A5 4G","A5 5G","A5 Pro","A6 Pro","Re
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
 const EQUIPE_DEFAULT = [
-  {nome:"Beatriz Diniz",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Erika Maneia",     filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Taynara Ferreira", filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Elias Andrade",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Dennas Pereira",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Erika Silva",      filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Lauanda Augusta",  filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Thais Rezende",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Tailon Martins",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Diego Souza",      filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Thais Almeida",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Gabriela Borges",  filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Lucas Monteiro",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Darien Alves",     filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Gabriel Ferreira", filial:"",rede:"",meta:0,acumulado:0}
+  {nome:"Beatriz Diniz",filial:"",rede:"",meta:45,acumulado:0},
+  {nome:"Erika Maneia",filial:"",rede:"",meta:74,acumulado:0},
+  {nome:"Taynara Ferreira",filial:"",rede:"",meta:50,acumulado:0},
+  {nome:"Elias Andrade",filial:"",rede:"",meta:46,acumulado:0},
+  {nome:"Dennas Pereira",filial:"",rede:"",meta:58,acumulado:0},
+  {nome:"Erika Silva",filial:"",rede:"",meta:45,acumulado:0},
+  {nome:"Lauanda Augusta",filial:"",rede:"",meta:30,acumulado:0},
+  {nome:"Thais Rezende",filial:"",rede:"",meta:48,acumulado:0},
+  {nome:"Tailon Martins",filial:"",rede:"",meta:45,acumulado:0},
+  {nome:"Diego Souza",filial:"",rede:"",meta:45,acumulado:0},
+  {nome:"Thais Almeida",filial:"",rede:"",meta:50,acumulado:0},
+  {nome:"Gabriela Borges",filial:"",rede:"",meta:45,acumulado:0},
+  {nome:"Lucas Monteiro",filial:"",rede:"",meta:45,acumulado:0}
 ];
 
 let app, db;
@@ -713,6 +711,12 @@ function infoMes(key = mesKeyFromDate()){
   const diasNoMes = new Date(ano, mes, 0).getDate();
   const diaBase = atual ? agora.getDate() : diasNoMes;
   return { key, ano, mes, nome: mesNomeFromKey(key), diasNoMes, diaBase, diasRestantes: Math.max(0, diasNoMes - diaBase), isAtual: atual };
+}
+
+function ontemKey(){
+  const d = parseDataLocal(today());
+  d.setDate(d.getDate() - 1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function rowMesKey(r){
   return r.mesKey || (r.ano && r.mes ? `${r.ano}-${String(r.mes).padStart(2,'0')}` : mesKeyFromDate(r.data));
@@ -788,46 +792,7 @@ async function sincronizarEquipeGlobal(){
       const lista = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : null);
       if(lista && lista.length){ aplicarEquipeConfig(lista); window.__equipeSincronizada = true; }
     }
-    /* Adiciona apenas promotores novos que ainda não existem no Firebase — nunca sobrescreve */
-    let precisaSalvar = false;
-    EQUIPE_DEFAULT.forEach(def => {
-      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, def.nome)
-        ? NOME_PROMOTOR_ALIASES[def.nome] : def.nome;
-      const existe = equipeConfig.find(x => x.nome === nomeNorm || x.nome === def.nome);
-      if(!existe){
-        equipeConfig.push({nome:nomeNorm, rede:def.rede, filial:def.filial, meta:0, acumulado:0});
-        precisaSalvar = true;
-      }
-    });
-    if(precisaSalvar){
-      salvarEquipeConfigOnline();
-      localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
-      atualizarSelectPromotores();
-    }
   }catch(e){ console.warn('Equipe sync:', e.message); }
-}
-
-async function zerarNovoMes(){
-  const mesAtual = mesKeyFromDate(today());
-  const ultimoMesZerado = localStorage.getItem('fenixUltimoMesZerado');
-  if(ultimoMesZerado === mesAtual) return;
-
-  let alterado = false;
-  equipeConfig.forEach(p => {
-    if(safe(p.acumulado) > 0 || safe(p.meta) > 0){
-      p.acumulado = 0;
-      p.meta = 0;
-      alterado = true;
-    }
-  });
-
-  localStorage.setItem('fenixUltimoMesZerado', mesAtual);
-
-  if(alterado){
-    localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
-    await salvarEquipeConfigOnline();
-    console.log('Fênix: meta e acumulado zerados para o mês', mesAtual);
-  }
 }
 async function sincronizarModelosGlobais(){
   if(!db) return;
@@ -946,7 +911,7 @@ function renderVendas(){
 
   /* CORREÇÃO: só auto-preenche se não foi tocado pelo usuário */
   if(acEl && !acEl.dataset.touched){
-    acEl.value = acumuladoBase;
+    acEl.value = acumuladoBase; // promotor confirma o total real do mês
   }
 
   const totalMes = acEl ? safe(acEl.value) : totalDia;
@@ -1127,10 +1092,7 @@ function consolidarPromotoresMes(rowsUnicos){
      o acumulado do dia mais recente declarado pelo promotor.
   ═══════════════════════════════════════════════════════ */
 
-  const ontem = (() => {
-    const y = new Date(); y.setDate(y.getDate()-1);
-    return `${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`;
-  })();
+  const ontem = ontemKey();
 
   // PASSO 1: determina acumulado correto de cada promotor
   // Regra:
@@ -1216,7 +1178,8 @@ function somaModelosConsolidado(porProm){
   return soma;
 }
 function totalEquipeConsolidado(porProm){
-  return Object.values(porProm||{}).reduce((s,p) => s + safe(p.totalMes), 0);
+  // somaVendasMes = soma real de todos os dias do mês por modelo (não o que o promotor digitou)
+  return Object.values(porProm||{}).reduce((s,p) => s + safe(p.somaVendasMes), 0);
 }
 
 function getDadosFiltrados(){
@@ -1242,8 +1205,8 @@ function calcularControleMensal(mesKey, totalMes, metaGeral){
   const ritmo = info.diasRestantes > 0 ? Math.ceil(falta / info.diasRestantes) : 0;
   if($('cmDias')) $('cmDias').textContent = info.diasNoMes;
   if($('cmRestantes')) $('cmRestantes').textContent = info.diasRestantes;
-  if($('cmRitmo')) $('cmRitmo').textContent = ritmo;
-  if($('cmPrevisto')) $('cmPrevisto').textContent = previsto;
+  if($('cmRitmo')) $('cmRitmo').textContent = meta > 0 ? ritmo : '—';
+  if($('cmPrevisto')) $('cmPrevisto').textContent = meta > 0 ? previsto : '—';
   if($('cmResumo')) $('cmResumo').textContent =
     `${info.nome}: ${total} vendas, meta ${meta||0}, faltam ${falta} unidade(s). Ao virar o mês, o painel zera automaticamente.`;
 }
@@ -1459,12 +1422,12 @@ async function carregarHistorico(){
       const totalRel = lista.reduce((s,r) => s + r.relatorios, 0);
       const ontem = lista.reduce((s,r) => s + r.ontem, 0);
       const metaEquipe = lista.reduce((s,r) => s + getMeta(r.nome), 0);
-      const pctEquipe = metaEquipe ? Math.round(totalEquipe / metaEquipe * 100) : 0;
+      const pctEquipe = metaEquipe ? Math.round(totalEquipe / metaEquipe * 100) : null;
 
       calcularControleMensal(mesAtivo, totalEquipe, metaEquipe);
       // Barra unificada de KPIs
       if($('hMes')) $('hMes').textContent = totalEquipe;
-      if($('hMeta')) $('hMeta').textContent = pctEquipe + '%';
+      if($('hMeta')) $('hMeta').textContent = pctEquipe !== null ? pctEquipe + '%' : '—';
       if($('hOntem')) $('hOntem').textContent = ontem;
       if($('hQtd')) $('hQtd').textContent = totalRel;
       // Mostra KPIs extras de supervisor
@@ -1475,7 +1438,7 @@ async function carregarHistorico(){
       if($('kpiPromotores')) $('kpiPromotores').classList.remove('hidden');
       if($('kpiMedia')) $('kpiMedia').classList.remove('hidden');
       if($('previsao')) $('previsao').textContent = lista.length
-        ? `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe}% da meta, ${totalRel} relatórios.`
+        ? `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe !== null ? pctEquipe+'% da meta' : 'sem meta definida'}, ${totalRel} relatórios.`
         : 'Sem lançamentos da equipe ainda.';
 
       /* ─── CARD DE PROMOTOR — CORREÇÃO DOS DADOS ───
@@ -2148,6 +2111,28 @@ if('serviceWorker' in navigator){
 /* ═══════════════════════════════════════════════════════
    INIT PRINCIPAL
 ═══════════════════════════════════════════════════════ */
+
+async function zerarNovoMes(){
+  const mesAtual = mesKeyFromDate(today());
+  const ultimoMesZerado = localStorage.getItem('fenixUltimoMesZerado');
+  if(ultimoMesZerado === mesAtual) return;
+
+  let alterado = false;
+  equipeConfig.forEach(p => {
+    if(safe(p.acumulado) > 0 || safe(p.meta) > 0){
+      p.acumulado = 0;
+      p.meta = 0;
+      alterado = true;
+    }
+  });
+
+  localStorage.setItem('fenixUltimoMesZerado', mesAtual);
+  if(alterado){
+    localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
+    await salvarEquipeConfigOnline();
+    console.log('Fênix: meta e acumulado zerados para', mesAtual);
+  }
+}
 async function iniciar(){
   initUi();
   await initFirebase();
