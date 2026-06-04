@@ -215,8 +215,8 @@ textarea{min-height:88px;resize:vertical}
 
 /* ===== EDIT LIST (Promotores) ===== */
 .edit-list{display:grid;gap:8px}
-.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:grid;gap:6px;grid-template-columns:2fr .8fr .6fr 52px 60px 34px 64px 34px;align-items:end}
-.edit-row input,.edit-row select{background:#fff;color:#17211C;border-color:#DDE5E1;min-height:36px;font-size:12px;padding:6px 8px;border-radius:8px}
+.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:14px;padding:8px;display:grid;gap:5px;grid-template-columns:1.6fr .7fr .5fr 50px 58px 32px 62px 32px;align-items:end}
+.edit-row input,.edit-row select{background:#fff;color:#17211C;border-color:#DDE5E1;min-height:34px;font-size:11px;padding:5px 7px;border-radius:7px;width:100%}
 .edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}
 .edit-pencil,.edit-remove{width:34px;height:36px;border-radius:8px;border:1px solid #D5DFDA;background:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .edit-pencil{color:var(--gold)}
@@ -589,10 +589,10 @@ textarea{min-height:88px;resize:vertical}
 <!-- ═══════════════════════════════════════════════════════
      POPUP SUPERVISOR — EDITAR PROMOTOR POR MODELO
 ═══════════════════════════════════════════════════════ -->
-<div id="popupSupPromotor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:9999;overflow-y:auto">
+<div id="popupSupPromotor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;overflow-y:auto;align-items:flex-start;justify-content:center">
   <div style="background:#fff;border-radius:16px;max-width:480px;margin:32px auto;padding:24px;position:relative">
-    <button onclick="fecharPopupSup()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;cursor:pointer;color:#64746C">✕</button>
-    <h3 id="popupSupNome" style="color:#0F766E;margin:0 0 16px;font-size:17px">Editar promotor</h3>
+    <button id="btnFecharPopupSup" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:26px;cursor:pointer;color:#64746C;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;z-index:10">✕</button>
+    <h3 id="popupSupNome" style="color:#0F766E;margin:0 0 16px;font-size:17px;padding-right:40px">Editar promotor</h3>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
       <div>
         <label style="font-size:10px;font-weight:800;color:#64746C;text-transform:uppercase;display:block;margin-bottom:4px">Meta do mês</label>
@@ -605,7 +605,7 @@ textarea{min-height:88px;resize:vertical}
     </div>
     <p style="font-size:11px;color:#64746C;margin:0 0 12px">Vendas por modelo (substitui o lançado pelo promotor):</p>
     <div id="popupSupModelos" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px"></div>
-    <button onclick="salvarPopupSup()" style="width:100%;background:#0F766E;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">💾 Salvar alterações</button>
+    <button id="btnSalvarPopupSup" style="width:100%;background:#0F766E;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">💾 Salvar alterações</button>
   </div>
 </div>
 
@@ -761,10 +761,9 @@ function filtrarMes(rows, key){ return (rows||[]).filter(r => rowMesKey(r) === k
    MODELOS / EQUIPE (localStorage)
 ═══════════════════════════════════════════════════════ */
 function carregarModelosVenda(){
-  try{
-    const local = JSON.parse(localStorage.getItem(LS_MODELOS)||'[]');
-    return [...new Set([...MODELOS_PADRAO, ...local])];
-  }catch{ return [...MODELOS_PADRAO]; }
+  // Sempre começa com padrão limpo — Firebase sincroniza extras depois
+  localStorage.removeItem(LS_MODELOS); // limpa cache antigo com modelos duplicados
+  return [...MODELOS_PADRAO];
 }
 function salvarModelosVenda(){ localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS)); }
 
@@ -861,7 +860,7 @@ async function sincronizarEquipeGlobal(){
    Chamado automaticamente na primeira sincronização de junho
 ═══════════════════════════════════════════════════════ */
 async function resetarAcumuladosJunho(){
-  const RESET_KEY = 'fenixResetJunho2026v2'; // v2: força novo reset com lista limpa
+  const RESET_KEY = 'fenixResetJunho2026v3'; // v3: força reset + limpa modelos duplicados
   if(localStorage.getItem(RESET_KEY)) return; // já resetou
 
   equipeConfig.forEach(p => {
@@ -871,10 +870,21 @@ async function resetarAcumuladosJunho(){
     delete p.supEditadoEm;
   });
 
+  // Limpa modelos antigos do localStorage
+  localStorage.removeItem(LS_MODELOS);
+  MODELOS = [...MODELOS_PADRAO];
+
+  // Limpa modelos antigos do Firebase também
+  if(db){
+    try{
+      await setDoc(doc(db,'config','modelos_venda'), {lista: MODELOS_PADRAO}, {merge:false});
+    }catch(e){ console.warn('reset modelos Firebase:', e.message); }
+  }
+
   localStorage.setItem(RESET_KEY, '1');
   localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
   await salvarEquipeConfigOnline();
-  console.log('Fênix: reset junho 2026 aplicado');
+  console.log('Fênix: reset junho 2026 v3 aplicado — modelos limpos');
 }
 
 async function zerarNovoMes(){
@@ -1993,9 +2003,10 @@ async function salvarPopupSup(){
     if(el) vendasSup[m] = safe(el.value);
   });
 
-  // Recalcula total a partir dos modelos se total não foi editado diretamente
+  // Total: soma dos modelos sempre é a fonte principal
+  // Override só é usado se explicitamente maior que a soma
   const somaModelos = Object.values(vendasSup).reduce((s,v)=>s+v, 0);
-  const totalFinal = novoTotal > 0 ? novoTotal : somaModelos;
+  const totalFinal = novoTotal > somaModelos ? novoTotal : somaModelos;
 
   equipeConfig[idx] = {
     ...p,
@@ -2037,7 +2048,7 @@ function renderConfigPromotores(){
       <div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div>
       <div><label style="color:#0F766E">Total mês ${temEdicaoSup}</label><input type="number" id="cfg_acumulado_${i}" value="${totalReal}" style="font-weight:900;color:#0F766E"></div>
       <button class="edit-pencil" data-focus="${i}" title="Editar campos básicos">✏️</button>
-      <button class="edit-modelos" data-modelos="${i}" title="Editar por modelo" style="background:#0F766E;color:#fff;border:none;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700">📊 Modelos</button>
+      <button class="edit-modelos" data-modelos="${i}" title="Editar por modelo" style="background:#0F766E;color:#fff;border:none;border-radius:7px;padding:0 6px;cursor:pointer;font-size:11px;font-weight:700;height:34px;white-space:nowrap">📊</button>
       <button class="edit-save" data-save="${i}">Salvar</button>
       <button class="edit-remove" data-remove="${i}">×</button>
     </div>`;
@@ -2225,6 +2236,11 @@ function exportCsv(){
    INIT UI
 ═══════════════════════════════════════════════════════ */
 function initUi(){
+  // Popup supervisor — conecta botões X e Salvar
+  document.addEventListener('click', e => {
+    if(e.target.id === 'btnFecharPopupSup') fecharPopupSup();
+    if(e.target.id === 'btnSalvarPopupSup') salvarPopupSup();
+  });
   if($('data')) $('data').value = today();
   atualizarSelectPromotores();
   if($('loja')) $('loja').innerHTML = '<option value="">Selecione...</option>' + LOJAS.map(n=>`<option>${n}</option>`).join('');
