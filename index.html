@@ -599,8 +599,9 @@ textarea{min-height:88px;resize:vertical}
         <input type="number" id="popupSupMeta" min="0" style="width:100%;padding:8px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:15px;font-weight:700">
       </div>
       <div>
-        <label style="font-size:10px;font-weight:800;color:#0F766E;text-transform:uppercase;display:block;margin-bottom:4px">Total mês (override)</label>
-        <input type="number" id="popupSupTotal" min="0" style="width:100%;padding:8px;border:1.5px solid #0F766E;border-radius:8px;font-size:15px;font-weight:700;color:#0F766E">
+        <label style="font-size:10px;font-weight:800;color:#0F766E;text-transform:uppercase;display:block;margin-bottom:4px">Total mês (soma automática)</label>
+        <input type="number" id="popupSupTotal" min="0" readonly
+          style="width:100%;padding:8px;border:1.5px solid #0F766E;border-radius:8px;font-size:15px;font-weight:900;color:#0F766E;background:#F0FDF9;cursor:default">
       </div>
     </div>
     <p style="font-size:11px;color:#64746C;margin:0 0 12px">Vendas por modelo (substitui o lançado pelo promotor):</p>
@@ -934,8 +935,13 @@ async function sincronizarModelosGlobais(){
 }
 async function salvarEquipeConfigOnline(){
   if(!db) return;
-  try{ await setDoc(doc(db,'config','equipe'), {equipe:equipeConfig, promotores:equipeConfig, updatedAt:serverTimestamp()}, {merge:true}); }
-  catch(e){ alert('Erro ao salvar equipe: '+e.message); }
+  try{
+    await setDoc(doc(db,'config','equipe'), {
+      equipe: equipeConfig,
+      promotores: equipeConfig,
+      updatedAt: serverTimestamp()
+    }); // sem merge — substitui completo para garantir dados limpos
+  }catch(e){ console.error('Erro ao salvar equipe:', e.message); }
 }
 function salvarEquipeConfig(){ aplicarEquipeConfig(equipeConfig); salvarEquipeConfigOnline(); }
 
@@ -1136,7 +1142,7 @@ function iniciarRealtimeListener(){
   if(!db) return;
   if(unsubscribeRelatorios) unsubscribeRelatorios();
 
-  // Listener para mudanças na equipe (supervisor edita → todos atualizam)
+  // Listener para mudanças na equipe — atualiza KPIs em tempo real
   const equipeRef = doc(db, 'config', 'equipe');
   onSnapshot(equipeRef, (snap) => {
     if(!snap.exists()) return;
@@ -1145,7 +1151,12 @@ function iniciarRealtimeListener(){
     if(lista && lista.length){
       aplicarEquipeConfig(lista);
       window.__equipeSincronizada = true;
-      // Atualiza cards se supervisor estiver no painel
+      // Renderiza KPIs imediatamente com dados já consolidados
+      const cons = window.__dashboardConsolidado || {};
+      const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
+      renderKpisSupervisor(cons, mesAtivo);
+      renderConfigPromotores();
+      // Refresh completo em background
       const screenAtiva = document.querySelector('.screen.active');
       if(screenAtiva?.id === 'supervisor') _refreshDashboard();
     }
@@ -1180,8 +1191,62 @@ function iniciarRealtimeListener(){
   );
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   RENDER KPIs SUPERVISOR — lê equipeConfig diretamente
+   Garante que edições do popup aparecem imediatamente
+═══════════════════════════════════════════════════════ */
+function renderKpisSupervisor(porPromConsolidado, mesAtivo){
+  // TOTAL MÊS: para cada promotor, usa acumulado do supervisor se editou,
+  // senão usa somaVendasMes dos relatórios
+  let totalEquipe = 0;
+  let metaEquipe = 0;
+  let totalRel = 0;
+  let ontemTotal = 0;
+  let nProm = 0;
+
+  equipeConfig.forEach(cfg => {
+    const cons = porPromConsolidado[cfg.nome];
+    // Acumulado: supervisor tem prioridade
+    const acum = cfg.supEditadoEm ? safe(cfg.acumulado) : safe(cons?.somaVendasMes) || safe(cfg.acumulado);
+    totalEquipe += acum;
+    metaEquipe += safe(cfg.meta);
+    if(cons){ totalRel += safe(cons.relatorios); ontemTotal += safe(cons.ontem); nProm++; }
+  });
+
+  // Se não há promotores com relatório, conta todos da equipe
+  if(nProm === 0) nProm = equipeConfig.length;
+
+  const pctEquipe = metaEquipe > 0 ? Math.round(totalEquipe / metaEquipe * 100) : null;
+  const mediaP = nProm ? Math.round(totalEquipe / nProm) : 0;
+
+  // Atualiza cards
+  if($('hMes')) $('hMes').textContent = totalEquipe;
+  if($('hMeta')) $('hMeta').textContent = pctEquipe !== null ? pctEquipe + '%' : '—';
+  if($('hOntem')) $('hOntem').textContent = ontemTotal;
+  if($('hQtd')) $('hQtd').textContent = totalRel;
+  if($('hProm')) $('hProm').textContent = nProm;
+  if($('hMedia')) $('hMedia').textContent = mediaP;
+  if($('kpiPromotores')) $('kpiPromotores').classList.remove('hidden');
+  if($('kpiMedia')) $('kpiMedia').classList.remove('hidden');
+  if($('previsao')) $('previsao').textContent =
+    `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe !== null ? pctEquipe+'% da meta' : 'sem meta definida'}, ${totalRel} relatórios.`;
+
+  calcularControleMensal(mesAtivo, totalEquipe, metaEquipe);
+  return { totalEquipe, metaEquipe, pctEquipe, nProm, mediaP };
+}
+
 function _refreshDashboard(){
-  requestAnimationFrame(() => { carregarHistorico(); if(isSupervisor) carregarSupervisor(); });
+  requestAnimationFrame(async () => {
+    await carregarHistorico();
+    if(isSupervisor){
+      await carregarSupervisor();
+      // Garante KPIs com equipeConfig atualizado
+      const cons = window.__dashboardConsolidado || {};
+      const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
+      renderKpisSupervisor(cons, mesAtivo);
+    }
+  });
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1314,17 +1379,17 @@ function consolidarPromotoresMes(rowsUnicos){
   });
 
   Object.values(porProm).forEach(p => {
-    if(p.supEditou && p.vendasSupMes){
-      // Supervisor editou: usa os valores dele como fonte de verdade
+    const cfgP = equipeConfig.find(x => x.nome === p.nome);
+    if(p.supEditou && p.vendasSupMes && Object.keys(p.vendasSupMes).length > 0){
+      // Supervisor editou: seus valores são fonte de verdade
       MODELOS.forEach(m => { p.vendasPorModelo[m] = safe(p.vendasSupMes[m]); });
       p.somaVendasMes = MODELOS.reduce((s,m) => s + safe(p.vendasSupMes[m]), 0);
-      // totalMes do supervisor via acumulado
-      const cfgP = equipeConfig.find(x => x.nome === p.nome);
-      if(cfgP?.acumulado > 0) p.totalMes = safe(cfgP.acumulado);
-      if(p.somaVendasMes > p.totalMes) p.totalMes = p.somaVendasMes;
+      p.totalMes = safe(cfgP?.acumulado) || p.somaVendasMes;
     } else {
-      // Sem edição do supervisor: usa soma real dos relatórios
+      // Sem edição do supervisor: soma real dos relatórios
       p.somaVendasMes = MODELOS.reduce((s,m) => s + safe(p.vendasPorModelo[m]), 0);
+      // Se equipeConfig tem acumulado manual, respeita também
+      if(cfgP?.acumulado > 0 && !p.supEditou) p.totalMes = Math.max(p.totalMes, safe(cfgP.acumulado));
     }
   });
 
@@ -1582,22 +1647,8 @@ async function carregarHistorico(){
       const metaEquipe = lista.reduce((s,r) => s + getMeta(r.nome), 0);
       const pctEquipe = metaEquipe ? Math.round(totalEquipe / metaEquipe * 100) : null;
 
-      calcularControleMensal(mesAtivo, totalEquipe, metaEquipe);
-      // Barra unificada de KPIs
-      if($('hMes')) $('hMes').textContent = totalEquipe;
-      if($('hMeta')) $('hMeta').textContent = pctEquipe !== null ? pctEquipe + '%' : '—';
-      if($('hOntem')) $('hOntem').textContent = ontem;
-      if($('hQtd')) $('hQtd').textContent = totalRel;
-      // Mostra KPIs extras de supervisor
-      const nProm = lista.length;
-      const mediaP = nProm ? Math.round(totalEquipe / nProm) : 0;
-      if($('hProm')) $('hProm').textContent = nProm;
-      if($('hMedia')) $('hMedia').textContent = mediaP;
-      if($('kpiPromotores')) $('kpiPromotores').classList.remove('hidden');
-      if($('kpiMedia')) $('kpiMedia').classList.remove('hidden');
-      if($('previsao')) $('previsao').textContent = lista.length
-        ? `Equipe: ${nProm} promotores, ${totalEquipe} vendas, ${pctEquipe !== null ? pctEquipe+'% da meta' : 'sem meta definida'}, ${totalRel} relatórios.`
-        : 'Sem lançamentos da equipe ainda.';
+      // KPIs renderizados por renderKpisSupervisor — lê equipeConfig direto
+      const { nProm } = renderKpisSupervisor(porPromConsolidado, mesAtivo);
 
       /* ─── CARD DE PROMOTOR — CORREÇÃO DOS DADOS ───
          - "Vendas do dia" = vendas do ÚLTIMO relatório enviado
@@ -2006,12 +2057,13 @@ function abrirPopupSup(idx){
 
 
 function recalcularTotalPopup(){
-  const soma = MODELOS.reduce((s,m) => {
-    const el = $('psm_' + m.replace(/\s+/g,'_'));
-    return s + safe(el?.value);
-  }, 0);
-  const totalEl = $('popupSupTotal');
-  if(totalEl) totalEl.value = soma;
+  let soma = 0;
+  MODELOS.forEach(m => {
+    const el = document.getElementById('psm_' + m.replace(/\s+/g,'_'));
+    if(el) soma += safe(el.value);
+  });
+  const totalEl = document.getElementById('popupSupTotal');
+  if(totalEl){ totalEl.value = soma; totalEl.style.color = soma > 0 ? '#0F766E' : '#94A3B8'; }
 }
 
 function fecharPopupSup(){
@@ -2047,19 +2099,27 @@ async function salvarPopupSup(){
     supEditadoEm: new Date().toISOString()
   };
 
-  // Salva no Firebase e espera confirmar
+  // 1. Atualiza memória local imediatamente
   aplicarEquipeConfig(equipeConfig);
-  await salvarEquipeConfigOnline();
+
+  // 2. Renderiza KPIs na hora — sem esperar Firebase
+  const cons = window.__dashboardConsolidado || {};
+  const mesAtivo = window.__mesAtivo || mesKeyFromDate(today());
+  renderKpisSupervisor(cons, mesAtivo);
+  renderConfigPromotores();
+
+  // 3. Salva no Firebase em background
+  salvarEquipeConfigOnline().catch(e => console.warn('save equipe:', e));
+
   fecharPopupSup();
-
-  // Força re-render completo dos cards — aguarda Firebase confirmar
-  setTimeout(async () => {
-    await sincronizarEquipeGlobal();
-    await carregarHistorico();
-    if(isSupervisor){ await carregarSupervisor(); renderConfigPromotores(); }
-  }, 300);
-
   popupSucesso('Dados salvos!', p.nome + ' — cards atualizados.');
+
+  // 4. Confirma com dados frescos do Firebase após 800ms
+  setTimeout(async () => {
+    await carregarHistorico();
+    if(isSupervisor) carregarSupervisor();
+    renderConfigPromotores();
+  }, 800);
 }
 
 // Fecha popup ao clicar fora
