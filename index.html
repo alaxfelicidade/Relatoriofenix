@@ -215,8 +215,8 @@ textarea{min-height:88px;resize:vertical}
 
 /* ===== EDIT LIST (Promotores) ===== */
 .edit-list{display:grid;gap:8px}
-.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:14px;padding:8px;display:grid;gap:5px;grid-template-columns:1.6fr .7fr .5fr 50px 58px 32px 62px 32px;align-items:end}
-.edit-row input,.edit-row select{background:#fff;color:#17211C;border-color:#DDE5E1;min-height:34px;font-size:11px;padding:5px 7px;border-radius:7px;width:100%}
+.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:12px;padding:7px 8px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.edit-row input,.edit-row select{background:#fff;color:#17211C;border:1px solid #DDE5E1;height:34px;font-size:11px;padding:4px 7px;border-radius:7px;width:100%;min-width:0}
 .edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}
 .edit-pencil,.edit-remove{width:34px;height:36px;border-radius:8px;border:1px solid #D5DFDA;background:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .edit-pencil{color:var(--gold)}
@@ -2044,8 +2044,8 @@ function abrirPopupSup(idx){
     return `<div>
       <label style="font-size:10px;font-weight:700;color:#475569;display:block;margin-bottom:3px">${escapeHTML(m)}</label>
       <input type="number" id="psm_${m.replace(/\s+/g,'_')}" min="0" value="${val}"
-        oninput="recalcularTotalPopup()"
-        style="width:100%;padding:7px;border:1.5px solid #CBD5E1;border-radius:7px;font-size:14px;font-weight:700">
+        oninput="recalcularTotalPopup()" onchange="recalcularTotalPopup()"
+        style="width:100%;padding:8px;border:1.5px solid #CBD5E1;border-radius:8px;font-size:15px;font-weight:700;text-align:center">
     </div>`;
   }).join('');
 
@@ -2053,17 +2053,30 @@ function abrirPopupSup(idx){
   recalcularTotalPopup();
 
   $('popupSupPromotor').style.display = 'flex';
+
+  // Garante que qualquer digitação recalcula o total — fallback robusto
+  setTimeout(() => {
+    document.querySelectorAll('#popupSupModelos input').forEach(el => {
+      el.oninput = recalcularTotalPopup;
+      el.onchange = recalcularTotalPopup;
+    });
+    recalcularTotalPopup();
+  }, 50);
 }
 
 
 function recalcularTotalPopup(){
   let soma = 0;
-  MODELOS.forEach(m => {
-    const el = document.getElementById('psm_' + m.replace(/\s+/g,'_'));
-    if(el) soma += safe(el.value);
+  // Busca todos os inputs do popup por seletor mais robusto
+  document.querySelectorAll('#popupSupModelos input[type="number"]').forEach(el => {
+    soma += safe(el.value);
   });
   const totalEl = document.getElementById('popupSupTotal');
-  if(totalEl){ totalEl.value = soma; totalEl.style.color = soma > 0 ? '#0F766E' : '#94A3B8'; }
+  if(totalEl){
+    totalEl.value = soma;
+    totalEl.style.color = soma > 0 ? '#0F766E' : '#94A3B8';
+    totalEl.style.fontWeight = '900';
+  }
 }
 
 function fecharPopupSup(){
@@ -2134,17 +2147,17 @@ function renderConfigPromotores(){
     const totalReal = safe(p.acumulado) || safe(cons[p.nome]?.somaVendasMes) || 0;
     const temEdicaoSup = p.supEditadoEm ? '🟢' : '';
     return `<div class="edit-row" id="cfg_row_${i}">
-      <div><label>Nome</label><input id="cfg_nome_${i}" value="${escapeHTML(p.nome)}"></div>
-      <div><label>Rede</label><select id="cfg_rede_${i}">
+      <div style="flex:2;min-width:130px"><label>Nome</label><input id="cfg_nome_${i}" value="${escapeHTML(p.nome)}"></div>
+      <div style="flex:1;min-width:100px"><label>Rede</label><select id="cfg_rede_${i}">
         <option value="">—</option>${LOJAS.map(l=>`<option ${p.rede===l?'selected':''}>${l}</option>`).join('')}
       </select></div>
-      <div><label>Filial</label><input id="cfg_filial_${i}" value="${escapeHTML(p.filial||'')}"></div>
-      <div><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div>
-      <div><label style="color:#0F766E">Total mês ${temEdicaoSup}</label><input type="number" id="cfg_acumulado_${i}" value="${totalReal}" style="font-weight:900;color:#0F766E"></div>
-      <button class="edit-pencil" data-focus="${i}" title="Editar campos básicos">✏️</button>
-      <button class="edit-modelos" data-modelos="${i}" title="Editar por modelo" style="background:#0F766E;color:#fff;border:none;border-radius:7px;padding:0 6px;cursor:pointer;font-size:11px;font-weight:700;height:34px;white-space:nowrap">📊</button>
-      <button class="edit-save" data-save="${i}">Salvar</button>
-      <button class="edit-remove" data-remove="${i}">×</button>
+      <div style="width:64px"><label>Filial</label><input id="cfg_filial_${i}" value="${escapeHTML(p.filial||'')}"></div>
+      <div style="width:52px"><label>Meta</label><input type="number" id="cfg_meta_${i}" value="${p.meta||0}"></div>
+      <div style="width:58px"><label style="color:#0F766E">Total ${temEdicaoSup}</label><input type="number" id="cfg_acumulado_${i}" value="${totalReal}" style="font-weight:900;color:#0F766E"></div>
+      <button class="edit-pencil" data-focus="${i}" title="Editar" style="flex-shrink:0">✏️</button>
+      <button class="edit-modelos" data-modelos="${i}" style="flex-shrink:0;background:#0F766E;color:#fff;border:none;border-radius:7px;width:34px;height:34px;cursor:pointer;font-size:13px">📊</button>
+      <button class="edit-save" data-save="${i}" style="flex-shrink:0">Salvar</button>
+      <button class="edit-remove" data-remove="${i}" style="flex-shrink:0">×</button>
     </div>`;
   }).join('');
 
@@ -2438,8 +2451,29 @@ window.addEventListener('appinstalled', () => {
    SERVICE WORKER REGISTRATION
 ═══════════════════════════════════════════════════════ */
 if('serviceWorker' in navigator){
+  // Limpa TODOS os caches antigos antes de registrar
+  if('caches' in window){
+    caches.keys().then(keys => {
+      keys.forEach(k => { if(k !== 'fenix-v4') caches.delete(k); });
+    });
+  }
+  // Força atualização do SW existente
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.update());
+  });
   navigator.serviceWorker.register('./sw.js').then(reg => {
-    console.log('✅ SW registrado:', reg.scope);
+    // Ativa imediatamente se há novo SW esperando
+    if(reg.waiting){ reg.waiting.postMessage({type:'SKIP_WAITING'}); }
+    reg.addEventListener('updatefound', () => {
+      const sw = reg.installing;
+      sw.addEventListener('statechange', () => {
+        if(sw.state === 'installed' && navigator.serviceWorker.controller){
+          // Novo SW instalado — recarrega para pegar versão nova
+          window.location.reload();
+        }
+      });
+    });
+    console.log('SW registrado v4:', reg.scope);
   }).catch(e => console.warn('SW erro:', e));
 }
 
