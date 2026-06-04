@@ -215,13 +215,13 @@ textarea{min-height:88px;resize:vertical}
 
 /* ===== EDIT LIST (Promotores) ===== */
 .edit-list{display:grid;gap:8px}
-.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:7px;grid-template-columns:minmax(120px,1.2fr) minmax(90px,.7fr) minmax(80px,.6fr) 60px 70px 36px 70px 36px;align-items:end}
-.edit-row input,.edit-row select{background:#fff;color:#17211C;border-color:#DDE5E1;min-height:40px;font-size:13px;padding:8px 10px;border-radius:10px}
+.edit-row{background:#F8FAF9;border:1px solid var(--line);border-radius:14px;padding:8px 10px;display:grid;gap:6px;grid-template-columns:2fr .8fr .6fr 52px 60px 34px 64px 34px;align-items:end}
+.edit-row input,.edit-row select{background:#fff;color:#17211C;border-color:#DDE5E1;min-height:36px;font-size:12px;padding:6px 8px;border-radius:8px}
 .edit-row label{font-size:10px;color:#64746C;font-weight:800;text-transform:uppercase}
-.edit-pencil,.edit-remove{width:36px;height:40px;border-radius:10px;border:1px solid #D5DFDA;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.edit-pencil,.edit-remove{width:34px;height:36px;border-radius:8px;border:1px solid #D5DFDA;background:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .edit-pencil{color:var(--gold)}
 .edit-remove{color:var(--red);font-weight:900;font-size:18px}
-.edit-save{height:40px;border-radius:10px;border:0;background:linear-gradient(135deg,var(--green-dark),var(--green-light));color:white;font-weight:900;padding:0 10px;cursor:pointer;font-size:12px}
+.edit-save{height:36px;border-radius:8px;border:0;background:linear-gradient(135deg,var(--green-dark),var(--green-light));color:white;font-weight:900;padding:0 8px;cursor:pointer;font-size:11px}
 .edit-row.editing{box-shadow:0 0 0 3px rgba(14,122,104,.12);border-color:var(--green-dark)}
 
 /* ===== ADD PROMOTOR BOX ===== */
@@ -274,7 +274,7 @@ textarea{min-height:88px;resize:vertical}
   .add-promotor-box>div:first-child,.add-promotor-box button{grid-column:1/-1}
   .add-model-sales .line{grid-template-columns:1fr}
   .add-model-sales button{width:100%}
-  .edit-row{grid-template-columns:1fr 1fr 60px 70px 70px 36px}
+  .edit-row{grid-template-columns:1fr .7fr 52px 58px 58px 32px}
   .edit-row>div:first-child{grid-column:1/-1}
 }
 @media(max-width:540px){
@@ -668,7 +668,7 @@ const SUPERVISOR_PIN  = "85741290";
 const LS_EQUIPE       = 'fenixEquipeConfig_v2';
 const LS_MODELOS      = 'fenix_modelos_venda_v2';
 const LS_MOSTRUARIO   = 'fenixMostruarioPromotor_v2';
-const MODELOS_PADRAO  = ["A5 4G","A5 5G","A5 Pro","A6x","A6k","A6 Pro","Reno13F","Reno14F"];
+const MODELOS_PADRAO  = ["A5","A5 5G","A5 Pro","A6x","A6k","A6","A6 Pro","Reno13F","Reno14F"];
 const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 
 const NOME_PROMOTOR_ALIASES = {}; // reservado para aliases futuros
@@ -861,7 +861,7 @@ async function sincronizarEquipeGlobal(){
    Chamado automaticamente na primeira sincronização de junho
 ═══════════════════════════════════════════════════════ */
 async function resetarAcumuladosJunho(){
-  const RESET_KEY = 'fenixResetJunho2026';
+  const RESET_KEY = 'fenixResetJunho2026v2'; // v2: força novo reset com lista limpa
   if(localStorage.getItem(RESET_KEY)) return; // já resetou
 
   equipeConfig.forEach(p => {
@@ -905,13 +905,22 @@ async function sincronizarModelosGlobais(){
   if(!db) return;
   try{
     const snap = await getDoc(doc(db,'config','modelos_venda'));
+    // Supervisor pode adicionar novos modelos além do padrão
+    // Mas nunca aceita modelos antigos/duplicados do localStorage
+    let extras = [];
     if(snap.exists()){
       const d = snap.data();
       if(Array.isArray(d.lista)){
-        MODELOS = [...new Set([...MODELOS_PADRAO, ...d.lista])];
-        localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS));
+        // Filtra apenas modelos que NÃO estão no padrão (adicionados pelo supervisor)
+        extras = d.lista.filter(m => !MODELOS_PADRAO.some(
+          mp => mp.toLowerCase().trim() === String(m||'').toLowerCase().trim()
+        ));
       }
     }
+    MODELOS = [...MODELOS_PADRAO, ...extras];
+    localStorage.setItem(LS_MODELOS, JSON.stringify(MODELOS));
+    // Salva lista limpa no Firebase também
+    await setDoc(doc(db,'config','modelos_venda'), {lista: MODELOS}, {merge:false});
   }catch(e){ console.warn('Modelos sync:', e.message); }
 }
 async function salvarEquipeConfigOnline(){
@@ -1951,6 +1960,7 @@ function abrirPopupSup(idx){
   // Campos por modelo
   const vendasSup = p.vendasSupMes || {};
   const vendasProm = dadosProm?.vendasPorModelo || {};
+  // Usa MODELOS atual (padrao + extras adicionados pelo supervisor, sem duplicatas)
   $('popupSupModelos').innerHTML = MODELOS.map(m => {
     const val = vendasSup[m] !== undefined ? vendasSup[m] : safe(vendasProm[m]);
     return `<div>
