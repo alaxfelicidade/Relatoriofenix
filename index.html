@@ -674,21 +674,18 @@ const LOJAS           = ["Magalu","Casas Bahia","Ponto","FastShop"];
 const NOME_PROMOTOR_ALIASES = {}; // reservado para aliases futuros
 
 const EQUIPE_DEFAULT = [
-  {nome:"Beatriz Diniz",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Erika Maneia",     filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Taynara Ferreira", filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Elias Andrade",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Dennas Pereira",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Erika Silva",      filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Lauanda Augusta",  filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Thais Rezende",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Tailon Martins",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Diego Souza",      filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Thais Almeida",    filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Gabriela Borges",  filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Lucas Monteiro",   filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Darien Alves",     filial:"",rede:"",meta:0,acumulado:0},
-  {nome:"Gabriel Ferreira", filial:"",rede:"",meta:0,acumulado:0}
+  {nome:"Darien Macedo Pereira Alves",    filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Dennas Pereira Prates",          filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Elias Andrade D Almeida Alves",  filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Erika Priscila Razzano Da Silva",filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Gabriel Fernandes Ferreira",     filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Gabriela Borges De Oliveira",    filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Lauanda Augusta Reis De Paula",  filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Lucas Henrique Ribeiro Marques", filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Tailon Thales Cardoso Martins",  filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Taynara Roberta Ferreira",       filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Thais Almeida Otoni",            filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}},
+  {nome:"Thais De Cassia Rezende Silva",  filial:"",rede:"",meta:0,acumulado:0,vendasSupMes:{}}
 ];
 
 let app, db;
@@ -815,28 +812,69 @@ async function sincronizarEquipeGlobal(){
   if(!db) return;
   try{
     const snap = await getDoc(doc(db,'config','equipe'));
+    let listaFirebase = [];
     if(snap.exists()){
       const d = snap.data();
-      const lista = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : null);
-      if(lista && lista.length){ aplicarEquipeConfig(lista); window.__equipeSincronizada = true; }
+      listaFirebase = Array.isArray(d.equipe) ? d.equipe : (Array.isArray(d.promotores) ? d.promotores : []);
     }
-    /* Adiciona apenas promotores novos que ainda não existem no Firebase — nunca sobrescreve */
-    let precisaSalvar = false;
-    EQUIPE_DEFAULT.forEach(def => {
-      const nomeNorm = Object.prototype.hasOwnProperty.call(NOME_PROMOTOR_ALIASES, def.nome)
-        ? NOME_PROMOTOR_ALIASES[def.nome] : def.nome;
-      const existe = equipeConfig.find(x => x.nome === nomeNorm || x.nome === def.nome);
-      if(!existe){
-        equipeConfig.push({nome:nomeNorm, rede:def.rede, filial:def.filial, meta:0, acumulado:0});
-        precisaSalvar = true;
+
+    // Nomes válidos = apenas os do EQUIPE_DEFAULT (lista oficial)
+    const nomesValidos = new Set(EQUIPE_DEFAULT.map(p => p.nome.trim().toLowerCase()));
+
+    // Filtra Firebase: mantém apenas promotores da lista oficial
+    // Preserva meta, acumulado e vendasSupMes de quem já existe
+    const listaLimpa = EQUIPE_DEFAULT.map(def => {
+      const existing = listaFirebase.find(x =>
+        String(x.nome||'').trim().toLowerCase() === def.nome.trim().toLowerCase()
+      );
+      if(existing){
+        // Promotor já existe no Firebase — preserva dados, garante nome correto
+        return {
+          ...existing,
+          nome: def.nome, // garante nome canônico correto
+          vendasSupMes: existing.vendasSupMes || {}
+        };
       }
+      // Novo promotor — entra zerado
+      return { ...def };
     });
-    if(precisaSalvar){
-      salvarEquipeConfigOnline();
-      localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
-      atualizarSelectPromotores();
-    }
+
+    aplicarEquipeConfig(listaLimpa);
+    window.__equipeSincronizada = true;
+
+    // Salva lista limpa no Firebase (remove nomes antigos/abreviados)
+    await setDoc(doc(db,'config','equipe'), {
+      equipe: listaLimpa,
+      promotores: listaLimpa,
+      updatedAt: serverTimestamp()
+    }, {merge:false}); // merge:false substitui completamente
+
+    localStorage.setItem(LS_EQUIPE, JSON.stringify(listaLimpa));
+    atualizarSelectPromotores();
+
   }catch(e){ console.warn('Equipe sync:', e.message); }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   RESET JUNHO — zera acumulados para supervisor preencher
+   Chamado automaticamente na primeira sincronização de junho
+═══════════════════════════════════════════════════════ */
+async function resetarAcumuladosJunho(){
+  const RESET_KEY = 'fenixResetJunho2026';
+  if(localStorage.getItem(RESET_KEY)) return; // já resetou
+
+  equipeConfig.forEach(p => {
+    p.acumulado = 0;
+    p.meta = 0;
+    p.vendasSupMes = {};
+    delete p.supEditadoEm;
+  });
+
+  localStorage.setItem(RESET_KEY, '1');
+  localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
+  await salvarEquipeConfigOnline();
+  console.log('Fênix: reset junho 2026 aplicado');
 }
 
 async function zerarNovoMes(){
@@ -2294,6 +2332,7 @@ async function iniciar(){
   await initFirebase();
   if(db){
     await sincronizarEquipeGlobal();
+    await resetarAcumuladosJunho();
     await zerarNovoMes();
     await sincronizarModelosGlobais();
     atualizarSelectPromotores();
