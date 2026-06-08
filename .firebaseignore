@@ -1,0 +1,8 @@
+node_modules/
+.firebase/
+.git/
+*.png
+test_app.mjs
+index_backup_*.html
+package.json
+package-lock.json

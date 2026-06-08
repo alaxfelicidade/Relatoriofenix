@@ -1,0 +1,5 @@
+node_modules/
+.firebase/
+*.png
+test_app.mjs
+index_backup_*.html
