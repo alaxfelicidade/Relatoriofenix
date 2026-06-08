@@ -578,6 +578,20 @@ textarea{min-height:88px;resize:vertical}
             <div class="rank" id="ranking"></div>
           </div>
         </div>
+
+        <div class="card">
+          <div class="card-head"><span>🛠️</span><b>Manutenção de dados (avançado)</b></div>
+          <div class="card-body">
+            <p style="font-size:12px;color:#64746C;margin:0 0 12px">Use com cuidado. Ações afetam o Firebase de toda a equipe.</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button id="btnLimparDuplicados" style="background:#F59E0B;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-size:13px">🧹 Limpar relatórios duplicados</button>
+              <button id="btnResetMesAtual" style="background:#DC2626;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-size:13px">⚠️ Zerar mês atual (apaga relatórios do mês)</button>
+              <button id="btnResetTotal" style="background:#7F1D1D;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-size:13px">🔴 RESET TOTAL (apaga TODOS os relatórios)</button>
+            </div>
+            <div id="manutencaoStatus" style="margin-top:10px;font-size:12px;font-weight:700"></div>
+          </div>
+        </div>
+
       </div><!-- /supPanel -->
 
     </section><!-- /supervisor -->
@@ -625,7 +639,8 @@ import {
 import {
   getFirestore,
   collection, addDoc, getDocs, query, orderBy,
-  serverTimestamp, doc, setDoc, getDoc, onSnapshot
+  serverTimestamp, doc, setDoc, getDoc, onSnapshot,
+  deleteDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* ═══════════════════════════════════════════════════════
@@ -804,8 +819,15 @@ function aplicarEquipeConfig(lista){
     renderVendas?.();
   }
 }
-function getMeta(nome){ const p = equipeConfig.find(x => x.nome === nome); return Number(p?.meta||0); }
-function getPerfilEquipe(nome){ return equipeConfig.find(x => x.nome === nome) || {nome, rede:'', filial:'', meta:0, acumulado:0}; }
+function getMeta(nome){
+  const n = String(nome||'').trim().toLowerCase();
+  const p = equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === n);
+  return Number(p?.meta||0);
+}
+function getPerfilEquipe(nome){
+  const n = String(nome||'').trim().toLowerCase();
+  return equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === n) || {nome, rede:'', filial:'', meta:0, acumulado:0};
+}
 
 async function sincronizarEquipeGlobal(){
   if(!db) return;
@@ -818,13 +840,11 @@ async function sincronizarEquipeGlobal(){
     }
 
     // Nomes válidos = apenas os do EQUIPE_DEFAULT (lista oficial)
-    const nomesValidos = new Set(EQUIPE_DEFAULT.map(p => p.nome.trim().toLowerCase()));
-
-    // Filtra Firebase: mantém apenas promotores da lista oficial
-    // Preserva meta, acumulado e vendasSupMes de quem já existe
+    // Preserva meta, acumulado e vendasSupMes de quem já existe no Firebase
     const listaLimpa = EQUIPE_DEFAULT.map(def => {
+      const defNorm = def.nome.trim().toLowerCase();
       const existing = listaFirebase.find(x =>
-        String(x.nome||'').trim().toLowerCase() === def.nome.trim().toLowerCase()
+        String(x.nome||'').trim().toLowerCase() === defNorm
       );
       if(existing){
         // Promotor já existe no Firebase — preserva dados, garante nome correto
@@ -841,12 +861,20 @@ async function sincronizarEquipeGlobal(){
     aplicarEquipeConfig(listaLimpa);
     window.__equipeSincronizada = true;
 
-    // Salva lista limpa no Firebase (remove nomes antigos/abreviados)
-    await setDoc(doc(db,'config','equipe'), {
-      equipe: listaLimpa,
-      promotores: listaLimpa,
-      updatedAt: serverTimestamp()
-    }, {merge:false}); // merge:false substitui completamente
+    // Só salva no Firebase se a lista mudou (evita escritas desnecessárias e lentidão)
+    const mudou = listaLimpa.length !== listaFirebase.length ||
+      listaLimpa.some((p,i) => {
+        const fb = listaFirebase.find(x => String(x.nome||'').trim().toLowerCase() === p.nome.trim().toLowerCase());
+        return !fb; // promotor novo que não existia no Firebase
+      });
+    if(mudou){
+      await setDoc(doc(db,'config','equipe'), {
+        equipe: listaLimpa,
+        promotores: listaLimpa,
+        updatedAt: serverTimestamp()
+      });
+      console.log('Equipe atualizada no Firebase');
+    }
 
     localStorage.setItem(LS_EQUIPE, JSON.stringify(listaLimpa));
     atualizarSelectPromotores();
@@ -1041,6 +1069,18 @@ function renderVendas(){
   const acEl = $('acumuladoMes');
 
   /* CORREÇÃO: só auto-preenche se não foi tocado pelo usuário */
+
+  // Aviso visual de meta — não bloqueia o relatório
+  const metaEl = $('metaPromotorBox');
+  if(metaEl){
+    const metaVal = getMeta(perfilSalvo()?.nome || $('promotor')?.value || '');
+    if(metaVal > 0){
+      metaEl.textContent = `Meta do mês: ${metaVal} aparelhos`;
+      metaEl.classList.remove('hidden');
+    } else {
+      metaEl.classList.add('hidden');
+    }
+  }
   if(acEl && !acEl.dataset.touched){
     acEl.value = acumuladoBase;
   }
@@ -1262,8 +1302,10 @@ function relatoriosUnicosPorPromotorData(rows){
   });
   const mapa = {};
   ordenados.forEach(r => {
-    const key = (r.nome||'?') + '___' + (r.data||'?');
-    if(!mapa[key]) mapa[key] = r; // pega só o mais recente
+    // Chave normalizada (case-insensitive) — evita duplicar mesmo promotor com capitalização diferente
+    const nomeNorm = String(r.nome||'?').trim().toLowerCase();
+    const key = nomeNorm + '___' + (r.data||'?');
+    if(!mapa[key]) mapa[key] = r;
   });
   return Object.values(mapa).sort((a,b) => String(b.data||'').localeCompare(String(a.data||'')));
 }
@@ -1311,8 +1353,12 @@ function consolidarPromotoresMes(rowsUnicos){
   const acumMap = {}; // nome → { data, tmi, temValorReal }
 
   // 1a: encontra o doc com maior data que tenha totalMesInformado > 0
+  const nomeCanonico = (raw) => {
+    const cfg = equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === String(raw||'').trim().toLowerCase());
+    return cfg?.nome || String(raw||'').trim();
+  };
   (rowsUnicos||[]).forEach(r => {
-    const n = (r.nome||'').trim();
+    const n = nomeCanonico(r.nome);
     if(!n) return;
     const dataR = r.data || '';
     const tmi = safe(r.totalMesInformado);
@@ -1326,7 +1372,7 @@ function consolidarPromotoresMes(rowsUnicos){
   // 1b: para promotores que não têm nenhum doc com totalMesInformado > 0,
   // usa r.total do doc com data mais recente (melhor estimativa disponível)
   (rowsUnicos||[]).forEach(r => {
-    const n = (r.nome||'').trim();
+    const n = nomeCanonico(r.nome);
     if(!n) return;
     if(acumMap[n]?.temValorReal) return; // já tem valor real, ignora
     const dataR = r.data || '';
@@ -1339,9 +1385,10 @@ function consolidarPromotoresMes(rowsUnicos){
   // PASSO 2: monta objeto consolidado completo
   const porProm = {};
   (rowsUnicos||[]).forEach(r => {
-    const n = (r.nome||'').trim() || 'Sem promotor';
-    // Verifica se supervisor tem edição para este promotor
-    const cfgProm = equipeConfig.find(x => x.nome === n);
+    // Normaliza nome para o nome canônico do equipeConfig (evita duplicar)
+    const nomeRaw = (r.nome||'').trim() || 'Sem promotor';
+    const cfgProm = equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === nomeRaw.toLowerCase());
+    const n = cfgProm?.nome || nomeRaw; // usa nome canônico
     const supEditou = cfgProm?.supEditadoEm;
     if(!porProm[n]) porProm[n] = {
       nome: n,
@@ -1379,7 +1426,7 @@ function consolidarPromotoresMes(rowsUnicos){
   });
 
   Object.values(porProm).forEach(p => {
-    const cfgP = equipeConfig.find(x => x.nome === p.nome);
+    const cfgP = equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === String(p.nome||'').trim().toLowerCase());
     if(p.supEditou && p.vendasSupMes && Object.keys(p.vendasSupMes).length > 0){
       // Supervisor editou: seus valores são fonte de verdade
       MODELOS.forEach(m => { p.vendasPorModelo[m] = safe(p.vendasSupMes[m]); });
@@ -1501,11 +1548,7 @@ async function salvarRelatorio(){
     show($('status'),'Preencha promotor, loja, filial e data.','err'); return;
   }
   // meta zerada não bloqueia — supervisor define depois
-  const acumuladoVal = safe($('acumuladoMes')?.value);
-  if(acumuladoVal <= 0){
-    show($('status'),'Informe o acumulado do mês (obrigatório, maior que zero).','err');
-    $('acumuladoMes')?.focus(); return;
-  }
+  // acumulado pode ser 0 no início do mês — não bloqueia
   const mostSelecionado = Object.values(mostruario||{}).some(Boolean) || (($('mostruarioExtra')?.value||'').trim().length > 0);
   if(!mostSelecionado){
     show($('status'),'Mostruário OPPO é obrigatório. Marque pelo menos um modelo.','err');
@@ -1525,6 +1568,8 @@ async function salvarRelatorio(){
     const perfilAtual = getPerfilEquipe(nomeP);
 
     const totalDiaCalc = MODELOS.reduce((s,m) => s+safe(vendas[m]), 0);
+    // Acumulado: usa o campo se preenchido, senão usa total do dia
+    const acumuladoVal = safe($('acumuladoMes')?.value) || totalDiaCalc;
 
     const payload = {
       uid: user.uid, email: user.email, nome: nomeP,
@@ -1552,7 +1597,7 @@ async function salvarRelatorio(){
     await addDoc(collection(db,'relatorios'), payload);
 
     /* Atualiza acumulado na ficha do promotor */
-    const pIdx = equipeConfig.findIndex(x => x.nome === nomeP);
+    const pIdx = equipeConfig.findIndex(x => String(x.nome||'').trim().toLowerCase() === String(nomeP||'').trim().toLowerCase());
     if(pIdx > -1){
       equipeConfig[pIdx].acumulado = acumuladoVal;
       setDoc(doc(db,'config','equipe'), {equipe:equipeConfig, promotores:equipeConfig, updatedAt:serverTimestamp()}, {merge:true});
@@ -1602,7 +1647,7 @@ async function carregarHistorico(){
 
     /* ── DEDUPLICAÇÃO (evita inflação por re-envios no mesmo dia) ── */
     let rowsUnicos = relatoriosUnicosPorPromotorData(rowsFiltrados);
-    rowsUnicos = rowsUnicos.filter(r => PROMOTORES.includes(r.nome));
+    rowsUnicos = rowsUnicos.filter(r => PROMOTORES.some(n => String(n||'').trim().toLowerCase() === String(r.nome||'').trim().toLowerCase()));
     // Garante ordenação por data DESC (YYYY-MM-DD) antes de consolidar
     // Isso assegura que consolidarPromotoresMes sempre veja o dia mais recente primeiro
     rowsUnicos.sort((a,b) => String(b.data||'').localeCompare(String(a.data||'')));
@@ -1869,7 +1914,7 @@ async function carregarSupervisor(){
   if(!window.__BASE_GERAL) await carregarBaseGeral();
 
   let rows = relatoriosUnicosPorPromotorData(getDadosFiltrados());
-  rows = rows.filter(r => PROMOTORES.includes(r.nome));
+  rows = rows.filter(r => PROMOTORES.some(n => String(n||'').trim().toLowerCase() === String(r.nome||'').trim().toLowerCase()));
   const mesSup = window.__mesAtivo || mesKeyFromDate(today());
   window.__rowsSupervisorModelo = rows;
 
@@ -2217,7 +2262,10 @@ async function initFirebase(){
     db = getFirestore(app);
     window.db = db;
 
-    await getDocs(collection(db,'config')); // teste de conectividade (sem cache offline — garante dados frescos)
+    // Teste de conectividade com timeout de 8 segundos
+    const testConn = getDocs(collection(db,'config'));
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000));
+    await Promise.race([testConn, timeout]);
     console.log('✅ Firestore conectado!');
     $('firebaseBanner').classList.remove('show');
 
@@ -2244,11 +2292,14 @@ function limparPerfil(){ localStorage.removeItem('fenixPerfil_v2'); }
 
 function preencherLogin(){
   atualizarSelectPromotores();
-  $('loginTipo').onchange = () => {
+  const toggleLogin = () => {
     const sup = $('loginTipo').value === 'supervisor';
     $('loginNomeBox').classList.toggle('hidden', sup);
     $('loginPinBox').classList.toggle('hidden', !sup);
   };
+  $('loginTipo').onchange = toggleLogin;
+  // Sincroniza estado visual ao carregar (caso já esteja em Supervisor)
+  toggleLogin();
 }
 
 async function entrarRapido(){
@@ -2274,16 +2325,17 @@ async function aplicarPerfil(){
   // 1. A equipe já foi sincronizada com Firebase (dados confiáveis)
   // 2. O nome NÃO está em PROMOTORES nem em equipeConfig
   // 3. NÃO é um login direto pelo dropdown (que já valida contra a lista atual)
+  const nomeNorm = String(p.nome||'').trim().toLowerCase();
   const nomeRemovidoDaEquipe = p.tipo === 'promotor'
     && window.__equipeSincronizada
     && !p.loginDireto
-    && !PROMOTORES.includes(p.nome)
-    && !equipeConfig.find(x => x.nome === p.nome);
+    && !PROMOTORES.some(n => String(n||'').trim().toLowerCase() === nomeNorm)
+    && !equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === nomeNorm);
 
   if(nomeRemovidoDaEquipe){
     limparPerfil();
     $('login').classList.remove('hidden'); $('main').classList.add('hidden');
-    show($('loginStatus'),'Seu acesso foi removido da equipe. Contate o supervisor.','err');
+    show($('loginStatus'),'Nome não encontrado na equipe atual. Contate o supervisor.','err');
     return;
   }
 
@@ -2342,10 +2394,13 @@ function exportCsv(){
    INIT UI
 ═══════════════════════════════════════════════════════ */
 function initUi(){
-  // Popup supervisor — conecta botões X e Salvar
+  // Popup supervisor + ferramentas — conecta botões
   document.addEventListener('click', e => {
     if(e.target.id === 'btnFecharPopupSup') fecharPopupSup();
     if(e.target.id === 'btnSalvarPopupSup') salvarPopupSup();
+    if(e.target.id === 'btnLimparDuplicados') limparRelatoriosDuplicados();
+    if(e.target.id === 'btnResetMesAtual') zerarMesAtual();
+    if(e.target.id === 'btnResetTotal') resetTotalFirebase();
   });
   if($('data')) $('data').value = today();
   atualizarSelectPromotores();
@@ -2480,6 +2535,107 @@ if('serviceWorker' in navigator){
 /* ═══════════════════════════════════════════════════════
    INIT PRINCIPAL
 ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   FERRAMENTAS DE MANUTENÇÃO DO FIREBASE
+═══════════════════════════════════════════════════════ */
+async function limparRelatoriosDuplicados(){
+  if(!db || !isSupervisor) return;
+  if(!confirm('Limpar relatórios duplicados? Mantém apenas o mais recente de cada promotor+data.')) return;
+  const st = $('manutencaoStatus');
+  if(st){ st.textContent = 'Analisando...'; st.style.color = '#0F766E'; }
+  try{
+    const snap = await getDocs(collection(db,'relatorios'));
+    const docs = [];
+    snap.forEach(d => docs.push({id:d.id, ...d.data()}));
+
+    // Agrupa por nome normalizado + data, mantém só o mais recente
+    const ordenados = docs.sort((a,b) => {
+      const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return tB - tA;
+    });
+    const vistos = {};
+    const paraApagar = [];
+    ordenados.forEach(r => {
+      const key = String(r.nome||'?').trim().toLowerCase() + '___' + (r.data||'?');
+      if(vistos[key]) paraApagar.push(r.id);
+      else vistos[key] = true;
+    });
+
+    if(paraApagar.length === 0){
+      if(st){ st.textContent = 'Nenhum duplicado encontrado.'; }
+      return;
+    }
+
+    // Apaga em lotes de 400 (limite do batch é 500)
+    for(let i=0; i<paraApagar.length; i+=400){
+      const batch = writeBatch(db);
+      paraApagar.slice(i, i+400).forEach(id => batch.delete(doc(db,'relatorios',id)));
+      await batch.commit();
+    }
+    if(st){ st.textContent = `${paraApagar.length} duplicados removidos!`; st.style.color = '#16A34A'; }
+    setTimeout(() => _refreshDashboard(), 500);
+  }catch(e){
+    if(st){ st.textContent = 'Erro: '+e.message; st.style.color = '#DC2626'; }
+  }
+}
+
+async function zerarMesAtual(){
+  if(!db || !isSupervisor) return;
+  const mesAtual = mesKeyFromDate(today());
+  if(!confirm(`ATENÇÃO: Apagar TODOS os relatórios de ${mesAtual}? Esta ação não pode ser desfeita.`)) return;
+  if(!confirm('Tem certeza absoluta? Digite OK na próxima caixa.')) return;
+  const st = $('manutencaoStatus');
+  if(st){ st.textContent = 'Apagando mês...'; st.style.color = '#DC2626'; }
+  try{
+    const snap = await getDocs(collection(db,'relatorios'));
+    const paraApagar = [];
+    snap.forEach(d => {
+      const r = d.data();
+      if((r.mesKey === mesAtual) || (r.data||'').startsWith(mesAtual)) paraApagar.push(d.id);
+    });
+    for(let i=0; i<paraApagar.length; i+=400){
+      const batch = writeBatch(db);
+      paraApagar.slice(i, i+400).forEach(id => batch.delete(doc(db,'relatorios',id)));
+      await batch.commit();
+    }
+    // Zera acumulados da equipe também
+    equipeConfig.forEach(p => { p.acumulado = 0; p.vendasSupMes = {}; delete p.supEditadoEm; });
+    await salvarEquipeConfigOnline();
+    if(st){ st.textContent = `${paraApagar.length} relatórios do mês apagados + acumulados zerados.`; st.style.color = '#16A34A'; }
+    setTimeout(() => _refreshDashboard(), 500);
+  }catch(e){
+    if(st){ st.textContent = 'Erro: '+e.message; st.style.color = '#DC2626'; }
+  }
+}
+
+async function resetTotalFirebase(){
+  if(!db || !isSupervisor) return;
+  if(!confirm('🔴 RESET TOTAL: Apaga TODOS os relatórios de TODOS os meses. Irreversível. Continuar?')) return;
+  if(!confirm('ÚLTIMA CONFIRMAÇÃO: Todos os dados históricos serão perdidos. Confirma?')) return;
+  const st = $('manutencaoStatus');
+  if(st){ st.textContent = 'Resetando tudo...'; st.style.color = '#DC2626'; }
+  try{
+    const snap = await getDocs(collection(db,'relatorios'));
+    const ids = [];
+    snap.forEach(d => ids.push(d.id));
+    for(let i=0; i<ids.length; i+=400){
+      const batch = writeBatch(db);
+      ids.slice(i, i+400).forEach(id => batch.delete(doc(db,'relatorios',id)));
+      await batch.commit();
+    }
+    // Zera acumulados e metas
+    equipeConfig.forEach(p => { p.acumulado = 0; p.meta = 0; p.vendasSupMes = {}; delete p.supEditadoEm; });
+    await salvarEquipeConfigOnline();
+    localStorage.setItem(LS_EQUIPE, JSON.stringify(equipeConfig));
+    if(st){ st.textContent = `RESET COMPLETO: ${ids.length} relatórios apagados. Tudo zerado.`; st.style.color = '#16A34A'; }
+    setTimeout(() => _refreshDashboard(), 500);
+  }catch(e){
+    if(st){ st.textContent = 'Erro: '+e.message; st.style.color = '#DC2626'; }
+  }
+}
+
 async function iniciar(){
   initUi();
   await initFirebase();
