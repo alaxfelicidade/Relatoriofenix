@@ -1657,6 +1657,36 @@ async function carregarHistorico(){
     window.__rowsDashboard = rowsUnicos;
     window.__dashboardConsolidado = porPromConsolidado;
 
+    /* ── INJETA EDIÇÕES DO SUPERVISOR nos promotores sem relatório ── */
+    equipeConfig.forEach(cfg => {
+      if(!cfg.vendasSupMes || !Object.keys(cfg.vendasSupMes).length) return;
+      const nomeNorm = cfg.nome.trim().toLowerCase();
+      // Se já existe no consolidado, atualiza vendasPorModelo com dados do supervisor
+      const existente = Object.values(porPromConsolidado).find(
+        p => p.nome.trim().toLowerCase() === nomeNorm
+      );
+      if(existente){
+        // Supervisor tem prioridade — sobrescreve vendas por modelo
+        MODELOS.forEach(m => { existente.vendasPorModelo[m] = safe(cfg.vendasSupMes[m]); });
+        existente.somaVendasMes = MODELOS.reduce((s,m) => s + safe(cfg.vendasSupMes[m]), 0);
+        existente.totalMes = safe(cfg.acumulado) || existente.somaVendasMes;
+      } else {
+        // Promotor sem relatório mas com edição do supervisor — cria entrada
+        porPromConsolidado[cfg.nome] = {
+          nome: cfg.nome,
+          totalMes: safe(cfg.acumulado),
+          somaVendasMes: MODELOS.reduce((s,m) => s + safe(cfg.vendasSupMes[m]), 0),
+          relatorios: 0, ontem: 0,
+          vendasPorModelo: Object.fromEntries(MODELOS.map(m => [m, safe(cfg.vendasSupMes[m])])),
+          vendasSupMes: cfg.vendasSupMes,
+          supEditou: true,
+          estoqueAtual: Object.fromEntries(MODELOS.map(m=>[m,0])),
+          lojas: new Set(), filiais: new Set(), mostruario: [], obs: [], ultimaData: ''
+        };
+      }
+    });
+    window.__dashboardConsolidado = porPromConsolidado;
+
     /* ── SOMA POR MODELO (painel geral) ── */
     const somaModelos = somaModelosConsolidado(porPromConsolidado);
     if($('dashboardModeloMes')){
