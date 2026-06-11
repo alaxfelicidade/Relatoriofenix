@@ -1701,9 +1701,12 @@ async function carregarHistorico(){
     if($('rankingRedeDashboard')){
       const porRede = {};
       Object.values(porPromConsolidado).forEach(p => {
-        const rede = [...p.lojas].filter(Boolean)[0] || 'Sem rede';
+        // Rede: 1º tenta a loja dos relatórios, 2º a rede cadastrada no equipeConfig
+        const cfgP = equipeConfig.find(x => String(x.nome||'').trim().toLowerCase() === String(p.nome||'').trim().toLowerCase());
+        const rede = [...p.lojas].filter(Boolean)[0] || cfgP?.rede || 'Sem rede';
         if(!porRede[rede]) porRede[rede] = {rede, total:0, rel:0, prom:new Set()};
-        porRede[rede].total += safe(p.totalMes);
+        // Total: prioridade supervisor (somaVendasMes já reflete vendasSupMes quando editado)
+        porRede[rede].total += safe(p.somaVendasMes) || safe(p.totalMes);
         porRede[rede].rel += safe(p.relatorios);
         porRede[rede].prom.add(p.nome);
       });
@@ -2073,7 +2076,7 @@ function iaSupervisor(){
     if($('previsao')) $('previsao').textContent = 'Sem dados para analisar ainda.';
     return;
   }
-  const totalEquipe = lista.reduce((s,p) => s + safe(p.totalMes), 0);
+  const totalEquipe = lista.reduce((s,p) => s + (safe(p.somaVendasMes) || safe(p.totalMes)), 0);
   const prom = lista.length;
   // Soma por modelo vem de vendasPorModelo (soma cumulativa dos dias, não acumulado inflado)
   const somaM = Object.fromEntries(MODELOS.map(m=>[m,0]));
@@ -2200,14 +2203,14 @@ async function salvarPopupSup(){
   salvarEquipeConfigOnline().catch(e => console.warn('save equipe:', e));
 
   fecharPopupSup();
-  popupSucesso('Dados salvos!', p.nome + ' — cards atualizados.');
 
-  // 4. Confirma com dados frescos do Firebase após 800ms
-  setTimeout(async () => {
-    await carregarHistorico();
-    if(isSupervisor) carregarSupervisor();
-    renderConfigPromotores();
-  }, 800);
+  // 4. Refresh COMPLETO IMEDIATO — todos os cards (soma por modelo,
+  //    ranking por rede, KPIs, cards promotor) re-renderizam com a edição
+  await carregarHistorico();
+  if(isSupervisor) await carregarSupervisor();
+  renderConfigPromotores();
+
+  popupSucesso('Dados salvos!', p.nome + ' — todos os cards atualizados.');
 }
 
 // Fecha popup ao clicar fora
@@ -2316,7 +2319,19 @@ async function initFirebase(){
    LOGIN / PERFIL
 ═══════════════════════════════════════════════════════ */
 function slugNome(n){ return String(n||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''); }
-function perfilSalvo(){ try{ return JSON.parse(localStorage.getItem('fenixPerfil_v2')||'null'); }catch{ return null; } }
+function perfilSalvo(){
+  try{
+    const p = JSON.parse(localStorage.getItem('fenixPerfil_v2')||'null');
+    if(!p) return null;
+    // Supervisor NUNCA persiste entre sessões — sempre pede senha ao abrir
+    // (window.__supervisorAtivo marca a sessão atual em memória)
+    if(p.tipo === 'supervisor' && !window.__supervisorAtivo){
+      localStorage.removeItem('fenixPerfil_v2');
+      return null;
+    }
+    return p;
+  }catch{ return null; }
+}
 function salvarPerfil(p){ localStorage.setItem('fenixPerfil_v2', JSON.stringify(p)); }
 function limparPerfil(){ localStorage.removeItem('fenixPerfil_v2'); }
 
@@ -2336,7 +2351,8 @@ async function entrarRapido(){
   const tipo = $('loginTipo').value;
   if(tipo === 'supervisor'){
     if($('loginPin').value !== SUPERVISOR_PIN){ show($('loginStatus'),'Senha incorreta.','err'); return; }
-    salvarPerfil({tipo:'supervisor', nome:'Supervisor Fênix', uid:'supervisor'});
+    window.__supervisorAtivo = true; // sessão válida só nesta aba/carregamento
+    salvarPerfil({tipo:'supervisor', nome:'Supervisor Fênix', uid:'supervisor', loginTs: Date.now()});
   }else{
     const nomeEscolhido = $('loginNome').value;
     if(!nomeEscolhido){ show($('loginStatus'),'Selecione seu nome.','err'); return; }
