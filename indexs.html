@@ -5417,5 +5417,136 @@ document.addEventListener('click',function(e){
 </script>
 
 
+
+<!-- ═══ PATCH PONTUAL: ordem alfabética sempre + layout mobile do modal Equipe ═══ -->
+<style id="patch-equipe-alfa-mobile">
+/* setas de reordenar não fazem mais sentido com ordem alfabética automática */
+#editModal .btn-order{display:none!important;}
+/* wrapper de campo com rótulo (rótulo só aparece no mobile) */
+.fld{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.fld .fld-lab{display:none;}
+@media(max-width:768px){
+  /* remove o scroll horizontal antigo e volta ao layout de cartão */
+  #formLista{overflow-x:visible!important;}
+  #editModal .edit-row,
+  #editModal .equipe-header-row,
+  #editModal .equipe-total-row{min-width:0!important;}
+  #editModal .equipe-header-row{display:none!important;}
+  #editModal .edit-row{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    padding:12px!important;
+    margin-bottom:12px!important;
+    background:#f8fafc!important;
+    border:1px solid #e2e8f0!important;
+    border-radius:12px!important;
+  }
+  #editModal .edit-row .nome-input{grid-column:1/-1!important;font-weight:800!important;}
+  #editModal .edit-row input,
+  #editModal .edit-row select{height:42px!important;font-size:13px!important;}
+  #editModal .edit-row .btn-ferias-modal{grid-column:1/2!important;width:100%!important;height:42px!important;font-size:12px!important;}
+  #editModal .edit-row .btn-del{grid-column:2/3!important;width:100%!important;height:42px!important;font-size:18px!important;}
+  .fld .fld-lab{display:block;font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.4px;}
+  #editModal .meta-pct-wrap::before{content:"% META";display:block;font-size:9px;font-weight:800;color:#64748b;letter-spacing:.4px;}
+  #editModal .meta-pct-hint{text-align:left!important;}
+  /* linha de TOTAIS compacta com rótulos */
+  #editModal .equipe-total-row{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:6px!important;
+    text-align:center!important;
+    padding:10px!important;
+  }
+  #editModal .equipe-total-row>div:nth-child(1),
+  #editModal .equipe-total-row>div:nth-child(2),
+  #editModal .equipe-total-row>div:nth-child(5),
+  #editModal .equipe-total-row>div:nth-child(10),
+  #editModal .equipe-total-row>div:nth-child(11){display:none!important;}
+  #editModal .equipe-total-row>div:nth-child(3){grid-column:1/-1!important;text-align:center!important;}
+  #editModal .equipe-total-row>div[data-lab]::before{
+    content:attr(data-lab);
+    display:block;font-size:8px;opacity:.7;font-weight:700;letter-spacing:.4px;
+  }
+}
+</style>
+<script id="patch-equipe-alfa-mobile-js">
+(function(){
+  function num(v){const x=parseFloat(v);return isNaN(x)?0:x;}
+
+  /* sincroniza o que está digitado na tela de volta para os dados,
+     apenas quando é seguro (evita corromper após remover linha) */
+  function syncDomSeguro(){
+    const arr=window.fenixData&&window.fenixData.promotores;
+    if(!Array.isArray(arr))return;
+    const domRows=document.querySelectorAll('#formLista .edit-row').length;
+    if(domRows===0)return;
+    if(domRows>arr.length)return; // acabou de remover linha: não sincroniza
+    const limite=Math.min(domRows,arr.length);
+    for(let k=0;k<limite;k++){
+      const nEl=document.getElementById('n_'+k);
+      if(!nEl)continue;
+      const fbtn=document.getElementById('fbtn_'+k);
+      const pctEl=document.getElementById('pct_'+k);
+      arr[k]={
+        filial:(document.getElementById('fil_'+k)||{}).value??arr[k].filial,
+        rede:(document.getElementById('rede_'+k)||{}).value??arr[k].rede,
+        nome:nEl.value,
+        capa:num((document.getElementById('c_'+k)||{}).value),
+        metaPct:pctEl&&pctEl.value!==''?num(pctEl.value):(arr[k].metaPct??20),
+        meta:num((document.getElementById('m_'+k)||{}).value),
+        real:num((document.getElementById('r_'+k)||{}).value),
+        reno:num((document.getElementById('re_'+k)||{}).value),
+        a5:num((document.getElementById('a_'+k)||{}).value),
+        ferias:fbtn?fbtn.classList.contains('on'):!!arr[k].ferias
+      };
+    }
+  }
+
+  /* ordena alfabeticamente (nomes vazios — linha recém-adicionada — ficam no fim) */
+  function ordenarAlfabetico(){
+    const arr=window.fenixData&&window.fenixData.promotores;
+    if(!Array.isArray(arr))return;
+    arr.sort(function(a,b){
+      const na=String((a&&a.nome)||'').trim();
+      const nb=String((b&&b.nome)||'').trim();
+      if(!na&&!nb)return 0;
+      if(!na)return 1;
+      if(!nb)return -1;
+      return na.localeCompare(nb,'pt-BR',{sensitivity:'base'});
+    });
+  }
+
+  /* adiciona rótulos nos campos (visíveis só no mobile) */
+  var LABELS=[['fil_','FILIAL'],['rede_','REDE'],['c_','CAPA'],['m_','META'],['r_','REAL'],['re_','RENO'],['a_','A6 PRO']];
+  function decorarLinhas(){
+    document.querySelectorAll('#formLista .edit-row').forEach(function(row){
+      LABELS.forEach(function(par){
+        var pre=par[0],lab=par[1];
+        var el=row.querySelector('input[id^="'+pre+'"],select[id^="'+pre+'"]');
+        if(pre==='fil_')el=row.querySelector('.filial-order-wrap')||el;
+        if(!el||el.closest('.fld'))return;
+        var w=document.createElement('div');w.className='fld';
+        var s=document.createElement('span');s.className='fld-lab';s.textContent=lab;
+        el.parentNode.insertBefore(w,el);w.appendChild(s);w.appendChild(el);
+      });
+    });
+    var labsTotais={equipeTotalCapa:'CAPA',equipeTotalMeta:'META',equipeTotalReal:'REAL',equipeTotalReno:'RENO',equipeTotalA6:'A6 PRO'};
+    Object.keys(labsTotais).forEach(function(id){
+      var el=document.getElementById(id);
+      if(el)el.setAttribute('data-lab',labsTotais[id]);
+    });
+  }
+
+  var rfAnterior=window.renderForm;
+  window.renderForm=function(){
+    syncDomSeguro();
+    ordenarAlfabetico();
+    if(typeof rfAnterior==='function')rfAnterior();
+    decorarLinhas();
+  };
+})();
+</script>
+
 </body>
 </html>
